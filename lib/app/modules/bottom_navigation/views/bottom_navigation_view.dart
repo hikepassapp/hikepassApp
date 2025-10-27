@@ -80,8 +80,8 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                         image: DecorationImage(
                           image: AssetImage(
                             controller.currentIndex.value == 0
-                                ? 'icons/home.png'
-                                : 'icons/unhome.png',
+                                ? 'assets/icons/home.png'
+                                : 'assets/icons/unhome.png',
                           ),
                         ),
                       ),
@@ -99,8 +99,8 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                         image: DecorationImage(
                           image: AssetImage(
                             controller.currentIndex.value == 1
-                                ? 'icons/chat.png'
-                                : 'icons/unchat.png',
+                                ? 'assets/icons/chat.png'
+                                : 'assets/icons/unchat.png',
                           ),
                         ),
                       ),
@@ -118,14 +118,14 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                         image: DecorationImage(
                           image: AssetImage(
                             controller.currentIndex.value == 2
-                                ? 'icons/hike.png'
-                                : 'icons/unhike.png',
+                                ? 'assets/icons/hike.png'
+                                : 'assets/icons/unhike.png',
                           ),
                         ),
                       ),
                     ),
                   ),
-                  label: 'Aktivitas Pendakian',
+                  label: 'Pendakian',
                 ),
 
                 BottomNavigationBarItem(
@@ -138,8 +138,8 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
                         image: DecorationImage(
                           image: AssetImage(
                             controller.currentIndex.value == 3
-                                ? 'icons/profile.png'
-                                : 'icons/unprofile.png',
+                                ? 'assets/icons/profile.png'
+                                : 'assets/icons/unprofile.png',
                           ),
                         ),
                       ),

@@ -12,31 +12,31 @@ class MenuGridWidget extends GetView<HomeController> {
       children: [
         Expanded(
           child: MenuItemWidget(
-            icon: 'images/reservasi.png',
+            icon: 'assets/images/reservasi.png',
             label: 'Reservasi',
             onTap: controller.navigateToReservation,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: MenuItemWidget(
-            icon: 'images/riwayat.png',
+            icon: 'assets/images/riwayat.png',
             label: 'Riwayat',
             onTap: controller.navigateToRiwayat,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: MenuItemWidget(
-            icon: 'images/informasi.png',
+            icon: 'assets/images/informasi.png',
             label: 'Informasi',
             onTap: controller.navigateToInformasi,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: MenuItemWidget(
-            icon: 'images/laporan.png',
+            icon: 'assets/images/laporan.png',
             label: 'Laporan',
             onTap: controller.navigateToLaporan,
           ),

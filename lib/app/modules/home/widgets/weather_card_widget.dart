@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../shared/theme/app_typography.dart';
 
 class WeatherCardWidget extends StatelessWidget {
@@ -38,9 +37,7 @@ class WeatherCardWidget extends StatelessWidget {
               children: [
                 Text(
                   'Cuaca Saat Ini',
-                  style: AppTypography.mMedium.copyWith(
-                    color: Colors.black87,
-                  ),
+                  style: AppTypography.mMedium.copyWith(color: Colors.black87),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -66,23 +63,18 @@ class WeatherCardWidget extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   weatherCondition,
-                  style: AppTypography.lBold.copyWith(
-                    color: Colors.black87,
-                  ),
+                  style: AppTypography.lBold.copyWith(color: Colors.black87),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   location,
-                  style: AppTypography.sRegular.copyWith(
-                    color: Colors.black54,
-                  ),
+                  style: AppTypography.sRegular.copyWith(color: Colors.black54),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
           Image.asset(
-            'images/weather.png',
+            'assets/images/weather.png',
             width: 140,
             height: 140,
             fit: BoxFit.contain,
