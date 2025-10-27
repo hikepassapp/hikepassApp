@@ -9,15 +9,15 @@ class HomeController extends GetxController {
   var location = 'Pangalengan, Kab. Bandung. Jawa Barat'.obs;
 
   void navigateToReservation() {
-    // Get.toNamed('/reservation');
+    Get.offAllNamed(Routes.reservasi);
   }
 
   void navigateToRiwayat() {
-    // Get.toNamed('/riwayat');
+    Get.offAllNamed(Routes.riwayat);
   }
 
   void navigateToInformasi() {
-    // Get.toNamed('/informasi');
+    Get.offAllNamed(Routes.informasi);
   }
 
   void navigateToLaporan() {

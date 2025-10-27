@@ -9,6 +9,9 @@ abstract class Routes {
   static const hiking = _Paths.hiking;
   static const profile = _Paths.profile;
   static const laporan = _Paths.laporan;
+  static const reservasi = _Paths.reservasi;
+  static const riwayat = _Paths.riwayat;
+  static const informasi = _Paths.informasi;
 }
 
 abstract class _Paths {
@@ -19,4 +22,7 @@ abstract class _Paths {
   static const hiking = '/hiking';
   static const profile = '/profile';
   static const laporan = '/laporan';
+  static const reservasi = '/reservasi';
+  static const riwayat = '/riwayat';
+  static const informasi = '/informasi';
 }
