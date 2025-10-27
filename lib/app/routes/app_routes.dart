@@ -8,6 +8,7 @@ abstract class Routes {
   static const chat = _Paths.chat;
   static const hiking = _Paths.hiking;
   static const profile = _Paths.profile;
+  static const laporan = _Paths.laporan;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const chat = '/chat';
   static const hiking = '/hiking';
   static const profile = '/profile';
+  static const laporan = '/laporan';
 }
