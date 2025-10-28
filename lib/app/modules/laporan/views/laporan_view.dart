@@ -69,6 +69,23 @@ class LaporanView extends GetView<LaporanController> {
               prefixIcon: Icons.camera_alt,
               onTap: controller.pickImage,
             ),
+            Obx(() {
+              if (controller.selectedImage.value != null) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      controller.selectedImage.value!,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
             const SizedBox(height: 24),
             CustomButton(
               text: 'Kirim',

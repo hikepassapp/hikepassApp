@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
-
 import '../../../shared/theme/app_typography.dart';
 
 class CustomTextField extends StatelessWidget {
