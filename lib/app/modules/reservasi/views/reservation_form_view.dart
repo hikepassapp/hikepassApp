@@ -1,43 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../widgets/continue_button.dart';
 
 class ReservationFormView extends StatelessWidget {
-  const ReservationFormView({super.key});
+  ReservationFormView({super.key});
+
+  final namaController = TextEditingController();
+  final nikController = TextEditingController();
+  final jkController = TextEditingController();
+  final alamatController = TextEditingController();
+  final telpController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final data = Get.arguments as Map<String, String>?;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Get.back(),
-        ),
-        title: const Text(
-          'Isi Data Pendaki',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-        centerTitle: false,
+        title: const Text("Isi Data Pendaki"),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF2D9F8C),
+        foregroundColor: Colors.white,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInputField('Nama Lengkap'),
-            _buildInputField('NIK'),
-            _buildInputField('Jenis Kelamin'),
-            _buildInputField('Alamat'),
-            _buildInputField('No Telepon'),
-            const SizedBox(height: 100),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _inputField("Nama Lengkap", namaController),
+              _inputField("NIK", nikController),
+              _inputField("Jenis Kelamin", jkController),
+              _inputField("Alamat", alamatController),
+              _inputField("No Telepon", telpController),
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
       ),
 
@@ -54,71 +54,27 @@ class ReservationFormView extends StatelessWidget {
               ),
             ],
           ),
-          child: ElevatedButton(
-            onPressed: () {
-              Get.snackbar(
-                'Berhasil',
-                'Data pendaki berhasil disimpan!',
-                backgroundColor: const Color(0xFF2D9F8C),
-                colorText: Colors.white,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2D9F8C),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Lanjutkan',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
+          child: ContinueButton(
+            namaController: namaController,
+            nikController: nikController,
+            jkController: jkController,
+            alamatController: alamatController,
+            telpController: telpController,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildInputField(String label) {
+  Widget _inputField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 6),
-          TextField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Masukkan $label',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2D9F8C)),
-              ),
-            ),
-          ),
-        ],
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     );
   }
