@@ -3,10 +3,26 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
-  static const HOME = _Paths.HOME;
+  static const home = _Paths.home;
+  static const bottomNavigation = _Paths.bottomNavigation;
+  static const chat = _Paths.chat;
+  static const hiking = _Paths.hiking;
+  static const profile = _Paths.profile;
+  static const laporan = _Paths.laporan;
+  static const reservasi = _Paths.reservasi;
+  static const riwayat = _Paths.riwayat;
+  static const informasi = _Paths.informasi;
 }
 
 abstract class _Paths {
   _Paths._();
-  static const HOME = '/home';
+  static const home = '/home';
+  static const bottomNavigation = '/bottom-navigation';
+  static const chat = '/chat';
+  static const hiking = '/hiking';
+  static const profile = '/profile';
+  static const laporan = '/laporan';
+  static const reservasi = '/reservasi';
+  static const riwayat = '/riwayat';
+  static const informasi = '/informasi';
 }

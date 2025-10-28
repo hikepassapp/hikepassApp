@@ -1,23 +1,26 @@
 import 'package:get/get.dart';
 
+import '../../../routes/app_pages.dart';
+
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
+  var userName = 'Nailong'.obs;
+  var temperature = 27.obs;
+  var weatherCondition = 'Cerah Berawan'.obs;
+  var location = 'Pangalengan, Kab. Bandung. Jawa Barat'.obs;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  void navigateToReservation() {
+    Get.offAllNamed(Routes.reservasi);
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void navigateToRiwayat() {
+    Get.offAllNamed(Routes.riwayat);
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  void navigateToInformasi() {
+    Get.offAllNamed(Routes.informasi);
   }
 
-  void increment() => count.value++;
+  void navigateToLaporan() {
+    Get.offAllNamed(Routes.laporan);
+  }
 }
