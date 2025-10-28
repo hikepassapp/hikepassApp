@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/modules/home/controllers/home_controller.dart';
-import '../../chat/controllers/chat_controller.dart';
-import '../../chat/views/chat_view.dart';
 import '../../hiking/controllers/hiking_controller.dart';
 import '../../hiking/views/hiking_view.dart';
 import '../../../shared/theme/app_colors.dart';
@@ -26,10 +24,6 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
               }
               return const HomeView();
             case 1:
-              if (!Get.isRegistered<ChatController>()) {
-                Get.lazyPut(() => ChatController());
-              }
-              return const ChatView();
             case 2:
               if (!Get.isRegistered<HikingController>()) {
                 Get.lazyPut(() => HikingController());

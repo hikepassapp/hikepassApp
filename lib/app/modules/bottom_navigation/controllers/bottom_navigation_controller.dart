@@ -24,6 +24,10 @@ class BottomNavigationController extends GetxController {
   }
 
   void setIndex(int index) {
+    if (index == 1) {
+      Get.toNamed(Routes.chat);
+      return;
+    }
     currentIndex.value = index;
     update();
   }
