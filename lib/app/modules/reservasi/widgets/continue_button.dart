@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../views/reservation_form_view.dart';
 
 class ContinueButton extends StatelessWidget {
   const ContinueButton({super.key});
@@ -8,13 +9,7 @@ class ContinueButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Get.snackbar(
-          'Berhasil',
-          'Reservasi berhasil dibuat',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        Get.to(() => const ReservationFormView());
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 48),
