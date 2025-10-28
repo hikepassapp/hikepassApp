@@ -2,25 +2,23 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../controllers/hiking_controller.dart';
+import '../controllers/register_controller.dart';
 
-class HikingView extends GetView<HikingController> {
-  const HikingView({super.key});
+class RegisterView extends GetView<RegisterController> {
+  const RegisterView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HikingView'),
+        title: const Text('RegisterView'),
         centerTitle: true,
       ),
       body: const Center(
         child: Text(
-          'HikingView is working',
+          'RegisterView is working',
           style: TextStyle(fontSize: 20),
         ),
       ),
     );
   }
 }
-
-// first push
