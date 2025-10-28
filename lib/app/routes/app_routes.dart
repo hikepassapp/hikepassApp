@@ -12,6 +12,7 @@ abstract class Routes {
   static const reservasi = _Paths.reservasi;
   static const riwayat = _Paths.riwayat;
   static const informasi = _Paths.informasi;
+
 }
 
 abstract class _Paths {
