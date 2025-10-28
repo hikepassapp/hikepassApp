@@ -12,12 +12,18 @@ import '../modules/informasi/bindings/informasi_binding.dart';
 import '../modules/informasi/views/informasi_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
+import '../modules/login/bindings/login_binding.dart';
+import '../modules/login/views/login_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
+import '../modules/register/bindings/register_binding.dart';
+import '../modules/register/views/register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
+import '../modules/spalsh_screen/bindings/spalsh_screen_binding.dart';
+import '../modules/spalsh_screen/views/spalsh_screen_view.dart';
 
 part 'app_routes.dart';
 
@@ -71,6 +77,21 @@ class AppPages {
       name: _Paths.informasi,
       page: () => const InformasiView(),
       binding: InformasiBinding(),
+    ),
+    GetPage(
+      name: _Paths.spalhScreen,
+      page: () => const SpalshScreenView(),
+      binding: SpalshScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.login,
+      page: () => const LoginView(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: _Paths.register,
+      page: () => const RegisterView(),
+      binding: RegisterBinding(),
     ),
   ];
 }

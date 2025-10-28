@@ -12,6 +12,9 @@ abstract class Routes {
   static const reservasi = _Paths.reservasi;
   static const riwayat = _Paths.riwayat;
   static const informasi = _Paths.informasi;
+  static const spalhScreen = _Paths.spalhScreen;
+  static const login = _Paths.login;
+  static const register = _Paths.register;
 }
 
 abstract class _Paths {
@@ -25,4 +28,7 @@ abstract class _Paths {
   static const reservasi = '/reservasi';
   static const riwayat = '/riwayat';
   static const informasi = '/informasi';
+  static const spalhScreen = '/spalh-screen';
+  static const login = '/login';
+  static const register = '/register';
 }
