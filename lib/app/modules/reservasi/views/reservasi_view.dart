@@ -9,16 +9,12 @@ class ReservasiView extends GetView<ReservasiController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ReservasiView'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('ReservasiView'), centerTitle: true),
       body: const Center(
-        child: Text(
-          'ReservasiView is working',
-          style: TextStyle(fontSize: 20),
-        ),
+        child: Text('ReservasiView is working', style: TextStyle(fontSize: 20)),
       ),
     );
   }
 }
+
+//
