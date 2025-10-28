@@ -5,6 +5,7 @@ import '../widgets/reservation_detail_header.dart';
 import '../widgets/reservation_detail_info.dart';
 import '../widgets/ticket_counter.dart';
 import '../widgets/continue_button.dart';
+import 'reservation_form_view.dart';
 
 class ReservationDetailView extends StatelessWidget {
   const ReservationDetailView({super.key});
@@ -42,6 +43,7 @@ class ReservationDetailView extends StatelessWidget {
         ],
       ),
 
+      // Tombol di bawah fix
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -55,7 +57,27 @@ class ReservationDetailView extends StatelessWidget {
               ),
             ],
           ),
-          child: const ContinueButton(),
+          // Ketika ditekan -> lanjut ke form pendaki
+          child: ElevatedButton(
+            onPressed: () {
+              Get.to(() => ReservationFormView(), arguments: data);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2D9F8C),
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Lanjutkan',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
+          ),
         ),
       ),
     );
