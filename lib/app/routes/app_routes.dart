@@ -12,11 +12,11 @@ abstract class Routes {
   static const reservasi = _Paths.reservasi;
   static const riwayat = _Paths.riwayat;
   static const informasi = _Paths.informasi;
-  static const spalhScreen = _Paths.spalhScreen;
-  static const login = _Paths.login;
-  static const register = _Paths.register;
-  static const PAKET = _Paths.PAKET;
-  static const BERITA = _Paths.BERITA;
+  
+  static const LANDING_SCREEN = _Paths.LANDING_SCREEN;
+  static const ROLE_SELECTION = _Paths.ROLE_SELECTION;
+  static const REGISTER = _Paths.REGISTER;
+  static const LOGIN = _Paths.LOGIN;
 }
 
 abstract class _Paths {
@@ -30,9 +30,8 @@ abstract class _Paths {
   static const reservasi = '/reservasi';
   static const riwayat = '/riwayat';
   static const informasi = '/informasi';
-  static const spalhScreen = '/spalh-screen';
-  static const login = '/login';
-  static const register = '/register';
-  static const PAKET = '/paket';
-  static const BERITA = '/berita';
+  static const LANDING_SCREEN = '/landing-screen';
+  static const ROLE_SELECTION = '/role-selection';
+  static const REGISTER = '/register';
+  static const LOGIN = '/login';
 }
