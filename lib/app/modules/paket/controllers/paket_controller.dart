@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class PaketController extends GetxController {
-  final paketWisataList = <PaketWisataModel>[
+  final RxList<PaketWisataModel> paketWisataList = <PaketWisataModel>[
     PaketWisataModel(
       title: 'Puncak Besar Malabar',
       subtitle: 'Trip Dieng Dieng',
@@ -18,6 +18,7 @@ class PaketController extends GetxController {
     ),
   ].obs;
 }
+
 class PaketWisataModel {
   final String title;
   final String subtitle;

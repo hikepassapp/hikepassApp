@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/paket_controller.dart';
+import '../controllers/home_controller.dart';
 
 class PaketWisataCard extends StatelessWidget {
   final PaketWisataModel paket;

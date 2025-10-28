@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/modules/home/widgets/berita_header_widget.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import '../../../widgets/curved_top_clipper.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/home_header_widget.dart';
 import '../widgets/weather_card_widget.dart';
 import '../widgets/menu_grid_widget.dart';
+import '../widgets/paket_wisata_header.dart';
+import '../widgets/paket_wisata_list.dart';
+import '../controllers/home_controller.dart';
+import '../widgets/berita_header_widget.dart';
+import '../widgets/berita_list_card.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -50,6 +56,24 @@ class HomeView extends GetView<HomeController> {
                         ),
                         const SizedBox(height: 24),
                         const MenuGridWidget(),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: PaketWisataHeader(),
+                        ),
+                        Obx(
+                          () => PaketWisataList(
+                            paketList: controller.paketWisataList.value,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: BeritaHeader(),
+                        ),
+                        const SizedBox(height: 24),
+                        const BeritaListWidget(),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
