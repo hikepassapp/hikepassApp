@@ -5,6 +5,8 @@ import 'package:hikepass_app/app/modules/register/views/register_password_view.d
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
 // Landing screen views are imported where needed; keep only the first/main view import below
 
+import '../modules/berita/bindings/berita_binding.dart';
+import '../modules/berita/views/berita_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
 import '../modules/bottom_navigation/views/bottom_navigation_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -26,6 +28,8 @@ import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
+import '../modules/register/bindings/register_binding.dart';
+import '../modules/register/views/register_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
