@@ -7,7 +7,7 @@ class HomeController extends GetxController {
   var temperature = 27.obs;
   var weatherCondition = 'Cerah Berawan'.obs;
   var location = 'Pangalengan, Kab. Bandung. Jawa Barat'.obs;
-
+  
   void navigateToReservation() {
     Get.offAllNamed(Routes.reservasi);
   }

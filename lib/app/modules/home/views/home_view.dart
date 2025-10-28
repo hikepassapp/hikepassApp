@@ -28,15 +28,13 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: Stack(
                 children: [
-                  Container(
-                    color: const Color(0xFFF5F5F5),
-                  ),
+                  Container(color: const Color(0xFFF5F5F5)),
                   ClipPath(
                     clipper: CurvedTopClipper(),
                     child: Container(
                       width: double.infinity,
-                      height: 150, 
-                      color: AppColors.secondary, 
+                      height: 150,
+                      color: AppColors.secondary,
                     ),
                   ),
                   SingleChildScrollView(
