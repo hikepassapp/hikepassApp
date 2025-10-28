@@ -40,7 +40,7 @@ class ReservasiView extends GetView<ReservasiController> {
               price: reservation['price'] ?? '',
               duration: reservation['duration'] ?? '',
               onTap: () {
-                // TODO: tambahkan navigasi ke detail page
+                controller.goToDetail(reservation);
               },
             );
           },
