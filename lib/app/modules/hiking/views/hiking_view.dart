@@ -22,3 +22,5 @@ class HikingView extends GetView<HikingController> {
     );
   }
 }
+
+// first push
