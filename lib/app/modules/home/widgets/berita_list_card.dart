@@ -8,26 +8,24 @@ class BeritaListWidget extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => SizedBox(
+    return SizedBox(
         height: 200,
-        child: controller.newsEventList.isEmpty
+        child: controller.beritaList.isEmpty
             ? const Center(
                 child: Text('Tidak ada berita atau event'),
               )
             : ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
-                itemCount: controller.newsEventList.length,
+                itemCount: controller.beritaList.length,
                 itemBuilder: (context, index) {
-                  final item = controller.newsEventList[index];
+                  final item = controller.beritaList[index];
                   return BeritaCardWidget(
-                    newsEvent: item,
-                    onTap: () => controller.onNewsEventTapped(item),
+                    beritaModel: item,
+                    onTap: () => controller.onBeritaAcaraTapped(item),
                   );
                 },
               ),
-      ),
-    );
+      );
   }
 }

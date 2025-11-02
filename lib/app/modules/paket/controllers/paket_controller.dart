@@ -1,36 +1,60 @@
 import 'package:get/get.dart';
+import '../../../models/paketWisataModel.dart';
 
 class PaketController extends GetxController {
-  final RxList<PaketWisataModel> paketWisataList = <PaketWisataModel>[
-    PaketWisataModel(
-      title: 'Puncak Besar Malabar',
-      subtitle: 'Trip Dieng Dieng',
-      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
-      tripType: 'Open Trip',
-      isOpenTrip: true,
-    ),
-    PaketWisataModel(
-      title: 'Puncak Bes',
-      subtitle: 'Kerta Trip',
-      imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606',
-      tripType: 'Private Trip',
-      isOpenTrip: false,
-    ),
-  ].obs;
-}
+  late PaketWisataModel paketData;
+  
+  // Observable variables
+  final paketTitle = ''.obs;
+  final rating = 0.0.obs;
+  final admin = ''.obs;
+  final tanggal = ''.obs;
+  final biaya = ''.obs;
+  final titikKumpul = ''.obs;
+  final jamKeberangkatan = ''.obs;
+  final narahubung = ''.obs;
+  
+  final fasilitasList = <String>[].obs;
+  final destinasiList = <String>[].obs;
+  final createdDate = ''.obs;
 
-class PaketWisataModel {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String tripType;
-  final bool isOpenTrip;
+  @override
+  void onInit() {
+    super.onInit();
+    // Ambil data dari arguments
+    if (Get.arguments != null && Get.arguments is PaketWisataModel) {
+      paketData = Get.arguments as PaketWisataModel;
+      loadPaketData();
+    }
+  }
+  
+  void loadPaketData() {
+    // Populate data dari model
+    paketTitle.value = paketData.title ?? '';
+    rating.value = paketData.rating ?? 0.0;
+    admin.value = paketData.admin ?? '';
+    tanggal.value = paketData.tanggal ?? '';
+    biaya.value = paketData.biaya ?? '';
+    titikKumpul.value = paketData.titikKumpul ?? '';
+    jamKeberangkatan.value = paketData.jamKeberangkatan ?? '';
+    narahubung.value = paketData.narahubung ?? '';
+    fasilitasList.value = paketData.fasilitas ?? [];
+    destinasiList.value = paketData.destinasi ?? [];
+    createdDate.value = paketData.createdDate ?? '';
+  }
 
-  PaketWisataModel({
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.tripType,
-    required this.isOpenTrip,
-  });
+  @override
+  void onReady() {
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+  }
+  
+  // Methods
+  void goBack() {
+    Get.back();
+  }
 }

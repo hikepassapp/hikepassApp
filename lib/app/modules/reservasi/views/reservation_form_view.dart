@@ -14,6 +14,8 @@ class ReservationFormView extends StatelessWidget {
   final jkController = TextEditingController();
   final alamatController = TextEditingController();
   final telpController = TextEditingController();
+
+  
   final selectedCountry = "+62".obs;
   final nationality = "WNI".obs;
   final gender = "".obs;
@@ -264,7 +266,7 @@ class ReservationFormView extends StatelessWidget {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.green),
+        borderSide: const BorderSide(color: AppColors.primary),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
     );
@@ -283,7 +285,7 @@ class ReservationFormView extends StatelessWidget {
             border: Border.all(
               color: formC.ktpImage.value == null
                   ? Colors.grey.shade300
-                  : Colors.green,
+                  : AppColors.primary,
               width: 2,
             ),
           ),
@@ -354,7 +356,7 @@ class ReservationFormView extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Icon(Icons.check, color: Colors.white, size: 20),

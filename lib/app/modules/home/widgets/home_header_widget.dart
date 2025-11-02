@@ -24,7 +24,7 @@ class HomeHeaderWidget extends GetView<HomeController> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Siap Menjelajahi Gunung Malabar?',
+            'Siap Menjelajahi Pegunungan?',
             style: AppTypography.mRegular.copyWith(
               color: Colors.white.withOpacity(0.9),
             ),

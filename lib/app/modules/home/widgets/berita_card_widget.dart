@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../models/classNewsEventModel.dart';
+import '../../../models/berita_model.dart';
 
 class BeritaCardWidget extends StatelessWidget {
-  final NewsEventModel newsEvent;
+  final BeritaModel beritaModel;
   final VoidCallback onTap;
 
   const BeritaCardWidget({
     Key? key,
-    required this.newsEvent,
+    required this.beritaModel,
     required this.onTap,
   }) : super(key: key);
 
@@ -35,7 +35,7 @@ class BeritaCardWidget extends StatelessWidget {
               // Background Image
               Positioned.fill(
                 child: Image.asset(
-                  newsEvent.imageUrl,
+                  beritaModel.imageUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     // Fallback jika gambar tidak ditemukan
@@ -73,7 +73,7 @@ class BeritaCardWidget extends StatelessWidget {
                   children: [
                     // Category Badge
                     Text(
-                      newsEvent.category,
+                      beritaModel.kategori,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -83,7 +83,7 @@ class BeritaCardWidget extends StatelessWidget {
                     const SizedBox(height: 4),
                     // Title
                     Text(
-                      newsEvent.title,
+                      beritaModel.title,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -96,7 +96,7 @@ class BeritaCardWidget extends StatelessWidget {
                     const SizedBox(height: 8),
                     // Date
                     Text(
-                      newsEvent.date,
+                      beritaModel.tanggal,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withOpacity(0.9),
