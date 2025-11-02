@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/paket_controller.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class HeaderImageWidget extends GetView<PaketController> {
   const HeaderImageWidget({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class HeaderImageWidget extends GetView<PaketController> {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 240,
-      backgroundColor: Colors.blue,
+      backgroundColor: AppColors.secondary,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
         onPressed: () => Get.back(),

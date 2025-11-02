@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/berita_controller.dart';
+import '../widgets/berita_header_widget.dart';
+import '../widgets/berita_content_widget.dart';
 
-class BeritaView extends GetView<BeritaController> {
-  const BeritaView({super.key});
+class BeritaDetailView extends GetView<BeritaController> {
+  const BeritaDetailView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BeritaView'),
-        centerTitle: true,
-      ),
-      body: const Center(
-        child: Text(
-          'BeritaView is working',
-          style: TextStyle(fontSize: 20),
-        ),
+      body: CustomScrollView(
+        slivers: [
+          const BeritaHeaderWidget(),
+          SliverToBoxAdapter(
+            child: const BeritaContentWidget(),
+          ),
+        ],
       ),
     );
   }

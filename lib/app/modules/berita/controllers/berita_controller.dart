@@ -1,61 +1,55 @@
 import 'package:get/get.dart';
+import '../../../models/berita_model.dart';
 
 class BeritaController extends GetxController {
-  var beritaList = <BeritaModel>[].obs;
-  var isLoading = false.obs;
+  // Data dari arguments
+  late BeritaModel beritaData;
+  
+  // Observable variables
+  final kategori = 'Berita'.obs;
+  final title = ''.obs;
+  final tanggal = ''.obs;
+  final author = ''.obs;
+  final introText = ''.obs;
+  final contentSections = <Map<String, String>>[].obs;
+  final sourceTitle = ''.obs;
+  final sourceUrl = ''.obs;
+  final imageUrl = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchBerita();
-  }
-
-  void fetchBerita() async {
-    try {
-      isLoading(true);
-      // Simulasi data - ganti dengan API call
-      await Future.delayed(Duration(seconds: 1));
-      beritaList.value = [
-        BeritaModel(
-          id: 1,
-          judul: 'Flutter 4.0 Dirilis dengan Fitur Baru',
-          deskripsi: 'Flutter merilis versi terbaru dengan berbagai peningkatan performa',
-          imageUrl: 'https://picsum.photos/400/200?random=1',
-          tanggal: DateTime.now(),
-        ),
-        BeritaModel(
-          id: 2,
-          judul: 'GetX: State Management Terbaik',
-          deskripsi: 'GetX menjadi pilihan utama developer Flutter untuk state management',
-          imageUrl: 'https://picsum.photos/400/200?random=2',
-          tanggal: DateTime.now(),
-        ),
-        BeritaModel(
-          id: 3,
-          judul: 'Tips Optimasi Aplikasi Flutter',
-          deskripsi: 'Panduan lengkap untuk meningkatkan performa aplikasi Flutter Anda',
-          imageUrl: 'https://picsum.photos/400/200?random=3',
-          tanggal: DateTime.now(),
-        ),
-      ];
-    } finally {
-      isLoading(false);
+    // Ambil data dari arguments
+    if (Get.arguments != null && Get.arguments is BeritaModel) {
+      beritaData = Get.arguments as BeritaModel;
+      loadBeritaData();
+    } else {
+      // Set default values jika tidak ada data
+      print('Warning: No BeritaModel data received');
     }
   }
-}
+  
+  void loadBeritaData() {
+    if (beritaData == null) return;
+    
+    kategori.value = beritaData!.kategori;
+    title.value = beritaData!.title;
+    tanggal.value = beritaData!.tanggal;
+    author.value = beritaData!.author;
+    introText.value = beritaData!.introText;
+    contentSections.value = beritaData!.contentSections;
+    sourceTitle.value = beritaData!.sourceTitle;
+    sourceUrl.value = beritaData!.sourceUrl;
+    imageUrl.value = beritaData!.imageUrl;
+  }
 
-class BeritaModel {
-  final int id;
-  final String judul;
-  final String deskripsi;
-  final String imageUrl;
-  final DateTime tanggal;
+  @override
+  void onReady() {
+    super.onReady();
+  }
 
-  BeritaModel({
-    required this.id,
-    required this.judul,
-    required this.deskripsi,
-    required this.imageUrl,
-    required this.tanggal,
-  });
+  @override
+  void onClose() {
+    super.onClose();
+  }
 }
