@@ -13,36 +13,36 @@ class DescriptionWidget extends GetView<PaketController> {
         const Text(
           'Deskripsi',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         const Text(
           'Include & Fasilitas :',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         ...controller.fasilitasList.map((item) => _buildListItem(item)).toList(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         const Text(
           'Destinasi yang dikunjungi :',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 8),
         ...controller.destinasiList.map((item) => _buildListItem(item)).toList(),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         const Text(
           'Dibuat pada tanggal',
           style: TextStyle(
             color: Colors.grey,
-            fontSize: 12,
+            fontSize: 10,
           ),
         ),
         const SizedBox(height: 4),
@@ -50,7 +50,7 @@ class DescriptionWidget extends GetView<PaketController> {
           controller.createdDate.value,
           style: const TextStyle(
             color: Colors.grey,
-            fontSize: 12,
+            fontSize: 10,
           ),
         ),
       ],
@@ -63,11 +63,11 @@ class DescriptionWidget extends GetView<PaketController> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('• ', style: TextStyle(fontSize: 14)),
+          const Text('• ', style: TextStyle(fontSize: 12)),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 12),
             ),
           ),
         ],

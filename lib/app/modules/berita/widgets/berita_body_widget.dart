@@ -14,12 +14,12 @@ class BeritaBodyWidget extends GetView<BeritaController> {
         Text(
           controller.introText.value,
           style: const TextStyle(
-            fontSize: 15,
+            fontSize: 12,
             height: 1.6,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         
         // Content sections
         ...controller.contentSections.asMap().entries.map((entry) {
@@ -32,7 +32,7 @@ class BeritaBodyWidget extends GetView<BeritaController> {
               Text(
                 '${index + 1}. ${section['title']}',
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   height: 1.5,
                 ),
@@ -41,12 +41,12 @@ class BeritaBodyWidget extends GetView<BeritaController> {
               Text(
                 section['content'] ?? '',
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 12,
                   height: 1.6,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
             ],
           );
         }).toList(),

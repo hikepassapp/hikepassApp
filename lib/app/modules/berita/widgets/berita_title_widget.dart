@@ -10,7 +10,7 @@ class BeritaTitleWidget extends GetView<BeritaController> {
     return Text(
       controller.title.value,
       style: const TextStyle(
-        fontSize: 24,
+        fontSize: 16,
         fontWeight: FontWeight.bold,
         height: 1.3,
       ),

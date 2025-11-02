@@ -22,9 +22,9 @@ class PaketView extends GetView<PaketController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const PaketInfoWidget(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
                   const DetailSectionWidget(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 8),
                   const DescriptionWidget(),
                 ],
               ),

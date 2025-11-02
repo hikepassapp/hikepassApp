@@ -14,11 +14,11 @@ class PaketInfoWidget extends GetView<PaketController> {
           'Open Trip',
           style: TextStyle(
             color: Colors.orange,
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -27,7 +27,7 @@ class PaketInfoWidget extends GetView<PaketController> {
                 () => Text(
                   controller.paketTitle.value,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -35,13 +35,13 @@ class PaketInfoWidget extends GetView<PaketController> {
             ),
             Row(
               children: [
-                const Icon(Icons.star, color: Colors.orange, size: 28),
+                const Icon(Icons.star, color: Colors.orange, size: 18),
                 const SizedBox(width: 4),
                 Obx(
                   () => Text(
                     controller.rating.value.toString(),
                     style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -54,7 +54,7 @@ class PaketInfoWidget extends GetView<PaketController> {
         Obx(
           () => Text(
             controller.admin.value,
-            style: const TextStyle(color: Colors.grey, fontSize: 14),
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ),
       ],

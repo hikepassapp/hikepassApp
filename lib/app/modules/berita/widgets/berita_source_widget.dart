@@ -31,15 +31,15 @@ class BeritaSourceWidget extends GetView<BeritaController> {
           const Text(
             'Sumber Artikel berjudul',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           Text(
             '"${controller.sourceTitle.value}"',
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
@@ -48,17 +48,17 @@ class BeritaSourceWidget extends GetView<BeritaController> {
           const Text(
             'selengkapnya dengan link:',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           GestureDetector(
             onTap: () => _launchURL(controller.sourceUrl.value),
             child: Text(
               controller.sourceUrl.value,
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: 11,
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               ),

@@ -13,7 +13,7 @@ class BeritaMetaWidget extends GetView<BeritaController> {
         Text(
           controller.tanggal.value,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             color: Colors.grey,
           ),
         ),
@@ -21,7 +21,7 @@ class BeritaMetaWidget extends GetView<BeritaController> {
         Text(
           'Oleh : ${controller.author.value}',
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             color: Colors.grey,
           ),
         ),

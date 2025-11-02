@@ -19,7 +19,7 @@ class DetailSectionWidget extends GetView<PaketController> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 4),
         Row(
           children: [
             Expanded(
@@ -30,8 +30,12 @@ class DetailSectionWidget extends GetView<PaketController> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        _buildDetailItem('Narahubung', controller.narahubung.value, fullWidth: true),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            _buildDetailItem('Narahubung', controller.narahubung.value, fullWidth: true),
+          ],
+        ),
       ],
     ));
   }
@@ -43,15 +47,15 @@ class DetailSectionWidget extends GetView<PaketController> {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             color: Colors.black87,
           ),
         ),
