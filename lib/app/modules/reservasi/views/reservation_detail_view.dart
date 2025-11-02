@@ -4,15 +4,15 @@ import '../controllers/reservasi_controller.dart';
 import '../widgets/reservation_detail_header.dart';
 import '../widgets/reservation_detail_info.dart';
 import '../widgets/ticket_counter.dart';
-import '../widgets/continue_button.dart';
-import 'reservation_form_view.dart';
+import 'reservasi_rules_view.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class ReservationDetailView extends StatelessWidget {
   const ReservationDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ReservasiController>();
+
     final data = Get.arguments as Map<String, String>;
 
     return Scaffold(
@@ -22,7 +22,7 @@ class ReservationDetailView extends StatelessWidget {
         slivers: [
           ReservationDetailHeader(
             imagePath: data['imagePath'] ?? '',
-            title: 'Pendakian Gunung Malabar',
+            title: data['title'] ?? '',
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -60,10 +60,10 @@ class ReservationDetailView extends StatelessWidget {
           // Ketika ditekan -> lanjut ke form pendaki
           child: ElevatedButton(
             onPressed: () {
-              Get.to(() => ReservationFormView(), arguments: data);
+              Get.to(() => ReservasiRulesView(), arguments: data);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2D9F8C),
+              backgroundColor: AppColors.secondary,
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -84,6 +84,10 @@ class ReservationDetailView extends StatelessWidget {
   }
 
   Widget _buildInputSection() {
+    final controller = Get.find<ReservasiController>();
+
+    final List<String> posList = ['Cinyiruan', 'Kopi Magma'];
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -102,20 +106,32 @@ class ReservationDetailView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Masukkan pos perizinan',
-              hintStyle: TextStyle(color: Colors.grey[400]),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF2D9F8C)),
-              ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
+
+          Obx(
+            () => DropdownButtonFormField<String>(
+              value: controller.selectedPos.value.isEmpty
+                  ? null
+                  : controller.selectedPos.value,
+              items: posList.map((pos) {
+                return DropdownMenuItem(value: pos, child: Text(pos));
+              }).toList(),
+              onChanged: (val) {
+                controller.selectedPos.value = val ?? '';
+              },
+              decoration: InputDecoration(
+                hintText: 'Pilih pos perizinan',
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF2D9F8C)),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
           ),

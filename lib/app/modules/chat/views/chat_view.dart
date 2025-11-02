@@ -27,7 +27,7 @@ class ChatView extends GetView<ChatController> {
         ),
         title: Text(
           'Asisten Virtual',
-          style: AppTypography.h3.copyWith(color: Colors.white),
+          style: AppTypography.h3.copyWith(color: Colors.white, fontSize: 20),
         ),
         centerTitle: true,
         backgroundColor: AppColors.secondary,

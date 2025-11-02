@@ -5,7 +5,6 @@ class ReservationCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String price;
-  final String duration;
   final VoidCallback? onTap;
 
   const ReservationCard({
@@ -14,7 +13,6 @@ class ReservationCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.price,
-    required this.duration,
     this.onTap,
   });
 
@@ -39,7 +37,7 @@ class ReservationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
-              // Gambar
+              // Gambar latar belakang
               Positioned.fill(
                 child: Image.asset(
                   imagePath,
@@ -86,7 +84,7 @@ class ReservationCard extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2D9F8C).withOpacity(0.9),
+                    color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.9),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
@@ -98,7 +96,7 @@ class ReservationCard extends StatelessWidget {
                       Text(
                         title,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                         ),
@@ -107,24 +105,18 @@ class ReservationCard extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.grey,
                           fontSize: 12,
+                          fontWeight: FontWeight.w200
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'Tarif : $price',
                         style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
                           fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        duration,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 12,
                         ),
                       ),
                     ],

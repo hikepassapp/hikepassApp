@@ -2,29 +2,14 @@ import 'package:get/get.dart';
 
 import '../../../routes/app_pages.dart';
 import '../../../models/classNewsEventModel.dart';
+import '../../../models/paketWisataModel.dart';
 
 class HomeController extends GetxController {
   var userName = 'Nailong'.obs;
   var temperature = 27.obs;
   var weatherCondition = 'Cerah Berawan'.obs;
   var location = 'Pangalengan, Kab. Bandung. Jawa Barat'.obs;
-  final RxList<PaketWisataModel> paketWisataList = <PaketWisataModel>[
-    PaketWisataModel(
-      title: 'Puncak Besar Malabar',
-      subtitle: 'Trip Dieng Dieng',
-      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
-      tripType: 'Open Trip',
-      isOpenTrip: true,
-    ),
-    PaketWisataModel(
-      title: 'Puncak Bes',
-      subtitle: 'Kerta Trip',
-      imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606',
-      tripType: 'Private Trip',
-      isOpenTrip: false,
-    ),
-  ].obs;
-
+  final paketWisataList = <PaketWisataModel>[].obs;
   final newsEventList = <NewsEventModel>[].obs;
   final isLoading = false.obs;
 
@@ -32,7 +17,35 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     loadNewsEvent();
+    loadPaketWisata();
   }
+
+  void loadPaketWisata() {
+    paketWisataList.value = [
+      PaketWisataModel(
+        id: '1',
+        title: 'Puncak Besar Malabar',
+        agen: 'Trip Dieng Dieng',
+        tripType: 'Open Trip',
+        date: '10 Des 2023',
+        imageUrl:
+            'assets/images/banner1.png',
+        description: 'Nikmati keindahan Puncak Besar Malabar bersama kami!',
+      ),
+      PaketWisataModel(
+        id: '2',
+        title: 'Petualangan Gunung Kerta',
+        agen: 'Kerta Trip',
+        tripType: 'Private Trip',
+        date: '15 Des 2023',
+        imageUrl:
+            'assets/images/banner2.png',
+        description: 'Jelajahi Gunung Kerta dengan pengalaman tak terlupakan.',
+      ),
+    ];
+  }
+
+  
 
   void loadNewsEvent() {
     newsEventList.value = [
@@ -42,7 +55,7 @@ class HomeController extends GetxController {
         category: 'Berita',
         date: '3 Des 2023',
         imageUrl:
-            'https://images.unsplash.com/photo-1454496522488-7a8e488e8606', // GANTI DENGAN PATH GAMBAR ANDA
+            'assets/images/banner4.png',
         description:
             'Kisah menarik tentang Gunung Malabar yang jarang diketahui',
       ),
@@ -52,20 +65,26 @@ class HomeController extends GetxController {
         category: 'Event',
         date: '5 Des 2023',
         imageUrl:
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4', // GANTI DENGAN PATH GAMBAR ANDA
+            'assets/images/banner3.png',
         description: 'Program reboisasi untuk menjaga kelestarian lingkungan',
       ),
     ];
   }
 
   void onSeeAllTapped() {
-    // Navigate ke halaman list lengkap
     Get.toNamed('/berita-event-list');
   }
 
   void onNewsEventTapped(NewsEventModel item) {
-    // Navigate ke detail
     Get.toNamed('/berita-event-detail', arguments: item);
+  }
+
+  void onSeeAllPaketWisataTapped() {
+    Get.toNamed('/paket-wisata-list');
+  }
+
+  void onPaketWisataTapped(PaketWisataModel item) {
+    Get.toNamed('/paket-wisata-detail', arguments: item);
   }
 
   void navigateToReservation() {
@@ -85,18 +104,3 @@ class HomeController extends GetxController {
   }
 }
 
-class PaketWisataModel {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String tripType;
-  final bool isOpenTrip;
-
-  PaketWisataModel({
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.tripType,
-    required this.isOpenTrip,
-  });
-}

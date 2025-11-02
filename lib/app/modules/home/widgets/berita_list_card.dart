@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../models/classNewsEventModel.dart';
 import '../controllers/home_controller.dart';
 import 'berita_card_widget.dart';
 import 'package:get/get.dart';
