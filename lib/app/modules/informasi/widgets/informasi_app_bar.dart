@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_pages.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
+import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class InformasiAppBar extends StatelessWidget implements PreferredSizeWidget {
   const InformasiAppBar({Key? key}) : super(key: key);
@@ -7,24 +10,22 @@ class InformasiAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.white,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Get.back(),
-      ),
-      title: const Text(
-        'Informasi',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Get.offAllNamed(Routes.bottomNavigation),
         ),
-      ),
-      centerTitle: true,
-    );
+        title: Text(
+          'Informasi',
+          style: AppTypography.h3.copyWith(color: Colors.white, fontSize: 20),
+        ),
+        centerTitle: true,
+        backgroundColor: AppColors.secondary,
+        iconTheme: IconThemeData(color: Colors.white),
+        elevation: 0,
+        toolbarHeight: 60,
+      );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

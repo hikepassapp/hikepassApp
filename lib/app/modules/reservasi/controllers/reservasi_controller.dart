@@ -1,11 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../views/reservation_detail_view.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ReservasiController extends GetxController {
   final reservations = <Map<String, String>>[].obs;
   final isLoading = false.obs;
-
+  final selectedPos = ''.obs;
   final ticketCount = 1.obs;
+  final isAgreed = false.obs;
+  var ktpImage = Rxn<XFile>();
 
   @override
   void onInit() {
@@ -19,31 +23,25 @@ class ReservasiController extends GetxController {
     reservations.value = [
       {
         'imagePath': 'assets/images/reservasi_panorama.png',
-        'title': 'Puncak Besar Malabar Via Panorama',
+        'title': 'Puncak Besar Malabar',
         'subtitle': 'LMDH',
         'price': 'Rp. 15.000',
         'duration': 'Estimasi 2 Jam',
-        'location': 'Kopi Malabar, Pangalengan, Kab. Bandung',
+        'location': 'Pangalengan, Kab. Bandung',
         'phoneNumber': '+628123456789',
         'estimasi': '± 2 Jam',
-      },
-      {
-        'imagePath': 'assets/images/reservasi_cinyiruan.png',
-        'title': 'Puncak Besar Malabar Via Cinyiruan',
-        'subtitle': 'LMDH',
-        'price': 'Rp. 10.000',
-        'duration': 'Estimasi 3 Jam',
-        'location': 'Cinyiruan, Pangalengan, Kab. Bandung',
-        'phoneNumber': '+628987654321',
-        'estimasi': '± 3 Jam',
       },
     ];
 
     isLoading.value = false;
   }
 
+  void toggleAgreement(bool? value) {
+    isAgreed.value = value ?? false;
+  }
+
   void incrementTicket() {
-    ticketCount.value++;
+    if (ticketCount.value < 8) ticketCount.value++;
   }
 
   void decrementTicket() {
@@ -62,5 +60,31 @@ class ReservasiController extends GetxController {
       transition: Transition.cupertino,
       duration: const Duration(milliseconds: 300),
     );
+  }
+
+  void submitData() {
+    if (isAgreed.value) {
+      Get.snackbar(
+        'Berhasil',
+        'Data berhasil disubmit',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } else {
+      Get.snackbar(
+        'Peringatan',
+        'Silakan centang persetujuan terlebih dahulu',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
+  }
+  Future<void> pickKtpImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      ktpImage.value = image;
+    }
   }
 }

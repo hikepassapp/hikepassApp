@@ -11,7 +11,7 @@ class BeritaHeader extends StatelessWidget {
         const Text(
           'Berita & Event',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
@@ -21,7 +21,7 @@ class BeritaHeader extends StatelessWidget {
           child: const Text(
             'Lihat Semua',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: Colors.blue,
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class ReservationHistoryView extends StatelessWidget {
   const ReservationHistoryView({super.key});
@@ -19,7 +20,7 @@ class ReservationHistoryView extends StatelessWidget {
                 Container(
                   height: 200,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF004D40),
+                    color: AppColors.secondary,
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40),
                       bottomRight: Radius.circular(40),

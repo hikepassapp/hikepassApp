@@ -10,8 +10,6 @@ import '../widgets/weather_card_widget.dart';
 import '../widgets/menu_grid_widget.dart';
 import '../widgets/paket_wisata_header.dart';
 import '../widgets/paket_wisata_list.dart';
-import '../controllers/home_controller.dart';
-import '../widgets/berita_header_widget.dart';
 import '../widgets/berita_list_card.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -61,17 +59,14 @@ class HomeView extends GetView<HomeController> {
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: PaketWisataHeader(),
                         ),
-                        Obx(
-                          () => PaketWisataList(
-                            paketList: controller.paketWisataList.value,
-                          ),
-                        ),
+                        const SizedBox(height: 12),
+                        const PaketWisataList(),
                         const SizedBox(height: 24),
                         const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
                           child: BeritaHeader(),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 12),
                         const BeritaListWidget(),
                         const SizedBox(height: 24),
                       ],

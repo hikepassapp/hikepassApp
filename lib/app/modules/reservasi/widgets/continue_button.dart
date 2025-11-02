@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../views/reservation_history_view.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
+
 
 class ContinueButton extends StatelessWidget {
   final TextEditingController namaController;
@@ -37,7 +39,7 @@ class ContinueButton extends StatelessWidget {
       },
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 48),
-        backgroundColor: const Color(0xFF2D9F8C),
+        backgroundColor: AppColors.secondary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: const Text(

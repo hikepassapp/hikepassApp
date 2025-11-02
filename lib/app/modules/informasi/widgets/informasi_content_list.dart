@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../models/informasiModel.dart';
 import '../controllers/informasi_controller.dart';
 import 'informasi_content_card.dart';
 
