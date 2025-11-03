@@ -5,14 +5,13 @@ import 'package:image_picker/image_picker.dart';
 
 class ReservasiController extends GetxController {
   // ======= DATA UTAMA =======
-  final reservations = <Map<String, String>>[].obs; // tiket aktif
-  final riwayat = <Map<String, String>>[].obs; // tiket yang sudah dibayar
+  final reservations = <Map<String, dynamic>>[].obs; // tiket aktif
+  final riwayat = <Map<String, dynamic>>[].obs; // tiket sudah dibayar
   final isLoading = false.obs;
   final selectedPos = ''.obs;
   final ticketCount = 1.obs;
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
-
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
 
   @override
@@ -25,12 +24,15 @@ class ReservasiController extends GetxController {
   void loadReservations() {
     isLoading.value = true;
 
+    // contoh tiket aktif (belum dibayar)
     reservations.value = [
       {
+        'id': 'R${DateTime.now().millisecondsSinceEpoch}',
         'imagePath': 'assets/images/reservasi_panorama.png',
         'title': 'Puncak Besar Malabar',
+        'jalur': 'Jalur Panorama',
         'subtitle': 'LMDH',
-        'price': 'Rp. 15.000',
+        'harga': 'Rp 15.000',
         'duration': 'Estimasi 2 Jam',
         'location': 'Pangalengan, Kab. Bandung',
         'phoneNumber': '+628123456789',
@@ -38,13 +40,13 @@ class ReservasiController extends GetxController {
       },
     ];
 
+    // kosongkan riwayat di awal
+    riwayat.clear();
     isLoading.value = false;
   }
 
   // ======= AGREEMENT, JUMLAH, DLL =======
-  void toggleAgreement(bool? value) {
-    isAgreed.value = value ?? false;
-  }
+  void toggleAgreement(bool? value) => isAgreed.value = value ?? false;
 
   void incrementTicket() {
     if (ticketCount.value < 8) ticketCount.value++;
@@ -54,16 +56,12 @@ class ReservasiController extends GetxController {
     if (ticketCount.value > 1) ticketCount.value--;
   }
 
-  void resetTicketCount() {
-    ticketCount.value = 1;
-  }
+  void resetTicketCount() => ticketCount.value = 1;
 
-  void setSelectedDate(DateTime date) {
-    selectedDate.value = date;
-  }
+  void setSelectedDate(DateTime date) => selectedDate.value = date;
 
   // ======= NAVIGASI DETAIL =======
-  void goToDetail(Map<String, String> reservation) {
+  void goToDetail(Map<String, dynamic> reservation) {
     Get.to(
       () => const ReservationDetailView(),
       arguments: reservation,
@@ -79,6 +77,8 @@ class ReservasiController extends GetxController {
         'Berhasil',
         'Data berhasil disubmit',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
       );
     } else {
       Get.snackbar(
@@ -95,28 +95,28 @@ class ReservasiController extends GetxController {
   Future<void> pickKtpImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       ktpImage.value = image;
     }
   }
 
   // ======= PEMBAYARAN & PEMINDAHAN DATA =======
-  void completePayment(Map<String, String> data) {
-    // hapus dari daftar tiket aktif
+  void completePayment(Map<String, dynamic> data) {
+    // Hapus tiket aktif berdasarkan 'title' (nama jalur)
     reservations.removeWhere((item) => item['title'] == data['title']);
 
-    // waktu dan tanggal real
+    //cAmbil waktu & tanggal asli
     final now = DateTime.now();
-    final formattedDate = "${now.day}-${now.month}-${now.year}";
+    final formattedDate =
+        "${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
     final formattedTime =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    // tambahkan ke daftar riwayat
+    // Tambahkan ke daftar riwayat
     riwayat.add({
       'id': data['id'] ?? 'D${now.millisecondsSinceEpoch}',
       'nama': data['nama'] ?? 'Pendaki',
-      'jalur': data['jalur'] ?? 'Panorama',
+      'jalur': data['jalur'] ?? data['title'] ?? 'Jalur Panorama',
       'tanggal': formattedDate,
       'waktu': formattedTime,
       'image': data['imagePath'] ?? 'assets/images/reservasi_panorama.png',
@@ -124,6 +124,15 @@ class ReservasiController extends GetxController {
       'status': 'Selesai',
     });
 
-    update(); // refresh UI otomatis
+    update(); // refresh tampilan
+
+    // Notifikasi sukses
+    Get.snackbar(
+      'Pembayaran Berhasil',
+      'Tiket telah ditambahkan ke Riwayat Pembayaran',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green.shade600,
+      colorText: Colors.white,
+    );
   }
 }

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../views/reservation_history_view.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
-
 class ContinueButton extends StatelessWidget {
   final TextEditingController namaController;
   final TextEditingController nikController;
