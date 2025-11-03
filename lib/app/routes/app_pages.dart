@@ -2,10 +2,7 @@ import 'package:get/get.dart';
 import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
 import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
-import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
-// Landing screen views are imported where needed; keep only the first/main view import below
 import '../modules/reservasi/views/reservation_payment_view.dart';
-
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
@@ -23,14 +20,11 @@ import '../modules/landingScreen/views/landing_screen_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
 import '../modules/login/views/login_email_view.dart';
 import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
-import '../modules/register/bindings/register_binding.dart';
-import '../modules/register/views/register_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
@@ -41,8 +35,8 @@ import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
 import '../modules/paket/bindings/paket_binding.dart';
 import '../modules/paket/views/paket_view.dart';
-import '../modules/berita/bindings/berita_binding.dart';
-import '../modules/berita/views/berita_view.dart';
+import '../modules/berita/views/berita_list.dart';
+import '../modules/paket/views/paket_list_view.dart';
 
 part 'app_routes.dart';
 
@@ -162,6 +156,16 @@ class AppPages {
     GetPage(
       name: _Paths.reservationPayment,
       page: () => const ReservationPaymentView(),
+    ),
+    GetPage(
+      name: '/berita-list',
+      page: () => const BeritaList(),
+      binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: '/paket-list',
+      page: () => const PaketListView(),
+      binding: PaketBinding(),
     ),
   ];
 }
