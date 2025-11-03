@@ -4,7 +4,7 @@ class ReservationCard extends StatelessWidget {
   final String imagePath;
   final String title;
   final String subtitle;
-  final String price;
+  final String harga; // ✅ ganti dari "price" ke "harga"
   final VoidCallback? onTap;
 
   const ReservationCard({
@@ -12,7 +12,7 @@ class ReservationCard extends StatelessWidget {
     required this.imagePath,
     required this.title,
     required this.subtitle,
-    required this.price,
+    required this.harga, // ✅ ubah di sini juga
     this.onTap,
   });
 
@@ -37,7 +37,6 @@ class ReservationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Stack(
             children: [
-              // Gambar latar belakang
               Positioned.fill(
                 child: Image.asset(
                   imagePath,
@@ -54,8 +53,6 @@ class ReservationCard extends StatelessWidget {
                   },
                 ),
               ),
-
-              // Overlay gradient bawah
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
@@ -72,8 +69,6 @@ class ReservationCard extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Informasi di bawah
               Positioned(
                 left: 0,
                 right: 0,
@@ -109,7 +104,7 @@ class ReservationCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                           fontWeight: FontWeight.w200,
@@ -117,7 +112,7 @@ class ReservationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Tarif : $price',
+                        'Tarif : $harga', // ✅ ubah di sini juga
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w400,
