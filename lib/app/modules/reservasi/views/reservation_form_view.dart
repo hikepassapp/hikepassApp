@@ -361,6 +361,7 @@ class ReservationFormView extends StatelessWidget {
     );
   }
 
+  @override
   void dispose() {
     namaController.dispose();
     nikController.dispose();
