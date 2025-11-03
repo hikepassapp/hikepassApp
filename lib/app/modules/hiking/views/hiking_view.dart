@@ -4,8 +4,6 @@ import '../controllers/hiking_controller.dart';
 import '../widgets/hiking_header.dart';
 import '../widgets/hiking_tab_bar.dart';
 import '../widgets/hiking_card.dart';
-
-/// Halaman utama Hiking: header, tab (Check-In/Check-Out), dan list kartu.
 class HikingView extends GetView<HikingController> {
   const HikingView({super.key});
 
@@ -27,11 +25,12 @@ class HikingView extends GetView<HikingController> {
             const SizedBox(height: 8),
             Expanded(
               child: Obx(() {
-                final items = controller.filtered;
+                final items = controller.filtered.toList();
                 if (items.isEmpty) {
                   return const Center(child: Text('Belum ada data'));
                 }
                 return ListView.separated(
+                  key: ValueKey(controller.tabIndex.value),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   itemCount: items.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),

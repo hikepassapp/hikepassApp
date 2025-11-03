@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../shared/theme/app_colors.dart';
 
 enum HikeType { checkIn, checkOut }
 
@@ -8,7 +9,7 @@ class HikingItem {
   final DateTime date;
   final String imagePath;
   final HikeType type;
-  
+
   HikingItem({
     required this.title,
     required this.date,
@@ -19,35 +20,53 @@ class HikingItem {
 
 class HikingController extends GetxController {
   final tabIndex = 0.obs;
+  final TextEditingController listController = TextEditingController();
+  final RxList<HikingItem> _allItems = <HikingItem>[].obs;
 
-  final List<HikingItem> _items = [
-    HikingItem(
-      title: 'Gunung Puntang',
-      date: DateTime(2025, 10, 28),
-      imagePath: 'assets/images/gunung-puntang.jpg',
-      type: HikeType.checkIn,
-    ),
-  ];
-
-  List<HikingItem> get filtered {
-    final isCheckIn = tabIndex.value == 0;
-    return _items.where((e) => isCheckIn ? e.type == HikeType.checkIn : e.type == HikeType.checkOut).toList();
+  @override
+  void onInit() {
+    super.onInit();
+    _allItems.addAll([
+      HikingItem(
+        title: 'Gunung Puntang',
+        date: DateTime(2025, 10, 28),
+        imagePath: 'assets/images/gunung-puntang.jpg',
+        type: HikeType.checkIn,
+      ),
+    ]);
   }
 
-  void switchTab(int i) => tabIndex.value = i;
+  List<HikingItem> get filtered {
+    final type = tabIndex.value == 0 ? HikeType.checkIn : HikeType.checkOut;
+    return _allItems.where((item) => item.type == type).toList();
+  }
 
-  final TextEditingController listController = TextEditingController();
+  void switchTab(int index) {
+    if (tabIndex.value != index) {
+      tabIndex.value = index;
+    }
+  }
 
   void submitCheckInAndGoToCheckout() {
-    final text = listController.text.trim();
-    if (text.isEmpty) {
-      Get.snackbar('Peringatan', 'List barang tidak boleh kosong!');
+    if (listController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Perhatian',
+        'Mohon isi list barang bawaan',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
       return;
     }
+    listController.clear();
+    Get.back();
 
-    tabIndex.value = 1; 
-    Get.back();           
-    Get.snackbar('Berhasil', 'Check-In berhasil disimpan!');
+    Get.snackbar(
+      'Berhasil',
+      'Check-in berhasil dilakukan',
+      backgroundColor: AppColors.primary,
+      colorText: Colors.white,
+    );
+
     listController.clear();
   }
 

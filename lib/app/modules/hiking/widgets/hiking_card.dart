@@ -10,8 +10,18 @@ class HikingCard extends StatelessWidget {
 
   String _formatDate(DateTime d) {
     const months = [
-      'Januari','Februari','Maret','April','Mei','Juni',
-      'Juli','Agustus','September','Oktober','November','Desember'
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
     ];
     return '${d.day} ${months[d.month - 1]} ${d.year}';
   }
@@ -25,11 +35,9 @@ class HikingCard extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 110,
+        height: 130,
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
             ClipRRect(
@@ -70,20 +78,28 @@ class HikingCard extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (isCheckIn) {
-                          Get.to(() => const CheckInFormPage()); // panggil page dari folder widgets
+                          Get.to(
+                            () => const CheckInFormPage(),
+                          ); // panggil page dari folder widgets
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: const Color(0xFF0E564A),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
                       child: Text(
                         isCheckIn ? 'Check-In' : 'Check-Out',
-                        style: const TextStyle(fontSize: 12, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

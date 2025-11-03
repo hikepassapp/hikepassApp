@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
 
 class LoginEmailContentWidget extends GetView<LoginController> {
-  const LoginEmailContentWidget({Key? key}) : super(key: key);
+  const LoginEmailContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

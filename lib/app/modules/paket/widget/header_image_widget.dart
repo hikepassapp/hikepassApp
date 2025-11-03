@@ -4,7 +4,7 @@ import '../controllers/paket_controller.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class HeaderImageWidget extends GetView<PaketController> {
-  const HeaderImageWidget({Key? key}) : super(key: key);
+  const HeaderImageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class HeaderImageWidget extends GetView<PaketController> {
               ? controller.paketData.imageUrl 
               : 'assets/images/banner1.png',
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
+          errorBuilder: (_, _, _) => Container(
             color: Colors.grey[300],
             child: const Center(
               child: Icon(

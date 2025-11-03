@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RoleSelectionHeroImageWidget extends StatelessWidget {
-  const RoleSelectionHeroImageWidget({Key? key}) : super(key: key);
+  const RoleSelectionHeroImageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

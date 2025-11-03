@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// Impor Controller
 import '../controllers/landing_screen_controller.dart';
 
 // Impor Widgets
@@ -21,6 +18,7 @@ class LandingScreenNextView extends GetView<LandingScreenController> {
         children: [
           SizedBox(
             height: double.infinity,
+            width: double.infinity,
             child: Image.asset(
               'assets/images/landingNext.png',
               fit: BoxFit.cover,

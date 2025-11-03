@@ -9,8 +9,9 @@ import '../widgets/info_box_widget.dart';
 
 class FillDataRegisterView extends GetView<RegisterController> {
   const FillDataRegisterView({Key? key}) : super(key: key);
+class FillDataRegisterView extends GetView<RegisterController> {
+  const FillDataRegisterView({super.key});
 
-  // Helper widget untuk label dengan tanda *
   Widget _buildLabel(String text, {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),

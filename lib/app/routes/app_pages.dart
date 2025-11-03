@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/modules/profile/views/edit_profile_view.dart';
 
+import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
+import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
+import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
@@ -33,7 +36,9 @@ import '../modules/register/views/register_password_view.dart';
 import '../modules/register/views/otp_verification_view.dart';
 import '../modules/register/views/fill_data_register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
+import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
+import '../modules/reservasi/views/reservation_payment_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
 import '../modules/roleSelection/bindings/role_selection_binding.dart';
@@ -46,7 +51,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.LANDING_SCREEN;
+  static const initial = Routes.landingScreen;
 
   static final routes = [
     GetPage(
@@ -95,18 +100,17 @@ class AppPages {
       binding: InformasiBinding(),
     ),
     GetPage(
-      name: _Paths.LANDING_SCREEN,
-      // Start on the first landing screen view
+      name: _Paths.landingScreen,
       page: () => const LandingScreenView(),
       binding: LandingScreenBinding(),
     ),
     GetPage(
-      name: _Paths.ROLE_SELECTION,
+      name: _Paths.roleSelection,
       page: () => const RoleSelectionView(),
       binding: RoleSelectionBinding(),
     ),
     GetPage(
-      name: _Paths.REGISTER,
+      name: _Paths.register,
       page: () => const RegisterView(),
       binding: RegisterBinding(),
     ),
@@ -126,11 +130,10 @@ class AppPages {
       binding: RegisterBinding(),
     ),
     GetPage(
-      name: _Paths.LOGIN,
+      name: _Paths.login,
       page: () => const LoginEmailView(),
       binding: LoginBinding(),
     ),
-    // Login sub-pages (email entry, otp, password)
     GetPage(
       name: '/login-email',
       page: () => const LoginEmailView(),
@@ -176,5 +179,9 @@ class AppPages {
       page: () => const AboutView(),
       binding: ProfileBinding(),
     ),
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
+    ),
+    GetPage(name: '/payment-success', page: () => const PaymentSuccessView()),
   ];
 }

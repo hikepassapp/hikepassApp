@@ -8,7 +8,7 @@ import '../widgets/custom_button_widget.dart';
 import '../widgets/password_requirements_widget.dart';
 
 class RegisterPasswordView extends GetView<RegisterController> {
-  const RegisterPasswordView({Key? key}) : super(key: key);
+  const RegisterPasswordView({super.key});
 
   @override
   Widget build(BuildContext context) {

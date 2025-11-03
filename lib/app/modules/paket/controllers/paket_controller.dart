@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../models/paketWisataModel.dart';
+import '../../../models/paket_wisata_model.dart';
 
 class PaketController extends GetxController {
   late PaketWisataModel paketData;
@@ -30,30 +30,19 @@ class PaketController extends GetxController {
   
   void loadPaketData() {
     // Populate data dari model
-    paketTitle.value = paketData.title ?? '';
-    rating.value = paketData.rating ?? 0.0;
-    admin.value = paketData.admin ?? '';
-    tanggal.value = paketData.tanggal ?? '';
-    biaya.value = paketData.biaya ?? '';
-    titikKumpul.value = paketData.titikKumpul ?? '';
-    jamKeberangkatan.value = paketData.jamKeberangkatan ?? '';
-    narahubung.value = paketData.narahubung ?? '';
-    fasilitasList.value = paketData.fasilitas ?? [];
-    destinasiList.value = paketData.destinasi ?? [];
-    createdDate.value = paketData.createdDate ?? '';
+    paketTitle.value = paketData.title;
+    rating.value = paketData.rating;
+    admin.value = paketData.admin;
+    tanggal.value = paketData.tanggal;
+    biaya.value = paketData.biaya;
+    titikKumpul.value = paketData.titikKumpul;
+    jamKeberangkatan.value = paketData.jamKeberangkatan;
+    narahubung.value = paketData.narahubung;
+    fasilitasList.value = paketData.fasilitas;
+    destinasiList.value = paketData.destinasi;
+    createdDate.value = paketData.createdDate;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-  
-  // Methods
   void goBack() {
     Get.back();
   }

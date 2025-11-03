@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/paket_controller.dart';
 
 class DetailSectionWidget extends GetView<PaketController> {
-  const DetailSectionWidget({Key? key}) : super(key: key);
+  const DetailSectionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/berita_controller.dart';
 
 class BeritaBodyWidget extends GetView<BeritaController> {
-  const BeritaBodyWidget({Key? key}) : super(key: key);
+  const BeritaBodyWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class BeritaBodyWidget extends GetView<BeritaController> {
               const SizedBox(height: 8),
             ],
           );
-        }).toList(),
+        })
       ],
     );
   }
