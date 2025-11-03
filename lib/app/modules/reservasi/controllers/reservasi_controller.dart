@@ -11,6 +11,8 @@ class ReservasiController extends GetxController {
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
 
+  Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+
   @override
   void onInit() {
     super.onInit();
@@ -52,7 +54,12 @@ class ReservasiController extends GetxController {
     ticketCount.value = 1;
   }
 
-  // Navigasi ke detail
+  // Set tanggal yang dipilih
+  void setSelectedDate(DateTime date) {
+    selectedDate.value = date;
+  }
+
+  // Navigasi ke detail reservasi
   void goToDetail(Map<String, String> reservation) {
     Get.to(
       () => const ReservationDetailView(),
@@ -62,6 +69,7 @@ class ReservasiController extends GetxController {
     );
   }
 
+  // Submit data reservasi
   void submitData() {
     if (isAgreed.value) {
       Get.snackbar(
@@ -79,6 +87,8 @@ class ReservasiController extends GetxController {
       );
     }
   }
+
+  // Upload foto KTP
   Future<void> pickKtpImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
