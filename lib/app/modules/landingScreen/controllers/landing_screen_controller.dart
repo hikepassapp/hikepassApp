@@ -65,10 +65,10 @@ class LandingScreenController extends GetxController {
   }
 
   void skip() {
-    Get.offAllNamed(Routes.LOGIN);
+    Get.offAllNamed(Routes.login);
   }
 
   void getStarted() {
-    Get.offAllNamed(Routes.REGISTER);
+    Get.offAllNamed(Routes.register);
   }
 }

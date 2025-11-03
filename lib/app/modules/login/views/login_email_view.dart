@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/login_controller.dart';
 import '../widgets/login_email_content_widget.dart';
 import '../widgets/login_help_widget.dart';
 
 class LoginEmailView extends GetView<LoginController> {
-  const LoginEmailView({Key? key}) : super(key: key);
+  const LoginEmailView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,14 @@ class LoginEmailView extends GetView<LoginController> {
                 left: 8,
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () => Get.back(),
+                  onPressed: () {
+                    // If there is something to pop, go back. Otherwise navigate to landing.
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else {
+                      Get.offAllNamed(Routes.LANDING_SCREEN);
+                    }
+                  },
                 ),
               ),
             ],

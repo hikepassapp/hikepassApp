@@ -8,7 +8,7 @@ import 'berita_body_widget.dart';
 import 'berita_source_widget.dart';
 
 class BeritaContentWidget extends GetView<BeritaController> {
-  const BeritaContentWidget({Key? key}) : super(key: key);
+  const BeritaContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

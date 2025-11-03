@@ -10,9 +10,9 @@ void main() {
     GetMaterialApp(
       title: "Application",
       theme: ThemeData(
-        useMaterial3: false, // optional — matikan tema M3 biar default hijau
+        useMaterial3: false,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.secondary, // set warna utama hijau
+          seedColor: AppColors.secondary,
         ),
         primaryColor: AppColors.secondary,
         focusColor: AppColors.secondary,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
-import '../widgets/confirmationCheckboxWidget.dart';
+import '../widgets/confirmation_checkbox_widget.dart';
 import '../widgets/permit_time_widget.dart';
 import '../widgets/rules_header_widget.dart';
 import '../widgets/rules_list_widget.dart';
@@ -10,7 +10,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class ReservasiRulesView extends GetView<ReservasiController> {
-  const ReservasiRulesView({Key? key}) : super(key: key);
+  const ReservasiRulesView({super.key});
 
   @override
   Widget build(BuildContext context) {

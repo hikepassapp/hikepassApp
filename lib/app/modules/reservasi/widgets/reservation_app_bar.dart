@@ -27,7 +27,6 @@ class ReservationAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.search, color: Colors.white),
           onPressed: () {
-            // TODO: menambahkan fitur pencarian nanti
           },
         ),
       ],
