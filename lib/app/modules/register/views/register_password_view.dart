@@ -12,6 +12,10 @@ class RegisterPasswordView extends GetView<RegisterController> {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure controller is available even if this view is opened directly
+    if (!Get.isRegistered<RegisterController>()) {
+      Get.put(RegisterController());
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

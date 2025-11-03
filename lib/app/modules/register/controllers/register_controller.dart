@@ -132,7 +132,8 @@ class RegisterController extends GetxController {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
 
-      Get.toNamed('/register/personal-data');
+      // Navigate to the registered route name for the fill data page
+      Get.toNamed('/register-fill-data');
     } catch (e) {
       Get.snackbar(
         'Error',

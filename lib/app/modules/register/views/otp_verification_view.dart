@@ -12,6 +12,10 @@ class RegisterOtpVerificationView extends GetView<RegisterController> {
 
   @override
   Widget build(BuildContext context) {
+    // Ensure RegisterController is registered so `controller` (GetView) won't throw
+    if (!Get.isRegistered<RegisterController>()) {
+      Get.put(RegisterController());
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -42,15 +46,16 @@ class RegisterOtpVerificationView extends GetView<RegisterController> {
                 style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               const SizedBox(height: 8),
-              Obx(
-                () => Text(
-                  controller.emailController.text.isNotEmpty
-                      ? controller.emailController.text
-                      : 'youremail@gmail.com',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+              // Show the email entered previously (not reactive). If you need
+              // it to update while typing, consider using a ValueListenableBuilder
+              // on controller.emailController.
+              Text(
+                controller.emailController.text.isNotEmpty
+                    ? controller.emailController.text
+                    : 'youremail@gmail.com',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: 24),

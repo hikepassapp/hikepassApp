@@ -6,6 +6,9 @@ import '../controllers/register_controller.dart';
 import '../widgets/custom_text_field_widget.dart';
 import '../widgets/custom_button_widget.dart';
 import '../widgets/info_box_widget.dart';
+
+class FillDataRegisterView extends GetView<RegisterController> {
+  const FillDataRegisterView({Key? key}) : super(key: key);
 class FillDataRegisterView extends GetView<RegisterController> {
   const FillDataRegisterView({super.key});
 
