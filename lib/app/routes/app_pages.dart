@@ -34,7 +34,6 @@ import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
 import '../modules/paket/bindings/paket_binding.dart';
 import '../modules/paket/views/paket_view.dart';
-
 part 'app_routes.dart';
 
 class AppPages {
@@ -148,5 +147,10 @@ class AppPages {
       page: () => const BeritaDetailView(),
       binding: BeritaBinding(),
     ),
+    GetPage(
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
+    ),
+    GetPage(name: '/payment-success', page: () => const PaymentSuccessView()),
   ];
 }

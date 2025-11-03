@@ -12,7 +12,6 @@ abstract class Routes {
   static const reservasi = _Paths.reservasi;
   static const riwayat = _Paths.riwayat;
   static const informasi = _Paths.informasi;
-
   static const landingScreen = _Paths.landingScreen;
   static const roleSelection = _Paths.roleSelection;
   static const register = _Paths.register;

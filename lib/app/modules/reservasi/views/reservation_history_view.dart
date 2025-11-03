@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
+import 'package:hikepass_app/app/routes/app_pages.dart'; // ✅ tambahkan ini biar Routes kebaca
 
 class ReservationHistoryView extends StatelessWidget {
   const ReservationHistoryView({super.key});
@@ -151,7 +152,19 @@ class ReservationHistoryView extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              // Navigasi ke halaman pembayaran
+              Get.toNamed(
+                Routes.reservationPayment,
+                arguments: {
+                  'nama': data?['nama'] ?? 'Pendaki',
+                  'jalur': data?['jalur'] ?? 'Panorama',
+                  'namaGunung': 'Malabar',
+                  'harga': 15000,
+                  'tanggal': data?['tanggal'] ?? '14 Mei 2025',
+                },
+              );
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2D9F8C),
               shape: RoundedRectangleBorder(
