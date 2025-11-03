@@ -16,6 +16,7 @@ abstract class Routes {
   static const roleSelection = _Paths.roleSelection;
   static const register = _Paths.register;
   static const login = _Paths.login;
+  static const reservationPayment = _Paths.reservationPayment;
 }
 
 abstract class _Paths {
@@ -33,4 +34,5 @@ abstract class _Paths {
   static const roleSelection = '/role-selection';
   static const register = '/register';
   static const login = '/login';
+  static const reservationPayment = '/reservation-payment';
 }
