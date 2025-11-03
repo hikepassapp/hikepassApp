@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class PermitTimeCard extends StatelessWidget {
-  const PermitTimeCard({Key? key}) : super(key: key);
+  const PermitTimeCard({super.key});
 
   @override
   Widget build(BuildContext context) {
