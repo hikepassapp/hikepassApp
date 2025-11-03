@@ -7,12 +7,11 @@ import '../widgets/custom_text_field_widget.dart';
 import '../widgets/custom_button_widget.dart';
 import '../widgets/info_box_widget.dart';
 
-// --- NAMA CLASS DIUBAH ---
 class FillDataRegisterView extends GetView<RegisterController> {
-  // --- CONSTRUCTOR DISESUAIKAN ---
   const FillDataRegisterView({Key? key}) : super(key: key);
+class FillDataRegisterView extends GetView<RegisterController> {
+  const FillDataRegisterView({super.key});
 
-  // Helper widget untuk label dengan tanda *
   Widget _buildLabel(String text, {bool isRequired = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),

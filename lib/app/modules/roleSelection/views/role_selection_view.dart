@@ -6,7 +6,7 @@ import '../widgets/role_selection_hero_image_widget.dart';
 import '../widgets/role_selection_content_widget.dart';
 
 class RoleSelectionView extends GetView<RoleSelectionController> {
-  const RoleSelectionView({Key? key}) : super(key: key);
+  const RoleSelectionView({super.key});
 
   @override
   Widget build(BuildContext context) {

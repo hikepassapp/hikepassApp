@@ -122,12 +122,7 @@ class BeritaModel {
     return tanggal;
   }
 
-  // Helper method untuk cek apakah berita baru (dalam 7 hari)
   bool isNew() {
-    // Implementasi sederhana, bisa disesuaikan dengan kebutuhan
-    final now = DateTime.now();
-    // Parse tanggal jika format sesuai
-    // Untuk sekarang return false dulu
     return false;
   }
 

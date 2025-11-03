@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+<<<<<<< HEAD
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 // Register views
@@ -12,6 +13,13 @@ import '../modules/reservasi/views/reservation_payment_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
 
 // Berita
+=======
+import 'package:hikepass_app/app/modules/profile/views/edit_profile_view.dart';
+
+import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
+import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
+import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
 
@@ -45,6 +53,10 @@ import '../modules/laporan/views/laporan_view.dart';
 
 // Login
 import '../modules/login/bindings/login_binding.dart';
+<<<<<<< HEAD
+=======
+// main login view is not used as a route directly; sub-pages are registered below
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
 import '../modules/login/views/login_email_view.dart';
 import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
@@ -52,15 +64,31 @@ import '../modules/login/views/login_password_view.dart';
 // Profile
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
+<<<<<<< HEAD
 
 // Register
 import '../modules/register/bindings/register_binding.dart';
 
 // Reservasi
+=======
+import '../modules/profile/views/terms_view.dart';
+import '../modules/profile/views/privacy_policy_view.dart';
+import '../modules/profile/views/about_view.dart';
+import '../modules/register/bindings/register_binding.dart';
+import '../modules/register/views/register_view.dart';
+import '../modules/register/views/register_password_view.dart';
+import '../modules/register/views/otp_verification_view.dart';
+import '../modules/register/views/fill_data_register_view.dart';
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
 import '../modules/reservasi/bindings/reservasi_binding.dart';
+import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
+<<<<<<< HEAD
 
 // Riwayat
+=======
+import '../modules/reservasi/views/reservation_payment_view.dart';
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
 
@@ -77,7 +105,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.LANDING_SCREEN;
+  static const initial = Routes.landingScreen;
 
   static final routes = [
     // ======= HOME & NAVIGATION =======
@@ -148,21 +176,25 @@ class AppPages {
 
     // ======= LANDING SCREEN =======
     GetPage(
+<<<<<<< HEAD
       name: _Paths.LANDING_SCREEN,
+=======
+      name: _Paths.landingScreen,
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
       page: () => const LandingScreenView(),
       binding: LandingScreenBinding(),
     ),
 
     // ======= ROLE SELECTION =======
     GetPage(
-      name: _Paths.ROLE_SELECTION,
+      name: _Paths.roleSelection,
       page: () => const RoleSelectionView(),
       binding: RoleSelectionBinding(),
     ),
 
     // ======= REGISTER =======
     GetPage(
-      name: _Paths.REGISTER,
+      name: _Paths.register,
       page: () => const RegisterView(),
       binding: RegisterBinding(),
     ),
@@ -184,7 +216,7 @@ class AppPages {
 
     // ======= LOGIN =======
     GetPage(
-      name: _Paths.LOGIN,
+      name: _Paths.login,
       page: () => const LoginEmailView(),
       binding: LoginBinding(),
     ),
@@ -217,5 +249,32 @@ class AppPages {
       page: () => const BeritaDetailView(),
       binding: BeritaBinding(),
     ),
+<<<<<<< HEAD
+=======
+    GetPage(
+      name: '/edit-profile',
+      page: () => const EditProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.TERMS,
+      page: () => const TermsView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRIVACY_POLICY,
+      page: () => const PrivacyPolicyView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT,
+      page: () => const AboutView(),
+      binding: ProfileBinding(),
+    ),
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
+    ),
+    GetPage(name: '/payment-success', page: () => const PaymentSuccessView()),
+>>>>>>> 7c50468f053130b1cd922255066189281c219c04
   ];
 }

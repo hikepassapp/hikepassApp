@@ -4,7 +4,7 @@ import '../controllers/berita_controller.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class BeritaHeaderWidget extends GetView<BeritaController> {
-  const BeritaHeaderWidget({Key? key}) : super(key: key);
+  const BeritaHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class BeritaHeaderWidget extends GetView<BeritaController> {
                   ? Image.asset(
                       imgUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, _, _) => Container(
                         color: Colors.grey[300],
                         child: const Center(
                           child: Icon(

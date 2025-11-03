@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PaketWisataHeader extends StatelessWidget {
-  const PaketWisataHeader({Key? key}) : super(key: key);
+  const PaketWisataHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
