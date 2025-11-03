@@ -1,14 +1,12 @@
-// lib/app/modules/register/widgets/password_requirements.dart
-
 import 'package:flutter/material.dart';
 
 class PasswordRequirements extends StatelessWidget {
   final List<String> requirements;
 
   const PasswordRequirements({
-    Key? key,
+    super.key,
     required this.requirements,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +46,7 @@ class PasswordRequirements extends StatelessWidget {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

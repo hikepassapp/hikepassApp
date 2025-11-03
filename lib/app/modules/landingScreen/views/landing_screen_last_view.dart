@@ -1,20 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-// Impor Controller
 import '../controllers/landing_screen_controller.dart';
-
-// Impor Widgets
-import '../widgets/landing_app_bar_widget.dart';
-import '../widgets/landing_hero_card_widget.dart';
-
-// --- INI PERUBAHANNYA ---
-// Impor tombol yang baru kita buat
 import '../widgets/landing_button_widget.dart';
-// Hapus 'import ../../shared/widgets/custom_botton.dart';
-
 class LandingScreenLastView extends GetView<LandingScreenController> {
   const LandingScreenLastView({super.key});
 
@@ -25,6 +12,7 @@ class LandingScreenLastView extends GetView<LandingScreenController> {
         children: [
           SizedBox(
             height: double.infinity,
+            width: double.infinity,
             child: Image.asset(
               'assets/images/landingLast.png',
               fit: BoxFit.cover,

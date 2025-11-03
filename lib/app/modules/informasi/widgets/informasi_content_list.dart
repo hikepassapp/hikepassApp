@@ -4,7 +4,7 @@ import '../controllers/informasi_controller.dart';
 import 'informasi_content_card.dart';
 
 class InformasiContentList extends GetView<InformasiController> {
-  const InformasiContentList({Key? key}) : super(key: key);
+  const InformasiContentList({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import '../widgets/login_otp_app_bar_widget.dart';
 import '../widgets/login_otp_content_widget.dart';
 
 class LoginOtpView extends GetView<LoginController> {
-  const LoginOtpView({Key? key}) : super(key: key);
+  const LoginOtpView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,9 +4,9 @@ class InformasiHeaderImage extends StatelessWidget {
   final String imageUrl;
 
   const InformasiHeaderImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

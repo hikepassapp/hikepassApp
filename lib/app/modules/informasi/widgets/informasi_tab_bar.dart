@@ -4,9 +4,9 @@ class InformasiTabBar extends StatelessWidget {
   final TabController tabController;
 
   const InformasiTabBar({
-    Key? key,
+    super.key,
     required this.tabController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -14,18 +14,7 @@ class ChatController extends GetxController {
       ChatMessage(
         text: 'Nailong, ada yang bisa kami bantu?',
         isBot: true,
-        time: '12:30',
-      ),
-      ChatMessage(
-        text:
-            'Akhir-akhir ini aku tertorik untuk hiking, kira-kira jalur pendakian di Gunung Malabar yang cocok untuk pemula apa ya?',
-        isBot: false,
-        time: '',
-      ),
-      ChatMessage(
-        text: 'Oke! kalo gitu aku coba bantu buat perbandingannya ya',
-        isBot: true,
-        time: '12:30',
+        time: _getCurrentTime(),
       ),
     ]);
   }
@@ -33,7 +22,6 @@ class ChatController extends GetxController {
   void sendMessage() {
     if (messageController.text.trim().isEmpty) return;
 
-    // Add user message
     messages.add(
       ChatMessage(
         text: messageController.text,
@@ -45,7 +33,6 @@ class ChatController extends GetxController {
     final userMessage = messageController.text;
     messageController.clear();
 
-    // Simulate bot response
     Future.delayed(const Duration(seconds: 1), () {
       messages.add(
         ChatMessage(

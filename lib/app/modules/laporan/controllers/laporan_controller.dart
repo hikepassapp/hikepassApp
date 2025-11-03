@@ -116,36 +116,27 @@ class LaporanController extends GetxController {
   }
 
   void submitLaporan() {
-    if (namaPelaporController.text.isEmpty &&
-        tanggalController.text.isEmpty &&
-        lokasiController.text.isEmpty &&
-        deskripsiController.text.isEmpty) {
+    if (namaPelaporController.text.isEmpty ||
+        tanggalController.text.isEmpty ||
+        lokasiController.text.isEmpty ||
+        deskripsiController.text.isEmpty ||
+        fotoController.text.isEmpty) {
       Get.snackbar(
         'Laporan tidak lengkap',
         'Silahkan lengkapi semua data',
         colorText: Colors.white,
         backgroundColor: Colors.red,
       );
-      return;
+    } else {
+      Get.snackbar(
+        'Success',
+        'Laporan berhasil dikirim',
+        colorText: Colors.white,
+        backgroundColor: AppColors.primary,
+      );
+      Future.delayed(const Duration(seconds: 2), () {
+        Get.offAllNamed(Routes.bottomNavigation);
+      });
     }
-    Get.snackbar(
-      'Success',
-      'Laporan berhasil dikirim',
-      colorText: Colors.white,
-      backgroundColor: AppColors.primary,
-    );
-    Future.delayed(const Duration(seconds: 2), () {
-      Get.offAllNamed(Routes.bottomNavigation);
-    });
-  }
-
-  @override
-  void onClose() {
-    namaPelaporController.dispose();
-    tanggalController.dispose();
-    lokasiController.dispose();
-    deskripsiController.dispose();
-    fotoController.dispose();
-    super.onClose();
   }
 }

@@ -4,7 +4,7 @@ import 'paket_wisata_card.dart';
 import 'package:get/get.dart';
 
 class PaketWisataList extends GetView<HomeController> {
-  const PaketWisataList({Key? key}) : super(key: key);
+  const PaketWisataList({super.key});
 
   @override
   Widget build(BuildContext context) {

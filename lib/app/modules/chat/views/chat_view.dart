@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
-import '../../../routes/app_pages.dart';
 import '../controllers/chat_controller.dart';
 import '../widgets/chat_bubble.dart';
 

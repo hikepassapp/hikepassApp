@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../models/informasiModel.dart';
+import '../../../models/informasi_model.dart';
 
 class InformasiController extends GetxController {
   final currentTabIndex = 0.obs;
@@ -56,11 +56,6 @@ class InformasiController extends GetxController {
       ),
     ],
   ).obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   void onTabChanged(int index) {
     currentTabIndex.value = index;
