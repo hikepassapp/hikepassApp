@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class RulesHeader extends StatelessWidget {
-  const RulesHeader({super.key});
+  const RulesHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

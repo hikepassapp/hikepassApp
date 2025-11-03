@@ -8,7 +8,7 @@ class RiwayatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ReservasiController reservasiC = Get.find<ReservasiController>();
+    final data = Get.arguments as Map<String, dynamic>?;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),

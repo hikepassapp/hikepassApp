@@ -10,7 +10,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class ReservasiRulesView extends GetView<ReservasiController> {
-  const ReservasiRulesView({super.key});
+  const ReservasiRulesView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
