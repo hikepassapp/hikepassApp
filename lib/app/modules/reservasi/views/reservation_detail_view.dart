@@ -12,29 +12,39 @@ class ReservationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final data = Get.arguments as Map<String, String>;
+    // FIX: ubah ke Map<String, dynamic>
+    final data = Get.arguments as Map<String, dynamic>;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
 
       body: CustomScrollView(
         slivers: [
+          // Header gambar dan judul
           ReservationDetailHeader(
             imagePath: data['imagePath'] ?? '',
             title: data['title'] ?? '',
           ),
+
+          // Konten utama
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Detail informasi tiket
                   ReservationDetailInfo(data: data),
                   const SizedBox(height: 16),
+
+                  // Input dropdown pos perizinan
                   _buildInputSection(),
+
                   const SizedBox(height: 16),
+
+                  // Counter jumlah tiket
                   const TicketCounter(),
+
                   const SizedBox(height: 100),
                 ],
               ),
@@ -43,7 +53,7 @@ class ReservationDetailView extends StatelessWidget {
         ],
       ),
 
-      // Tombol di bawah fix
+      // Tombol lanjut di bawah
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -57,10 +67,10 @@ class ReservationDetailView extends StatelessWidget {
               ),
             ],
           ),
-          // Ketika ditekan -> lanjut ke form pendaki
           child: ElevatedButton(
             onPressed: () {
-              Get.to(() => ReservasiRulesView(), arguments: data);
+              // arguments tetap Map<String, dynamic>
+              Get.to(() => const ReservasiRulesView(), arguments: data);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.secondary,
@@ -83,10 +93,10 @@ class ReservationDetailView extends StatelessWidget {
     );
   }
 
+  // Widget dropdown pos perizinan
   Widget _buildInputSection() {
     final controller = Get.find<ReservasiController>();
-
-    final List<String> posList = ['Cinyiruan', 'Kopi Magma'];
+    final List<String> posList = ['Cinyiruan', 'Panorama'];
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -107,6 +117,7 @@ class ReservationDetailView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
+          // Dropdown reactive dengan GetX
           Obx(
             () => DropdownButtonFormField<String>(
               value: controller.selectedPos.value.isEmpty

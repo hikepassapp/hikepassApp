@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../reservasi/controllers/reservasi_controller.dart';
 
 class PaymentSuccessView extends StatelessWidget {
   const PaymentSuccessView({super.key});
@@ -7,6 +8,7 @@ class PaymentSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Get.arguments as Map<String, dynamic>?;
+    final reservasiC = Get.find<ReservasiController>(); // 🔹 ambil controller
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -21,6 +23,8 @@ class PaymentSuccessView extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
+            // 🔹 Pindahkan tiket ke riwayat sebelum balik
+            reservasiC.completePayment(data ?? {});
             Get.offAllNamed(
               '/bottom-navigation',
               arguments: {'initialIndex': 0}, // tab Beranda
@@ -64,7 +68,8 @@ class PaymentSuccessView extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                // 🔁 tombol bawah juga kembali ke Beranda
+                // 🔹 Pindahkan tiket ke riwayat sebelum balik ke beranda
+                reservasiC.completePayment(data ?? {});
                 Get.offAllNamed(
                   '/bottom-navigation',
                   arguments: {'initialIndex': 0},
