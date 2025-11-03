@@ -11,7 +11,7 @@ class PaketWisataHeader extends StatelessWidget {
         const Text(
           'Paket Wisata',
           style: TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
           ),
@@ -21,7 +21,7 @@ class PaketWisataHeader extends StatelessWidget {
           child: const Text(
             'Lihat Semua',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: Colors.blue,
             ),
           ),

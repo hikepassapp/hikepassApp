@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 class ReservationDetailHeader extends StatelessWidget {
   final String imagePath;
@@ -16,7 +17,7 @@ class ReservationDetailHeader extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       expandedHeight: 240,
-      backgroundColor: const Color(0xFF2D9F8C),
+      backgroundColor: AppColors.secondary,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
         onPressed: () => Get.back(),

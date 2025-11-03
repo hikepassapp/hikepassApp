@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/paket_controller.dart';
-import '../widget/paket_wisata_header.dart';
-import '../widget/paket_wisata_list.dart';
+import '../widget/header_image_widget.dart';
+import '../widget/paket_info_widget.dart';
+import '../widget/detail_section_widget.dart';
+import '../widget/description_widget.dart';
 
 class PaketView extends GetView<PaketController> {
   const PaketView({Key? key}) : super(key: key);
@@ -10,30 +12,25 @@ class PaketView extends GetView<PaketController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Home'),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black87,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            // Header
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: PaketWisataHeader(),
+      body: CustomScrollView(
+        slivers: [
+          const HeaderImageWidget(),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const PaketInfoWidget(),
+                  const SizedBox(height: 8),
+                  const DetailSectionWidget(),
+                  const SizedBox(height: 8),
+                  const DescriptionWidget(),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            // List Paket Wisata
-            Obx(() => PaketWisataList(
-              paketList: controller.paketWisataList,
-            )),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

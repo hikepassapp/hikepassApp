@@ -38,6 +38,10 @@ import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
 import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
+import '../modules/paket/bindings/paket_binding.dart';
+import '../modules/paket/views/paket_view.dart';
+import '../modules/berita/bindings/berita_binding.dart';
+import '../modules/berita/views/berita_view.dart';
 
 part 'app_routes.dart';
 
@@ -143,6 +147,16 @@ class AppPages {
       name: '/login-password',
       page: () => const LoginPasswordView(),
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: '/paket',
+      page: () => const PaketView(),
+      binding: PaketBinding(),
+    ),
+    GetPage(
+      name: '/berita-detail',
+      page: () => const BeritaDetailView(),
+      binding: BeritaBinding(),
     ),
   ];
 }

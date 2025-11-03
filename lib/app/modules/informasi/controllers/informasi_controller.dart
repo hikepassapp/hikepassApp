@@ -6,7 +6,7 @@ class InformasiController extends GetxController {
 
   final peraturanData = InformasiModel(
     id: 'peraturan',
-    imageUrl: 'assets/images/peraturan_banner.jpg', // GANTI PATH GAMBAR DI SINI
+    imageUrl: 'assets/images/peraturan-banner.png', // GANTI PATH GAMBAR DI SINI
     contents: [
       InformasiContent(
         title: 'Dilarang Mengotori Gunung dan Membuang Sampah Sembarangan',
@@ -25,7 +25,7 @@ class InformasiController extends GetxController {
 
   final tipsData = InformasiModel(
     id: 'tips',
-    imageUrl: 'assets/images/tips_banner.jpg', // GANTI PATH GAMBAR DI SINI
+    imageUrl: 'assets/images/tips-banner.png',
     contents: [
       InformasiContent(
         title: 'Persiapan Fisik dan Mental',
@@ -48,7 +48,7 @@ class InformasiController extends GetxController {
 
   final umumData = InformasiModel(
     id: 'umum',
-    imageUrl: 'assets/images/umum_banner.jpg', // GANTI PATH GAMBAR DI SINI
+    imageUrl: 'assets/images/umum-banner.png',
     contents: [
       InformasiContent(
         title: 'Tentang Gunung Malabar',
