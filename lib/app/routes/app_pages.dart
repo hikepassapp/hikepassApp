@@ -4,6 +4,7 @@ import 'package:hikepass_app/app/modules/register/views/otp_verification_view.da
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
 // Landing screen views are imported where needed; keep only the first/main view import below
+import '../modules/reservasi/views/reservation_payment_view.dart';
 
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
@@ -157,6 +158,10 @@ class AppPages {
       name: '/berita-detail',
       page: () => const BeritaDetailView(),
       binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
     ),
   ];
 }
