@@ -9,11 +9,7 @@ import '../controllers/landing_screen_controller.dart';
 // Impor Widgets
 import '../widgets/landing_app_bar_widget.dart';
 import '../widgets/landing_hero_card_widget.dart';
-
-// --- INI PERUBAHANNYA ---
-// Impor tombol yang baru kita buat
 import '../widgets/landing_button_widget.dart';
-// Hapus 'import ../../shared/widgets/custom_botton.dart';
 
 class LandingScreenView extends GetView<LandingScreenController> {
   const LandingScreenView({super.key});

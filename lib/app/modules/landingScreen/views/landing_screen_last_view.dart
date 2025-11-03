@@ -5,15 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 // Impor Controller
 import '../controllers/landing_screen_controller.dart';
-
 // Impor Widgets
 import '../widgets/landing_app_bar_widget.dart';
 import '../widgets/landing_hero_card_widget.dart';
-
-// --- INI PERUBAHANNYA ---
-// Impor tombol yang baru kita buat
 import '../widgets/landing_button_widget.dart';
-// Hapus 'import ../../shared/widgets/custom_botton.dart';
 
 class LandingScreenLastView extends GetView<LandingScreenController> {
   const LandingScreenLastView({super.key});
@@ -72,13 +67,9 @@ class LandingScreenLastView extends GetView<LandingScreenController> {
                       LandingButton(
                         text: 'Masuk Sebagai Pendaki',
                         onTap: controller.skip,
+                        backgroundColor: const Color(0xFF179778),
                       ),
                       SizedBox(height: 20),
-                      LandingButton(
-                        text: 'Masuk Sebagai Pengelola',
-                        onTap: controller.skip,
-                        backgroundColor: Color(0xFF179778),
-                      ),
                     ],
                   ),
                 ),

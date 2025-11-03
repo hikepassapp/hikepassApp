@@ -1,9 +1,5 @@
 import 'package:get/get.dart';
-import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
-import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
-import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
-import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
-// Landing screen views are imported where needed; keep only the first/main view import below
+import 'package:hikepass_app/app/modules/profile/views/edit_profile_view.dart';
 
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
@@ -22,16 +18,20 @@ import '../modules/landingScreen/views/landing_screen_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
+// main login view is not used as a route directly; sub-pages are registered below
 import '../modules/login/views/login_email_view.dart';
 import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
+import '../modules/profile/views/terms_view.dart';
+import '../modules/profile/views/privacy_policy_view.dart';
+import '../modules/profile/views/about_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
-import '../modules/register/bindings/register_binding.dart';
-import '../modules/register/views/register_view.dart';
+import '../modules/register/views/register_password_view.dart';
+import '../modules/register/views/otp_verification_view.dart';
+import '../modules/register/views/fill_data_register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
@@ -40,8 +40,6 @@ import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
 import '../modules/paket/bindings/paket_binding.dart';
 import '../modules/paket/views/paket_view.dart';
-import '../modules/berita/bindings/berita_binding.dart';
-import '../modules/berita/views/berita_view.dart';
 
 part 'app_routes.dart';
 
@@ -157,6 +155,26 @@ class AppPages {
       name: '/berita-detail',
       page: () => const BeritaDetailView(),
       binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: '/edit-profile',
+      page: () => const EditProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.TERMS,
+      page: () => const TermsView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRIVACY_POLICY,
+      page: () => const PrivacyPolicyView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT,
+      page: () => const AboutView(),
+      binding: ProfileBinding(),
     ),
   ];
 }
