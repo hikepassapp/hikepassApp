@@ -23,7 +23,9 @@ class ChatView extends GetView<ChatController> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.offAllNamed(Routes.bottomNavigation),
+          onPressed: () {
+            Get.back();
+          },
         ),
         title: Text(
           'Asisten Virtual',
@@ -70,10 +72,11 @@ class ChatView extends GetView<ChatController> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const Divider(height: 1),
           Expanded(
             child: Obx(
               () => ListView.builder(
+                controller: controller.scrollController,
                 padding: const EdgeInsets.all(16),
                 itemCount: controller.messages.length,
                 itemBuilder: (context, index) {

@@ -8,12 +8,7 @@ import 'package:hikepass_app/app/routes/app_pages.dart';
 class BottomNavigationController extends GetxController {
   RxInt currentIndex = 0.obs;
 
-  final screens = [
-    Routes.home,
-    Routes.chat,
-    Routes.hiking,
-    Routes.profile,
-  ];
+  final screens = [Routes.home, Routes.chat, Routes.hiking, Routes.profile];
   @override
   void onInit() {
     super.onInit();
@@ -29,6 +24,10 @@ class BottomNavigationController extends GetxController {
       return;
     }
     currentIndex.value = index;
-    update();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 }
