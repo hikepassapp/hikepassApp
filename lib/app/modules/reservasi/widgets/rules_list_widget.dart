@@ -26,10 +26,7 @@ class RulesList extends StatelessWidget {
     return Column(
       children: List.generate(
         rules.length,
-        (index) => RulesItem(
-          number: index + 1,
-          text: rules[index],
-        ),
+        (index) => RulesItem(number: index + 1, text: rules[index]),
       ),
     );
   }

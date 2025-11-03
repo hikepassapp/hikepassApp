@@ -8,7 +8,7 @@ import '../widgets/custom_button_widget.dart';
 import '../widgets/info_box_widget.dart';
 
 class FillDataRegisterView extends GetView<RegisterController> {
-  const FillDataRegisterView({super.key});
+  const FillDataRegisterView({Key? key}) : super(key: key);
 
   Widget _buildLabel(String text, {bool isRequired = false}) {
     return Padding(

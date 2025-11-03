@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
+
 class ConfirmationCheckbox extends GetView<ReservasiController> {
   const ConfirmationCheckbox({super.key});
 

@@ -26,18 +26,11 @@ class PermitTimeCard extends StatelessWidget {
           ),
           child: Row(
             children: const [
-              Icon(
-                Icons.circle,
-                size: 10,
-                color: AppColors.fontBlack1,
-              ),
+              Icon(Icons.circle, size: 10, color: AppColors.fontBlack1),
               SizedBox(width: 12),
               Text(
                 'Pos Perizinan Buka 24 Jam',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.fontBlack1,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.fontBlack1),
               ),
             ],
           ),
