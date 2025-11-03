@@ -12,6 +12,7 @@ class RiwayatView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
+
       body: Column(
         children: [
           // ===== HEADER =====
@@ -31,7 +32,7 @@ class RiwayatView extends StatelessWidget {
                 top: 40,
                 left: 16,
                 child: IconButton(
-                  // 🔹 Panah kembali ke beranda
+                  // 🔹 Tombol kembali ke beranda
                   onPressed: () {
                     Get.offAllNamed(
                       '/bottom-navigation',
@@ -56,7 +57,7 @@ class RiwayatView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "Lihat pesananmu disini",
+                      "Lihat pesananmu di sini",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                   ],
@@ -77,59 +78,52 @@ class RiwayatView extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: GetBuilder<ReservasiController>(
-                builder: (controller) {
-                  final riwayat = controller.riwayat;
+              child: Obx(() {
+                final riwayat = reservasiC.riwayat;
 
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Riwayat Pembayaran Tiket",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // ====== CEK DATA ======
-                      if (riwayat.isEmpty)
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              'Belum ada riwayat pembayaran',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        // ====== LISTVIEW BUILDER ======
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: riwayat.length,
-                            itemBuilder: (context, index) {
-                              final item = riwayat[index];
-                              return _ticketCard(
-                                image:
-                                    item['image'] ??
-                                    'assets/images/reservasi_panorama.png',
-                                title: item['jalur'] ?? '-',
-                                subtitle:
-                                    "${item['tanggal']} • ${item['waktu'] ?? ''}",
-                                status: item['status'] ?? 'Selesai',
-                              );
-                            },
-                          ),
-                        ),
-                    ],
+                if (riwayat.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Belum ada riwayat pembayaran',
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
                   );
-                },
-              ),
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Riwayat Pembayaran Tiket",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ===== LISTVIEW =====
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: riwayat.length,
+                        itemBuilder: (context, index) {
+                          final item = riwayat[index];
+                          return _ticketCard(
+                            image:
+                                item['image'] ??
+                                'assets/images/reservasi_panorama.png',
+                            title: item['jalur'] ?? '-',
+                            subtitle:
+                                "${item['tanggal']} • ${item['waktu'] ?? ''}",
+                            status: item['status'] ?? 'Selesai',
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
