@@ -6,10 +6,10 @@ class BeritaCardWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const BeritaCardWidget({
-    Key? key,
+    super.key,
     required this.beritaModel,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

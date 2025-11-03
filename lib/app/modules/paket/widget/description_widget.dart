@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/paket_controller.dart';
 
 class DescriptionWidget extends GetView<PaketController> {
-  const DescriptionWidget({Key? key}) : super(key: key);
+  const DescriptionWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class DescriptionWidget extends GetView<PaketController> {
           ),
         ),
         const SizedBox(height: 4),
-        ...controller.fasilitasList.map((item) => _buildListItem(item)).toList(),
+        ...controller.fasilitasList.map((item) => _buildListItem(item)),
         const SizedBox(height: 8),
         const Text(
           'Destinasi yang dikunjungi :',
@@ -36,7 +36,7 @@ class DescriptionWidget extends GetView<PaketController> {
           ),
         ),
         const SizedBox(height: 8),
-        ...controller.destinasiList.map((item) => _buildListItem(item)).toList(),
+        ...controller.destinasiList.map((item) => _buildListItem(item)),
         const SizedBox(height: 12),
         const Text(
           'Dibuat pada tanggal',

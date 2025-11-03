@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// Impor Controller
 import '../controllers/landing_screen_controller.dart';
 
 // Impor Widgets
@@ -20,8 +17,9 @@ class LandingScreenView extends GetView<LandingScreenController> {
       body: Stack(
         children: [
           SizedBox(
+            width: double.infinity,
             height: double.infinity,
-            child: Image.asset('assets/images/landing.png'),
+            child: Image.asset('assets/images/landing.png', fit: BoxFit.cover),
           ),
           SafeArea(
             child: Padding(

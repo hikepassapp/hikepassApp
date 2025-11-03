@@ -4,7 +4,7 @@ import '../controllers/role_selection_controller.dart';
 import 'role_button_widget.dart';
 
 class RoleSelectionContentWidget extends GetView<RoleSelectionController> {
-  const RoleSelectionContentWidget({Key? key}) : super(key: key);
+  const RoleSelectionContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

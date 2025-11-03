@@ -4,12 +4,16 @@ import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ReservasiController extends GetxController {
-  final reservations = <Map<String, String>>[].obs;
+  // ======= DATA UTAMA =======
+  final reservations = <Map<String, String>>[].obs; // tiket aktif
+  final riwayat = <Map<String, String>>[].obs; // tiket yang sudah dibayar
   final isLoading = false.obs;
   final selectedPos = ''.obs;
   final ticketCount = 1.obs;
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
+
+  Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
 
   @override
   void onInit() {
@@ -17,6 +21,7 @@ class ReservasiController extends GetxController {
     loadReservations();
   }
 
+  // ======= LOAD DATA TIKET =======
   void loadReservations() {
     isLoading.value = true;
 
@@ -36,6 +41,7 @@ class ReservasiController extends GetxController {
     isLoading.value = false;
   }
 
+  // ======= AGREEMENT, JUMLAH, DLL =======
   void toggleAgreement(bool? value) {
     isAgreed.value = value ?? false;
   }
@@ -52,7 +58,11 @@ class ReservasiController extends GetxController {
     ticketCount.value = 1;
   }
 
-  // Navigasi ke detail
+  void setSelectedDate(DateTime date) {
+    selectedDate.value = date;
+  }
+
+  // ======= NAVIGASI DETAIL =======
   void goToDetail(Map<String, String> reservation) {
     Get.to(
       () => const ReservationDetailView(),
@@ -62,6 +72,7 @@ class ReservasiController extends GetxController {
     );
   }
 
+  // ======= SUBMIT / VALIDASI DATA =======
   void submitData() {
     if (isAgreed.value) {
       Get.snackbar(
@@ -79,6 +90,8 @@ class ReservasiController extends GetxController {
       );
     }
   }
+
+  // ======= UPLOAD FOTO KTP =======
   Future<void> pickKtpImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -86,5 +99,31 @@ class ReservasiController extends GetxController {
     if (image != null) {
       ktpImage.value = image;
     }
+  }
+
+  // ======= PEMBAYARAN & PEMINDAHAN DATA =======
+  void completePayment(Map<String, String> data) {
+    // hapus dari daftar tiket aktif
+    reservations.removeWhere((item) => item['title'] == data['title']);
+
+    // waktu dan tanggal real
+    final now = DateTime.now();
+    final formattedDate = "${now.day}-${now.month}-${now.year}";
+    final formattedTime =
+        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+    // tambahkan ke daftar riwayat
+    riwayat.add({
+      'id': data['id'] ?? 'D${now.millisecondsSinceEpoch}',
+      'nama': data['nama'] ?? 'Pendaki',
+      'jalur': data['jalur'] ?? 'Panorama',
+      'tanggal': formattedDate,
+      'waktu': formattedTime,
+      'image': data['imagePath'] ?? 'assets/images/reservasi_panorama.png',
+      'harga': data['harga'] ?? 'Rp 15.000',
+      'status': 'Selesai',
+    });
+
+    update(); // refresh UI otomatis
   }
 }

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/berita_model.dart';
-import '../../../models/paketWisataModel.dart';
+import '../../../models/paket_wisata_model.dart';
 
 class HomeController extends GetxController {
   var userName = 'Nailong'.obs;
