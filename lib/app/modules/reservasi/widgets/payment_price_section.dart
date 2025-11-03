@@ -11,6 +11,7 @@ class PaymentPriceSection extends StatelessWidget {
 
     return Column(
       children: [
+        // ====== Kotak Harga ======
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           decoration: BoxDecoration(
@@ -24,29 +25,35 @@ class PaymentPriceSection extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Harga Tiket',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
               ),
               Text(
                 'Rp 15.000',
                 style: TextStyle(
                   color: Color(0xFF2D9F8C),
                   fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 20),
 
-        // ================== TOMBOL BAYAR SEKARANG ==================
+        const SizedBox(height: 24),
+
+        // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // Validasi tanggal
+            // ✅ 1. Validasi tanggal
             if (controller.selectedDate.value == null) {
               Get.snackbar(
                 'Peringatan',
@@ -58,24 +65,22 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Ambil waktu & tanggal asli device
+            // ✅ 2. Ambil data & format waktu
             final now = DateTime.now();
             final selected = controller.selectedDate.value!;
             final formattedDate =
-                '${selected.day}-${selected.month}-${selected.year}';
-
-            // 12-jam (AM/PM)
-            final hour = now.hour > 12 ? now.hour - 12 : now.hour;
-            final ampm = now.hour >= 12 ? 'PM' : 'AM';
+                '${selected.day.toString().padLeft(2, '0')}-${selected.month.toString().padLeft(2, '0')}-${selected.year}';
             final formattedTime =
-                "${hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')} $ampm";
+                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-            // Data yang dikirim ke halaman sukses
+            // ✅ 3. Buat data tiket baru
             final data = {
               'id': 'D${now.millisecondsSinceEpoch}',
               'nama': 'Dhea',
               'title': 'Puncak Besar Malabar',
-              'jalur': 'Panorama',
+              'jalur': controller.selectedPos.value.isNotEmpty
+                  ? controller.selectedPos.value
+                  : 'Panorama',
               'metode': 'QRIS',
               'tanggal': formattedDate,
               'waktu': formattedTime,
@@ -84,11 +89,17 @@ class PaymentPriceSection extends StatelessWidget {
               'imagePath': 'assets/images/reservasi_panorama.png',
             };
 
-            // Update data di controller
+            // ✅ 4. Tambahkan ke riwayat (pasti cuma sekali)
             controller.completePayment(data);
 
-            // Navigasi ke halaman sukses
-            Get.toNamed('/payment-success', arguments: data);
+            // ✅ 5. Reset form (biar bisa reservasi lagi)
+            controller.selectedDate.value = null;
+            controller.selectedPos.value = '';
+            controller.ticketCount.value = 1;
+            controller.isAgreed.value = false;
+
+            // ✅ 6. Arahkan ke halaman sukses
+            Get.offNamed('/payment-success', arguments: data);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),
@@ -96,10 +107,15 @@ class PaymentPriceSection extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            elevation: 0,
           ),
           child: const Text(
             'Bayar Sekarang',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
         ),
       ],

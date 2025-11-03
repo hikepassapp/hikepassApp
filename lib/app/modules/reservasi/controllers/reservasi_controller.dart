@@ -20,11 +20,10 @@ class ReservasiController extends GetxController {
     loadReservations();
   }
 
-  // ======= LOAD DATA TIKET =======
+  // ======= LOAD DATA TIKET (dummy awal) =======
   void loadReservations() {
     isLoading.value = true;
 
-    // contoh tiket aktif (belum dibayar)
     reservations.value = [
       {
         'id': 'R${DateTime.now().millisecondsSinceEpoch}',
@@ -40,7 +39,7 @@ class ReservasiController extends GetxController {
       },
     ];
 
-    // kosongkan riwayat di awal
+    // Kosongkan riwayat di awal (sekali saja)
     riwayat.clear();
     isLoading.value = false;
   }
@@ -60,7 +59,7 @@ class ReservasiController extends GetxController {
 
   void setSelectedDate(DateTime date) => selectedDate.value = date;
 
-  // ======= NAVIGASI DETAIL =======
+  // ======= NAVIGASI KE DETAIL =======
   void goToDetail(Map<String, dynamic> reservation) {
     Get.to(
       () => const ReservationDetailView(),
@@ -68,27 +67,6 @@ class ReservasiController extends GetxController {
       transition: Transition.cupertino,
       duration: const Duration(milliseconds: 300),
     );
-  }
-
-  // ======= SUBMIT / VALIDASI DATA =======
-  void submitData() {
-    if (isAgreed.value) {
-      Get.snackbar(
-        'Berhasil',
-        'Data berhasil disubmit',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.shade600,
-        colorText: Colors.white,
-      );
-    } else {
-      Get.snackbar(
-        'Peringatan',
-        'Silakan centang persetujuan terlebih dahulu',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
-    }
   }
 
   // ======= UPLOAD FOTO KTP =======
@@ -102,31 +80,46 @@ class ReservasiController extends GetxController {
 
   // ======= PEMBAYARAN & PEMINDAHAN DATA =======
   void completePayment(Map<String, dynamic> data) {
-    // Hapus tiket aktif berdasarkan 'title' (nama jalur)
-    reservations.removeWhere((item) => item['title'] == data['title']);
-
-    //cAmbil waktu & tanggal asli
+    // Ambil waktu & tanggal sekarang
     final now = DateTime.now();
     final formattedDate =
         "${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
     final formattedTime =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    // Tambahkan ke daftar riwayat
-    riwayat.add({
-      'id': data['id'] ?? 'D${now.millisecondsSinceEpoch}',
-      'nama': data['nama'] ?? 'Pendaki',
-      'jalur': data['jalur'] ?? data['title'] ?? 'Jalur Panorama',
+    // Pastikan semua nilai disimpan dalam bentuk String
+    final riwayatItem = {
+      'id': (data['id'] ?? 'D${now.millisecondsSinceEpoch}').toString(),
+      'nama': data['nama']?.toString() ?? 'Pendaki',
+      'jalur':
+          (data['selectedPos'] ??
+                  data['jalur'] ??
+                  data['title'] ??
+                  'Jalur Panorama')
+              .toString(),
       'tanggal': formattedDate,
       'waktu': formattedTime,
-      'image': data['imagePath'] ?? 'assets/images/reservasi_panorama.png',
-      'harga': data['harga'] ?? 'Rp 15.000',
+      'image': (data['imagePath'] ?? 'assets/images/reservasi_panorama.png')
+          .toString(),
+      'harga': (data['harga'] ?? 'Rp 15.000').toString(),
       'status': 'Selesai',
-    });
+    };
 
-    update(); // refresh tampilan
+    // Tambahkan ke daftar riwayat hanya sekali
+    if (!riwayat.any((r) => r['id'] == riwayatItem['id'])) {
+      riwayat.add(riwayatItem);
+    }
 
-    // Notifikasi sukses
+    // Reset data input
+    resetTicketCount();
+    selectedDate.value = null;
+    selectedPos.value = '';
+    isAgreed.value = false;
+
+    // Update UI
+    update();
+
+    // Notifikasi sukses (1x saja)
     Get.snackbar(
       'Pembayaran Berhasil',
       'Tiket telah ditambahkan ke Riwayat Pembayaran',
