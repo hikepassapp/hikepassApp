@@ -6,11 +6,11 @@ class RoleButtonWidget extends StatelessWidget {
   final VoidCallback onTap;
 
   const RoleButtonWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.backgroundColor,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -25,9 +25,4 @@ class BottomNavigationController extends GetxController {
     }
     currentIndex.value = index;
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

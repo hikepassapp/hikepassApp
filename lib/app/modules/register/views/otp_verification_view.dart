@@ -8,7 +8,7 @@ import '../widgets/custom_button_widget.dart';
 import '../widgets/info_box_widget.dart';
 
 class RegisterOtpVerificationView extends GetView<RegisterController> {
-  const RegisterOtpVerificationView({Key? key}) : super(key: key);
+  const RegisterOtpVerificationView({super.key});
 
   @override
   Widget build(BuildContext context) {

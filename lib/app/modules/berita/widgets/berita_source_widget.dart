@@ -4,7 +4,7 @@ import '../controllers/berita_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BeritaSourceWidget extends GetView<BeritaController> {
-  const BeritaSourceWidget({Key? key}) : super(key: key);
+  const BeritaSourceWidget({super.key});
 
   Future<void> _launchURL(String url) async {
     final Uri uri = Uri.parse(url);

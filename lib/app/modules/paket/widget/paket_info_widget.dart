@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/paket_controller.dart';
 
 class PaketInfoWidget extends GetView<PaketController> {
-  const PaketInfoWidget({Key? key}) : super(key: key);
+  const PaketInfoWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

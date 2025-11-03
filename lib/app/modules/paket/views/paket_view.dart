@@ -7,7 +7,7 @@ import '../widget/detail_section_widget.dart';
 import '../widget/description_widget.dart';
 
 class PaketView extends GetView<PaketController> {
-  const PaketView({Key? key}) : super(key: key);
+  const PaketView({super.key});
 
   @override
   Widget build(BuildContext context) {

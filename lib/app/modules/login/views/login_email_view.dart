@@ -5,7 +5,7 @@ import '../widgets/login_email_content_widget.dart';
 import '../widgets/login_help_widget.dart';
 
 class LoginEmailView extends GetView<LoginController> {
-  const LoginEmailView({Key? key}) : super(key: key);
+  const LoginEmailView({super.key});
 
   @override
   Widget build(BuildContext context) {

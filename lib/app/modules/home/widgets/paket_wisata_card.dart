@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../models/paketWisataModel.dart';
+import '../../../models/paket_wisata_model.dart';
 
 class PaketWisataCard extends StatelessWidget {
   final PaketWisataModel paketWisata;
   final VoidCallback onTap;
 
   const PaketWisataCard({
-    Key? key,
+    super.key,
     required this.paketWisata,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

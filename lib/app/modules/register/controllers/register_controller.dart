@@ -49,7 +49,6 @@ class RegisterController extends GetxController {
 
   Future<void> registerEmail() async {
     isLoading.value = true;
-    print("✅ Mulai proses registrasi email...");
     await Future.delayed(const Duration(seconds: 2));
 
     Get.snackbar(
@@ -61,7 +60,6 @@ class RegisterController extends GetxController {
     );
 
     isLoading.value = false;
-    print("✅ Navigasi ke /register-password...");
     Get.toNamed('/register-password');
   }
 
@@ -102,7 +100,6 @@ class RegisterController extends GetxController {
 
     try {
       isLoading.value = true;
-      // TODO: Implementasi API save password
       await Future.delayed(const Duration(seconds: 2));
 
       Get.toNamed('/register-otp');
@@ -133,7 +130,6 @@ class RegisterController extends GetxController {
 
     try {
       isLoading.value = true;
-      // TODO: Implementasi API verify OTP
       await Future.delayed(const Duration(seconds: 2));
 
       Get.toNamed('/register/personal-data');
@@ -219,7 +215,6 @@ class RegisterController extends GetxController {
 
     try {
       isLoading.value = true;
-      // TODO: Implementasi API save personal data
       await Future.delayed(const Duration(seconds: 2));
 
       Get.snackbar(

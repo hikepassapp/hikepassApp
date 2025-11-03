@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/login_controller.dart';
 
 class LoginPasswordFormWidget extends GetView<LoginController> {
-  const LoginPasswordFormWidget({Key? key}) : super(key: key);
+  const LoginPasswordFormWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

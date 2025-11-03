@@ -7,7 +7,7 @@ import '../widgets/informasi_tab_bar.dart';
 import '../widgets/informasi_content_list.dart';
 import '../widgets/informasi_footer.dart';
 class InformasiView extends GetView<InformasiController> {
-  const InformasiView({Key? key}) : super(key: key);
+  const InformasiView({super.key});
 
   @override
   Widget build(BuildContext context) {

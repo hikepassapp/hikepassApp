@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RoleSelectionAppBarWidget extends StatelessWidget {
-  const RoleSelectionAppBarWidget({Key? key}) : super(key: key);
+  const RoleSelectionAppBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

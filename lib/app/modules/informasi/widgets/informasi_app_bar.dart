@@ -5,7 +5,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class InformasiAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const InformasiAppBar({Key? key}) : super(key: key);
+  const InformasiAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
