@@ -5,19 +5,20 @@ import '../../../models/chat_message.dart';
 class ChatController extends GetxController {
   final messageController = TextEditingController();
   final messages = <ChatMessage>[].obs;
+  final scrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
-    // Initial bot messages
     messages.addAll([
       ChatMessage(
-        text: 'Sampurasun, ada yang bisa kami bantu?',
+        text: 'Nailong, ada yang bisa kami bantu?',
         isBot: true,
         time: '12:30',
       ),
       ChatMessage(
-        text: 'Akhir-akhir ini aku tertorik untuk hiking, kira-kira jalur pendakian di Gunung Malabar yang cocok untuk pemula apa ya?',
+        text:
+            'Akhir-akhir ini aku tertorik untuk hiking, kira-kira jalur pendakian di Gunung Malabar yang cocok untuk pemula apa ya?',
         isBot: false,
         time: '',
       ),
@@ -33,23 +34,40 @@ class ChatController extends GetxController {
     if (messageController.text.trim().isEmpty) return;
 
     // Add user message
-    messages.add(ChatMessage(
-      text: messageController.text,
-      isBot: false,
-      time: _getCurrentTime(),
-    ));
+    messages.add(
+      ChatMessage(
+        text: messageController.text,
+        isBot: false,
+        time: _getCurrentTime(),
+      ),
+    );
 
     final userMessage = messageController.text;
     messageController.clear();
 
     // Simulate bot response
     Future.delayed(const Duration(seconds: 1), () {
-      messages.add(ChatMessage(
-        text: _getBotResponse(userMessage),
-        isBot: true,
-        time: _getCurrentTime(),
-      ));
+      messages.add(
+        ChatMessage(
+          text: _getBotResponse(userMessage),
+          isBot: true,
+          time: _getCurrentTime(),
+        ),
+      );
+      _scrollToBottom();
     });
+  }
+
+  void _scrollToBottom() {
+    if (scrollController.hasClients) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+    }
   }
 
   String _getCurrentTime() {
@@ -58,20 +76,32 @@ class ChatController extends GetxController {
   }
 
   String _getBotResponse(String message) {
-    // Simple bot responses
-    if (message.toLowerCase().contains('halo') || 
-        message.toLowerCase().contains('hai')) {
+    final lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.contains('halo') || lowerMessage.contains('hai')) {
       return 'Halo! Ada yang bisa saya bantu?';
     }
-    if (message.toLowerCase().contains('gunung')) {
-      return 'Untuk informasi gunung, silakan pilih menu yang sesuai di aplikasi!';
+
+    if (lowerMessage.contains('gunung') || lowerMessage.contains('pendakian')) {
+      return 'Untuk informasi gunung dan jalur pendakian, silakan pilih menu yang sesuai di aplikasi!';
     }
+
+    if (lowerMessage.contains('pemula') || lowerMessage.contains('beginner')) {
+      return 'Untuk pemula, saya sarankan memilih jalur dengan tingkat kesulitan rendah hingga sedang. Pastikan juga membawa perlengkapan yang memadai!';
+    }
+
+    if (lowerMessage.contains('terima kasih') ||
+        lowerMessage.contains('makasih')) {
+      return 'Sama-sama! Jangan ragu untuk bertanya lagi ya 😊';
+    }
+
     return 'Terima kasih atas pertanyaannya. Tim kami akan segera merespon.';
   }
 
   @override
   void onClose() {
     messageController.dispose();
+    scrollController.dispose();
     super.onClose();
   }
 }

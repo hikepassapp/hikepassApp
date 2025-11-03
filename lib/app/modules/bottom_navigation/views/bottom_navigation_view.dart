@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/modules/home/controllers/home_controller.dart';
+import '../../chat/controllers/chat_controller.dart';
+import '../../chat/views/chat_view.dart';
 import '../../hiking/controllers/hiking_controller.dart';
 import '../../hiking/views/hiking_view.dart';
 import '../../../shared/theme/app_colors.dart';
@@ -24,6 +26,10 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
               }
               return const HomeView();
             case 1:
+              if (!Get.isRegistered<ChatController>()) {
+                Get.lazyPut(() => ChatController());
+              }
+              return const ChatView();
             case 2:
               if (!Get.isRegistered<HikingController>()) {
                 Get.lazyPut(() => HikingController());
@@ -42,109 +48,113 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
           }
         }),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Obx(
-            () => BottomNavigationBar(
-              backgroundColor: Colors.white,
-              currentIndex: controller.currentIndex.value,
-              selectedLabelStyle: AppTypography.sMedium,
-              unselectedLabelStyle: AppTypography.sRegular,
-              unselectedItemColor: AppColors.gray,
-              selectedItemColor: AppColors.primary,
-              type: BottomNavigationBarType.fixed,
-              onTap: (index) => controller.setIndex(index),
-              items: [
-                BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            controller.currentIndex.value == 0
-                                ? 'assets/icons/home.png'
-                                : 'assets/icons/unhome.png',
-                          ),
-                        ),
-                      ),
+      bottomNavigationBar: Obx(
+        () => controller.currentIndex.value == 1
+            ? const SizedBox.shrink()
+            : Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
                     ),
-                  ),
-                  label: 'Beranda',
+                  ],
                 ),
-                BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            controller.currentIndex.value == 1
-                                ? 'assets/icons/chat.png'
-                                : 'assets/icons/unchat.png',
+                child: SafeArea(
+                  child: Obx(
+                    () => BottomNavigationBar(
+                      backgroundColor: Colors.white,
+                      currentIndex: controller.currentIndex.value,
+                      selectedLabelStyle: AppTypography.sMedium,
+                      unselectedLabelStyle: AppTypography.sRegular,
+                      unselectedItemColor: AppColors.gray,
+                      selectedItemColor: AppColors.primary,
+                      type: BottomNavigationBarType.fixed,
+                      onTap: (index) => controller.setIndex(index),
+                      items: [
+                        BottomNavigationBarItem(
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 25,
+                              width: 25,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    controller.currentIndex.value == 0
+                                        ? 'assets/icons/home.png'
+                                        : 'assets/icons/unhome.png',
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
+                          label: 'Beranda',
                         ),
-                      ),
-                    ),
-                  ),
-                  label: 'Pesan',
-                ),
-                BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            controller.currentIndex.value == 2
-                                ? 'assets/icons/hike.png'
-                                : 'assets/icons/unhike.png',
+                        BottomNavigationBarItem(
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 25,
+                              width: 25,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    controller.currentIndex.value == 1
+                                        ? 'assets/icons/chat.png'
+                                        : 'assets/icons/unchat.png',
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
+                          label: 'Pesan',
                         ),
-                      ),
-                    ),
-                  ),
-                  label: 'Pendakian',
-                ),
+                        BottomNavigationBarItem(
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 25,
+                              width: 25,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    controller.currentIndex.value == 2
+                                        ? 'assets/icons/hike.png'
+                                        : 'assets/icons/unhike.png',
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          label: 'Pendakian',
+                        ),
 
-                BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 25,
-                      width: 25,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                            controller.currentIndex.value == 3
-                                ? 'assets/icons/profile.png'
-                                : 'assets/icons/unprofile.png',
+                        BottomNavigationBarItem(
+                          icon: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 25,
+                              width: 25,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    controller.currentIndex.value == 3
+                                        ? 'assets/icons/profile.png'
+                                        : 'assets/icons/unprofile.png',
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
+                          label: 'Profil',
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                  label: 'Profil',
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }
