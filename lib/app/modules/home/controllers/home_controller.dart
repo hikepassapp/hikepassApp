@@ -12,14 +12,14 @@ class HomeController extends GetxController {
     PaketWisataModel(
       title: 'Puncak Besar Malabar',
       subtitle: 'Trip Dieng Dieng',
-      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
+      imageUrl: 'assets/images/banner(1).png',
       tripType: 'Open Trip',
       isOpenTrip: true,
     ),
     PaketWisataModel(
       title: 'Puncak Bes',
       subtitle: 'Kerta Trip',
-      imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606',
+      imageUrl: 'assets/images/banner(5).png',
       tripType: 'Private Trip',
       isOpenTrip: false,
     ),
@@ -41,8 +41,7 @@ class HomeController extends GetxController {
         title: '3 Fakta Unik Gunung Malabar',
         category: 'Berita',
         date: '3 Des 2023',
-        imageUrl:
-            'https://images.unsplash.com/photo-1454496522488-7a8e488e8606', // GANTI DENGAN PATH GAMBAR ANDA
+        imageUrl: 'assets/images/banner(6).png',
         description:
             'Kisah menarik tentang Gunung Malabar yang jarang diketahui',
       ),
@@ -51,8 +50,7 @@ class HomeController extends GetxController {
         title: 'Reboisasi Hutan Lindung Tahun 2023',
         category: 'Event',
         date: '5 Des 2023',
-        imageUrl:
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4', // GANTI DENGAN PATH GAMBAR ANDA
+        imageUrl: 'assets/images/banner(7).png',
         description: 'Program reboisasi untuk menjaga kelestarian lingkungan',
       ),
     ];
