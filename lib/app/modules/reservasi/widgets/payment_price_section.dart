@@ -46,11 +46,11 @@ class PaymentPriceSection extends StatelessWidget {
         // ================== TOMBOL BAYAR SEKARANG ==================
         ElevatedButton(
           onPressed: () {
-            // Cek apakah user sudah pilih tanggal
+            // Validasi tanggal
             if (controller.selectedDate.value == null) {
               Get.snackbar(
                 'Peringatan',
-                'Silakan pilih tanggal pendakian terlebih dahulu',
+                'Silakan pilih tanggal pendakian terlebih dahulu!',
                 backgroundColor: Colors.orange,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.BOTTOM,
@@ -58,25 +58,37 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Jika sudah, tampilkan notifikasi sukses
-            Get.snackbar(
-              'Pembayaran Berhasil',
-              'Tiket berhasil dibeli!',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            // Ambil waktu & tanggal asli device
+            final now = DateTime.now();
+            final selected = controller.selectedDate.value!;
+            final formattedDate =
+                '${selected.day}-${selected.month}-${selected.year}';
 
-            // Lalu pindah ke halaman Pesananku (riwayat)
-            Get.toNamed(
-              '/riwayat',
-              arguments: {
-                'tanggal': controller.selectedDate.value?.toString() ?? '-',
-                'jalur': 'Panorama',
-                'nama': 'Dhea',
-                'durasi': '2 Hari',
-              },
-            );
+            // 12-jam (AM/PM)
+            final hour = now.hour > 12 ? now.hour - 12 : now.hour;
+            final ampm = now.hour >= 12 ? 'PM' : 'AM';
+            final formattedTime =
+                "${hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')} $ampm";
+
+            // Data yang dikirim ke halaman sukses
+            final data = {
+              'id': 'D${now.millisecondsSinceEpoch}',
+              'nama': 'Dhea',
+              'title': 'Puncak Besar Malabar',
+              'jalur': 'Panorama',
+              'metode': 'QRIS',
+              'tanggal': formattedDate,
+              'waktu': formattedTime,
+              'harga': 'Rp 15.000',
+              'durasi': '2 Hari',
+              'imagePath': 'assets/images/reservasi_panorama.png',
+            };
+
+            // Update data di controller
+            controller.completePayment(data);
+
+            // Navigasi ke halaman sukses
+            Get.toNamed('/payment-success', arguments: data);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),

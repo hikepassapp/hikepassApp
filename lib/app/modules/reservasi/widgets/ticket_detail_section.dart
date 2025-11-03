@@ -10,8 +10,16 @@ class TicketDetailSection extends StatefulWidget {
 }
 
 class _TicketDetailSectionState extends State<TicketDetailSection> {
-  final ReservasiController controller = Get.find<ReservasiController>();
+  late final ReservasiController controller;
   DateTime? selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    // pastikan controller diinisialisasi dengan aman
+    controller = Get.find<ReservasiController>();
+    selectedDate = controller.selectedDate.value;
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime now = DateTime.now();
@@ -24,9 +32,9 @@ class _TicketDetailSectionState extends State<TicketDetailSection> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2D9F8C), // warna header date picker
-              onPrimary: Colors.white, // teks di header
-              onSurface: Colors.black, // warna teks tanggal
+              primary: Color(0xFF2D9F8C),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
           ),
           child: child!,
@@ -38,9 +46,7 @@ class _TicketDetailSectionState extends State<TicketDetailSection> {
       setState(() {
         selectedDate = picked;
       });
-
-      // Simpan ke controller supaya bisa dibaca di tombol “Bayar Sekarang”
-      controller.setSelectedDate(picked);
+      controller.setSelectedDate(picked); // simpan ke controller
     }
   }
 
@@ -70,6 +76,7 @@ class _TicketDetailSectionState extends State<TicketDetailSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // tampilkan tanggal terpilih
               Text(
                 selectedDate == null
                     ? 'Pilih tanggal pendakian'
