@@ -84,7 +84,12 @@ class ReservationCard extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.9),
+                    color: const Color.fromARGB(
+                      255,
+                      255,
+                      255,
+                      255,
+                    ).withOpacity(0.9),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(16),
                       bottomRight: Radius.circular(16),
@@ -107,7 +112,7 @@ class ReservationCard extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
-                          fontWeight: FontWeight.w200
+                          fontWeight: FontWeight.w200,
                         ),
                       ),
                       const SizedBox(height: 6),

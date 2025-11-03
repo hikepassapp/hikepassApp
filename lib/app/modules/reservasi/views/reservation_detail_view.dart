@@ -12,7 +12,6 @@ class ReservationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final data = Get.arguments as Map<String, String>;
 
     return Scaffold(
