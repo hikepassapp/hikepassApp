@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileInfoCardWidget extends GetView<ProfileController> {
-  const ProfileInfoCardWidget({Key? key}) : super(key: key);
+  const ProfileInfoCardWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

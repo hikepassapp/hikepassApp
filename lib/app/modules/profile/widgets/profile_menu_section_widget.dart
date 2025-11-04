@@ -17,10 +17,10 @@ class ProfileMenuSectionWidget extends StatelessWidget {
   final List<ProfileMenuItem> items;
 
   const ProfileMenuSectionWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

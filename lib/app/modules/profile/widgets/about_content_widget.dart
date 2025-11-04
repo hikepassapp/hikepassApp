@@ -1,9 +1,8 @@
-// lib/app/modules/about_ticket/widgets/about_ticket_content_widget.dart
 import 'package:flutter/material.dart';
 import 'about_section_widget.dart';
 
 class AboutContentWidget extends StatelessWidget {
-  const AboutContentWidget({Key? key}) : super(key: key);
+  const AboutContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

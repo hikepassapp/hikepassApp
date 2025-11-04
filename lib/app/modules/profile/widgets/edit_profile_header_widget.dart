@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EditProfileHeaderWidget extends StatelessWidget {
-  const EditProfileHeaderWidget({Key? key}) : super(key: key);
+  const EditProfileHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

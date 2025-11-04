@@ -7,7 +7,7 @@ import '../widgets/terms_content_widget.dart';
 import '../widgets/terms_action_button_widget.dart';
 
 class TermsView extends GetView<ProfileController> {
-  const TermsView({Key? key}) : super(key: key);
+  const TermsView({super.key});
 
   @override
   Widget build(BuildContext context) {

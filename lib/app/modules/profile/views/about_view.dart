@@ -7,7 +7,7 @@ import '../widgets/about_content_widget.dart';
 import '../widgets/about_action_button_widget.dart';
 
 class AboutView extends GetView<ProfileController> {
-  const AboutView({Key? key}) : super(key: key);
+  const AboutView({super.key});
 
   @override
   Widget build(BuildContext context) {

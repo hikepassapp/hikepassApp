@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
 
 class EditProfileFormWidget extends GetView<ProfileController> {
-  const EditProfileFormWidget({Key? key}) : super(key: key);
+  const EditProfileFormWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

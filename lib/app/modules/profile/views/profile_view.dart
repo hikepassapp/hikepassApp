@@ -5,7 +5,7 @@ import '../widgets/profile_menu_section_widget.dart';
 import '../../../routes/app_pages.dart';
 
 class ProfileView extends GetView<ProfileController> {
-  const ProfileView({Key? key}) : super(key: key);
+  const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,12 +98,12 @@ class ProfileView extends GetView<ProfileController> {
                               ProfileMenuItem(
                                 icon: Icons.description_outlined,
                                 title: 'Syarat dan Ketentuan',
-                                onTap: () => Get.toNamed(Routes.TERMS),
+                                onTap: () => Get.toNamed(Routes.terms),
                               ),
                               ProfileMenuItem(
                                 icon: Icons.privacy_tip_outlined,
                                 title: 'Kebijakan Privasi',
-                                onTap: () => Get.toNamed(Routes.PRIVACY_POLICY),
+                                onTap: () => Get.toNamed(Routes.privacyPolicy),
                               ),
                             ],
                           ),
@@ -117,7 +117,7 @@ class ProfileView extends GetView<ProfileController> {
                               ProfileMenuItem(
                                 icon: Icons.info_outline,
                                 title: 'Tentang Tiket Pendakian',
-                                onTap: () => Get.toNamed(Routes.ABOUT),
+                                onTap: () => Get.toNamed(Routes.about),
                               ),
                             ],
                           ),
