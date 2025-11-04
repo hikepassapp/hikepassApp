@@ -1,8 +1,7 @@
-// lib/app/modules/about_ticket/widgets/about_ticket_header_widget.dart
 import 'package:flutter/material.dart';
 
 class AboutHeaderWidget extends StatelessWidget {
-  const AboutHeaderWidget({Key? key}) : super(key: key);
+  const AboutHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

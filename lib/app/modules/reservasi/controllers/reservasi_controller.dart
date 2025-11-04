@@ -4,9 +4,8 @@ import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ReservasiController extends GetxController {
-  // ======= DATA UTAMA =======
-  final reservations = <Map<String, dynamic>>[].obs; // tiket aktif
-  final riwayat = <Map<String, dynamic>>[].obs; // tiket sudah dibayar
+  final reservations = <Map<String, dynamic>>[].obs; 
+  final riwayat = <Map<String, dynamic>>[].obs; 
   final isLoading = false.obs;
   final selectedPos = ''.obs;
   final ticketCount = 1.obs;
@@ -20,7 +19,6 @@ class ReservasiController extends GetxController {
     loadReservations();
   }
 
-  // ======= LOAD DATA TIKET (dummy awal) =======
   void loadReservations() {
     isLoading.value = true;
 
@@ -39,12 +37,10 @@ class ReservasiController extends GetxController {
       },
     ];
 
-    // Kosongkan riwayat di awal (sekali saja)
     riwayat.clear();
     isLoading.value = false;
   }
 
-  // ======= AGREEMENT, JUMLAH, DLL =======
   void toggleAgreement(bool? value) => isAgreed.value = value ?? false;
 
   void incrementTicket() {
@@ -59,7 +55,6 @@ class ReservasiController extends GetxController {
 
   void setSelectedDate(DateTime date) => selectedDate.value = date;
 
-  // ======= NAVIGASI KE DETAIL =======
   void goToDetail(Map<String, dynamic> reservation) {
     Get.to(
       () => const ReservationDetailView(),
@@ -69,7 +64,6 @@ class ReservasiController extends GetxController {
     );
   }
 
-  // ======= UPLOAD FOTO KTP =======
   Future<void> pickKtpImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -77,17 +71,13 @@ class ReservasiController extends GetxController {
       ktpImage.value = image;
     }
   }
-
-  // ======= PEMBAYARAN & PEMINDAHAN DATA =======
   void completePayment(Map<String, dynamic> data) {
-    // Ambil waktu & tanggal sekarang
     final now = DateTime.now();
     final formattedDate =
         "${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
     final formattedTime =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    // Pastikan semua nilai disimpan dalam bentuk String
     final riwayatItem = {
       'id': (data['id'] ?? 'D${now.millisecondsSinceEpoch}').toString(),
       'nama': data['nama']?.toString() ?? 'Pendaki',
@@ -105,21 +95,17 @@ class ReservasiController extends GetxController {
       'status': 'Selesai',
     };
 
-    // Tambahkan ke daftar riwayat hanya sekali
     if (!riwayat.any((r) => r['id'] == riwayatItem['id'])) {
       riwayat.add(riwayatItem);
     }
 
-    // Reset data input
     resetTicketCount();
     selectedDate.value = null;
     selectedPos.value = '';
     isAgreed.value = false;
 
-    // Update UI
     update();
 
-    // Notifikasi sukses (1x saja)
     Get.snackbar(
       'Pembayaran Berhasil',
       'Tiket telah ditambahkan ke Riwayat Pembayaran',

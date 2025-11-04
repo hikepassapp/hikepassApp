@@ -44,8 +44,6 @@ class HikingController extends GetxController {
   final tabIndex = 0.obs;
   final TextEditingController listController = TextEditingController();
   final RxList<HikingItem> _allItems = <HikingItem>[].obs;
-
-  // item yang sedang diproses di form
   final Rxn<HikingItem> selectedItem = Rxn<HikingItem>();
 
   @override
@@ -71,13 +69,10 @@ class HikingController extends GetxController {
   void switchTab(int index) {
     if (tabIndex.value != index) tabIndex.value = index;
   }
-
-  // Set item yang akan diproses sebelum membuka form
   void selectItem(HikingItem item) {
     selectedItem.value = item;
   }
 
-  // Submit dari form Check-In
   void submitCheckInAndGoToCheckout() {
     if (listController.text.trim().isEmpty) {
       Get.snackbar('Perhatian', 'Mohon isi list barang bawaan',
@@ -100,10 +95,9 @@ class HikingController extends GetxController {
     Get.snackbar('Berhasil', 'Check-in berhasil dilakukan',
         backgroundColor: AppColors.primary, colorText: Colors.white);
 
-    switchTab(1); // pindah ke tab Check-Out
+    switchTab(1); 
   }
 
-  // Submit dari form Check-Out
   void submitCheckOutAndFinish() {
     if (listController.text.trim().isEmpty) {
       Get.snackbar('Perhatian', 'Mohon isi list barang bawaan',
@@ -113,7 +107,6 @@ class HikingController extends GetxController {
 
     final current = selectedItem.value;
     if (current != null) {
-      // Contoh: setelah check-out, hapus dari daftar (atau bisa tandai selesai)
       _allItems.removeWhere((e) => e.id == current.id);
       selectedItem.value = null;
     }
@@ -124,11 +117,7 @@ class HikingController extends GetxController {
     Get.snackbar('Selesai', 'Check-out berhasil dicatat',
         backgroundColor: AppColors.primary, colorText: Colors.white);
 
-    switchTab(1); // tetap di tab Check-Out
+    switchTab(1);
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

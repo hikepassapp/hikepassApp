@@ -1,8 +1,7 @@
-// lib/app/modules/terms/widgets/terms_content_widget.dart
 import 'package:flutter/material.dart';
 
 class TermsContentWidget extends StatelessWidget {
-  const TermsContentWidget({Key? key}) : super(key: key);
+  const TermsContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

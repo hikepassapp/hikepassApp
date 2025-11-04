@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AboutActionButtonWidget extends StatelessWidget {
-  const AboutActionButtonWidget({Key? key}) : super(key: key);
+  const AboutActionButtonWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

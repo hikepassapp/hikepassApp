@@ -39,7 +39,7 @@ class LoginEmailView extends GetView<LoginController> {
                     if (Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
                     } else {
-                      Get.offAllNamed(Routes.LANDING_SCREEN);
+                      Get.offAllNamed(Routes.landingScreen);
                     }
                   },
                 ),
