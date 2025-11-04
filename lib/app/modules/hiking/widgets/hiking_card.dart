@@ -25,7 +25,7 @@ class HikingCard extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 135,
+        height: 150,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Row(

@@ -4,7 +4,7 @@ import '../controllers/home_controller.dart';
 import 'berita_card_widget.dart';
 
 class BeritaListWidget extends GetView<HomeController> {
-  const BeritaListWidget({Key? key}) : super(key: key);
+  const BeritaListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
