@@ -53,7 +53,7 @@ class HikingController extends GetxController {
       HikingItem(
         id: 'malabar-20251104',
         title: 'Puncak Besar Malabar',
-        subtitle: 'Jalur Cinyiruan',
+        subtitle: 'Jalur Panorama',
         date: DateTime(2025, 11, 4),
         imagePath: 'assets/images/reservasi_panorama.png',
         type: HikeType.checkIn,

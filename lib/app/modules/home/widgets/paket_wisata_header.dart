@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../controllers/home_controller.dart';
+import 'package:get/get.dart';
 
-class PaketWisataHeader extends StatelessWidget {
-  const PaketWisataHeader({super.key});
+class PaketWisataHeader extends GetView<HomeController> {
+  const PaketWisataHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class PaketWisataHeader extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: controller.onSeeAllPaketWisataTapped,
           child: const Text(
             'Lihat Semua',
             style: TextStyle(
