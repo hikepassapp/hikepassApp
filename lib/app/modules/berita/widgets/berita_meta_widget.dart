@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/berita_controller.dart';
 
 class BeritaMetaWidget extends GetView<BeritaController> {
-  const BeritaMetaWidget({Key? key}) : super(key: key);
+  const BeritaMetaWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

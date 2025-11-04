@@ -8,7 +8,7 @@ import '../widgets/custom_button_widget.dart';
 import '../widgets/info_box_widget.dart';
 
 class RegisterView extends GetView<RegisterController> {
-  const RegisterView({Key? key}) : super(key: key);
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../models/informasiModel.dart';
+import '../../../models/informasi_model.dart';
 
 class InformasiContentCard extends StatelessWidget {
   final InformasiContent content;
 
   const InformasiContentCard({
-    Key? key,
+    super.key,
     required this.content,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

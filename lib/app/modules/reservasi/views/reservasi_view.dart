@@ -37,7 +37,7 @@ class ReservasiView extends GetView<ReservasiController> {
               imagePath: reservation['imagePath'] ?? '',
               title: reservation['title'] ?? '',
               subtitle: reservation['subtitle'] ?? '',
-              price: reservation['price'] ?? '',
+              harga: reservation['harga'] ?? '',
               onTap: () {
                 controller.goToDetail(reservation);
               },

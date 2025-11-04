@@ -11,6 +11,7 @@ class PaymentPriceSection extends StatelessWidget {
 
     return Column(
       children: [
+        // ====== Kotak Harga ======
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           decoration: BoxDecoration(
@@ -24,33 +25,39 @@ class PaymentPriceSection extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Harga Tiket',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
               ),
               Text(
                 'Rp 15.000',
                 style: TextStyle(
                   color: Color(0xFF2D9F8C),
                   fontWeight: FontWeight.bold,
+                  fontSize: 16,
                 ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 20),
 
-        // ================== TOMBOL BAYAR SEKARANG ==================
+        const SizedBox(height: 24),
+
+        // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // Cek apakah user sudah pilih tanggal
+            // ✅ 1. Validasi tanggal
             if (controller.selectedDate.value == null) {
               Get.snackbar(
                 'Peringatan',
-                'Silakan pilih tanggal pendakian terlebih dahulu',
+                'Silakan pilih tanggal pendakian terlebih dahulu!',
                 backgroundColor: Colors.orange,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.BOTTOM,
@@ -58,25 +65,41 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Jika sudah, tampilkan notifikasi sukses
-            Get.snackbar(
-              'Pembayaran Berhasil',
-              'Tiket berhasil dibeli!',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            // ✅ 2. Ambil data & format waktu
+            final now = DateTime.now();
+            final selected = controller.selectedDate.value!;
+            final formattedDate =
+                '${selected.day.toString().padLeft(2, '0')}-${selected.month.toString().padLeft(2, '0')}-${selected.year}';
+            final formattedTime =
+                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-            // Lalu pindah ke halaman Pesananku (riwayat)
-            Get.toNamed(
-              '/riwayat',
-              arguments: {
-                'tanggal': controller.selectedDate.value?.toString() ?? '-',
-                'jalur': 'Panorama',
-                'nama': 'Dhea',
-                'durasi': '2 Hari',
-              },
-            );
+            // ✅ 3. Buat data tiket baru
+            final data = {
+              'id': 'D${now.millisecondsSinceEpoch}',
+              'nama': 'Dhea',
+              'title': 'Puncak Besar Malabar',
+              'jalur': controller.selectedPos.value.isNotEmpty
+                  ? controller.selectedPos.value
+                  : 'Panorama',
+              'metode': 'QRIS',
+              'tanggal': formattedDate,
+              'waktu': formattedTime,
+              'harga': 'Rp 15.000',
+              'durasi': '2 Hari',
+              'imagePath': 'assets/images/reservasi_panorama.png',
+            };
+
+            // ✅ 4. Tambahkan ke riwayat (pasti cuma sekali)
+            controller.completePayment(data);
+
+            // ✅ 5. Reset form (biar bisa reservasi lagi)
+            controller.selectedDate.value = null;
+            controller.selectedPos.value = '';
+            controller.ticketCount.value = 1;
+            controller.isAgreed.value = false;
+
+            // ✅ 6. Arahkan ke halaman sukses
+            Get.offNamed('/payment-success', arguments: data);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),
@@ -84,10 +107,15 @@ class PaymentPriceSection extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            elevation: 0,
           ),
           child: const Text(
             'Bayar Sekarang',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: Colors.white,
+            ),
           ),
         ),
       ],

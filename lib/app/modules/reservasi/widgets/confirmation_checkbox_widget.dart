@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
-import 'package:hikepass_app/app/shared/theme/app_colors.dart';
+
 class ConfirmationCheckbox extends GetView<ReservasiController> {
-  const ConfirmationCheckbox({Key? key}) : super(key: key);
+  const ConfirmationCheckbox({super.key});
 
   @override
   Widget build(BuildContext context) {

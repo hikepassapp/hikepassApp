@@ -9,12 +9,12 @@ class InfoBox extends StatelessWidget {
   final Color iconColor;
 
   const InfoBox({
-    Key? key,
+    super.key,
     required this.message,
     this.icon = Icons.check_circle,
     this.backgroundColor = const Color(0xFFD1FAE5),
     this.iconColor = const Color(0xFF059669),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

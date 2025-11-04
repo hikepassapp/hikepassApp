@@ -15,7 +15,6 @@ class ReservationFormView extends StatelessWidget {
   final alamatController = TextEditingController();
   final telpController = TextEditingController();
 
-  
   final selectedCountry = "+62".obs;
   final nationality = "WNI".obs;
   final gender = "".obs;
@@ -126,10 +125,7 @@ class ReservationFormView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel("Nomor Induk Kependudukan"),
-        TextField(
-          controller: nikController,
-          decoration: _inputDecoration(),
-        ),
+        TextField(controller: nikController, decoration: _inputDecoration()),
         _buildHintText("*NIK harus sesuai dengan kartu identitas"),
       ],
     );
@@ -140,10 +136,7 @@ class ReservationFormView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLabel("Nama Lengkap"),
-        TextField(
-          controller: namaController,
-          decoration: _inputDecoration(),
-        ),
+        TextField(controller: namaController, decoration: _inputDecoration()),
         _buildHintText("*Nama harus sesuai dengan kartu identitas"),
       ],
     );
@@ -368,7 +361,6 @@ class ReservationFormView extends StatelessWidget {
     );
   }
 
-  @override
   void dispose() {
     namaController.dispose();
     nikController.dispose();

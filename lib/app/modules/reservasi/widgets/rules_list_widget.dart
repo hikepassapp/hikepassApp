@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'rules_item_widget.dart';
 
 class RulesList extends StatelessWidget {
-  const RulesList({Key? key}) : super(key: key);
+  const RulesList({super.key});
 
   static const List<String> rules = [
     'pendaki wajib mengisi form registrasi',
@@ -26,10 +26,7 @@ class RulesList extends StatelessWidget {
     return Column(
       children: List.generate(
         rules.length,
-        (index) => RulesItem(
-          number: index + 1,
-          text: rules[index],
-        ),
+        (index) => RulesItem(number: index + 1, text: rules[index]),
       ),
     );
   }

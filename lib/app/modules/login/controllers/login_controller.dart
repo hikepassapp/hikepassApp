@@ -46,7 +46,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Mohon masukkan email.',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -57,7 +56,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Format email tidak valid.',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -75,7 +73,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Terjadi kesalahan. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -91,7 +88,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Mohon masukkan password.',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -108,7 +104,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Terjadi kesalahan. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -141,8 +136,6 @@ class LoginController extends GetxController {
 
     try {
       isOtpLoading.value = true;
-
-      // TODO: Call verify OTP API
       await Future.delayed(Duration(seconds: 2));
 
       // Simulate validation - for demo, accept "123456" as valid
@@ -177,13 +170,11 @@ class LoginController extends GetxController {
   // Resend OTP
   Future<void> resendOtp() async {
     try {
-      // TODO: Call resend OTP API
       await Future.delayed(Duration(seconds: 1));
 
       Get.snackbar(
         'Success',
         'Kode OTP telah dikirim ulang',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
       );
@@ -191,7 +182,6 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         'Gagal mengirim ulang OTP',
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );

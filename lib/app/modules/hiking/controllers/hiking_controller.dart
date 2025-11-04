@@ -1,59 +1,134 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../shared/theme/app_colors.dart';
 
 enum HikeType { checkIn, checkOut }
 
 class HikingItem {
+  final String id;
   final String title;
+  final String subtitle;
   final DateTime date;
   final String imagePath;
   final HikeType type;
-  
+
   HikingItem({
+    required this.id,
     required this.title,
+    required this.subtitle,
     required this.date,
     required this.imagePath,
     required this.type,
   });
+
+  HikingItem copyWith({
+    String? id,
+    String? title,
+    String? subtitle,
+    DateTime? date,
+    String? imagePath,
+    HikeType? type,
+  }) {
+    return HikingItem(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      subtitle: subtitle ?? this.subtitle,
+      date: date ?? this.date,
+      imagePath: imagePath ?? this.imagePath,
+      type: type ?? this.type,
+    );
+  }
 }
 
 class HikingController extends GetxController {
   final tabIndex = 0.obs;
+  final TextEditingController listController = TextEditingController();
+  final RxList<HikingItem> _allItems = <HikingItem>[].obs;
 
-  final List<HikingItem> _items = [
-    HikingItem(
-      title: 'Gunung Puntang',
-      date: DateTime(2025, 10, 28),
-      imagePath: 'assets/images/gunung-puntang.jpg',
-      type: HikeType.checkIn,
-    ),
-  ];
+  // item yang sedang diproses di form
+  final Rxn<HikingItem> selectedItem = Rxn<HikingItem>();
 
-  List<HikingItem> get filtered {
-    final isCheckIn = tabIndex.value == 0;
-    return _items.where((e) => isCheckIn ? e.type == HikeType.checkIn : e.type == HikeType.checkOut).toList();
+  @override
+  void onInit() {
+    super.onInit();
+    _allItems.addAll([
+      HikingItem(
+        id: 'malabar-20251104',
+        title: 'Puncak Besar Malabar',
+        subtitle: 'Jalur Cinyiruan',
+        date: DateTime(2025, 11, 4),
+        imagePath: 'assets/images/reservasi_panorama.png',
+        type: HikeType.checkIn,
+      ),
+    ]);
   }
 
-  void switchTab(int i) => tabIndex.value = i;
+  List<HikingItem> get filtered {
+    final type = tabIndex.value == 0 ? HikeType.checkIn : HikeType.checkOut;
+    return _allItems.where((item) => item.type == type).toList();
+  }
 
-  final TextEditingController listController = TextEditingController();
+  void switchTab(int index) {
+    if (tabIndex.value != index) tabIndex.value = index;
+  }
 
+  // Set item yang akan diproses sebelum membuka form
+  void selectItem(HikingItem item) {
+    selectedItem.value = item;
+  }
+
+  // Submit dari form Check-In
   void submitCheckInAndGoToCheckout() {
-    final text = listController.text.trim();
-    if (text.isEmpty) {
-      Get.snackbar('Peringatan', 'List barang tidak boleh kosong!');
+    if (listController.text.trim().isEmpty) {
+      Get.snackbar('Perhatian', 'Mohon isi list barang bawaan',
+          backgroundColor: Colors.orange, colorText: Colors.white);
       return;
     }
 
-    tabIndex.value = 1; 
-    Get.back();           
-    Get.snackbar('Berhasil', 'Check-In berhasil disimpan!');
+    final current = selectedItem.value;
+    if (current != null) {
+      final idx = _allItems.indexWhere((e) => e.id == current.id);
+      if (idx != -1) {
+        _allItems[idx] = _allItems[idx].copyWith(type: HikeType.checkOut);
+      }
+      selectedItem.value = null;
+    }
+
     listController.clear();
+    Get.back();
+
+    Get.snackbar('Berhasil', 'Check-in berhasil dilakukan',
+        backgroundColor: AppColors.primary, colorText: Colors.white);
+
+    switchTab(1); // pindah ke tab Check-Out
+  }
+
+  // Submit dari form Check-Out
+  void submitCheckOutAndFinish() {
+    if (listController.text.trim().isEmpty) {
+      Get.snackbar('Perhatian', 'Mohon isi list barang bawaan',
+          backgroundColor: Colors.orange, colorText: Colors.white);
+      return;
+    }
+
+    final current = selectedItem.value;
+    if (current != null) {
+      // Contoh: setelah check-out, hapus dari daftar (atau bisa tandai selesai)
+      _allItems.removeWhere((e) => e.id == current.id);
+      selectedItem.value = null;
+    }
+
+    listController.clear();
+    Get.back();
+
+    Get.snackbar('Selesai', 'Check-out berhasil dicatat',
+        backgroundColor: AppColors.primary, colorText: Colors.white);
+
+    switchTab(1); // tetap di tab Check-Out
   }
 
   @override
   void onClose() {
-    listController.dispose();
     super.onClose();
   }
 }

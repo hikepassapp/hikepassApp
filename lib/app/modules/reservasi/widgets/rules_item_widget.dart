@@ -5,11 +5,7 @@ class RulesItem extends StatelessWidget {
   final int number;
   final String text;
 
-  const RulesItem({
-    Key? key,
-    required this.number,
-    required this.text,
-  }) : super(key: key);
+  const RulesItem({super.key, required this.number, required this.text});
 
   @override
   Widget build(BuildContext context) {

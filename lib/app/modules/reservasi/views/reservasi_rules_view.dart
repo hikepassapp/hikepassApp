@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
-import '../widgets/confirmationCheckboxWidget.dart';
+import '../widgets/confirmation_checkbox_widget.dart';
 import '../widgets/permit_time_widget.dart';
 import '../widgets/rules_header_widget.dart';
 import '../widgets/rules_list_widget.dart';
@@ -10,11 +10,13 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class ReservasiRulesView extends GetView<ReservasiController> {
-  const ReservasiRulesView({Key? key}) : super(key: key);
+  const ReservasiRulesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final data = Get.arguments as Map<String, String>;
+    // FIX: ubah ke Map<String, dynamic>
+    final data = Get.arguments as Map<String, dynamic>;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
@@ -24,7 +26,7 @@ class ReservasiRulesView extends GetView<ReservasiController> {
         ),
         centerTitle: true,
         backgroundColor: AppColors.secondary,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         toolbarHeight: 60,
       ),
@@ -35,6 +37,7 @@ class ReservasiRulesView extends GetView<ReservasiController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Box daftar aturan
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -42,7 +45,7 @@ class ReservasiRulesView extends GetView<ReservasiController> {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 6,
@@ -51,23 +54,31 @@ class ReservasiRulesView extends GetView<ReservasiController> {
                     ],
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Column(
+                  child: const Column(
                     children: [
-                      const RulesHeader(),
-                      const SizedBox(height: 12),
-                      const RulesList(),
+                      RulesHeader(),
+                      SizedBox(height: 12),
+                      RulesList(),
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 30),
+
+                // Waktu izin pendakian
                 const PermitTimeCard(),
+
                 const SizedBox(height: 20),
+
+                // Checkbox konfirmasi
                 const ConfirmationCheckbox(),
               ],
             ),
           ),
         ),
       ),
+
+      // Tombol lanjut di bawah
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -81,9 +92,9 @@ class ReservasiRulesView extends GetView<ReservasiController> {
               ),
             ],
           ),
-          // Ketika ditekan -> lanjut ke form pendaki
           child: ElevatedButton(
             onPressed: () {
+              // tetap kirim Map<String, dynamic>
               Get.to(() => ReservationFormView(), arguments: data);
             },
             style: ElevatedButton.styleFrom(

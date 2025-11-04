@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginPasswordAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const LoginPasswordAppBarWidget({Key? key}) : super(key: key);
+  const LoginPasswordAppBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
