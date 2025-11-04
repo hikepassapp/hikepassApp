@@ -5,13 +5,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
 import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
-import 'package:hikepass_app/app/modules/register/views/register_view.dart';
-
-// Reservasi
 import '../modules/reservasi/views/reservation_payment_view.dart';
-import '../modules/reservasi/views/payment_success_view.dart';
-
-// Berita
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
 
@@ -52,11 +46,8 @@ import '../modules/login/views/login_password_view.dart';
 // Profile
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
-
-// Register
 import '../modules/register/bindings/register_binding.dart';
-
-// Reservasi
+import '../modules/register/views/register_view.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
 
@@ -71,6 +62,10 @@ import '../modules/roleSelection/views/role_selection_view.dart';
 // Paket
 import '../modules/paket/bindings/paket_binding.dart';
 import '../modules/paket/views/paket_view.dart';
+import '../modules/berita/views/berita_list.dart';
+import '../modules/paket/views/paket_list_view.dart';
+
+import '../modules/reservasi/views/payment_success_view.dart';
 
 part 'app_routes.dart';
 
@@ -216,6 +211,20 @@ class AppPages {
       name: '/berita-detail',
       page: () => const BeritaDetailView(),
       binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
+    ),
+    GetPage(
+      name: '/berita-list',
+      page: () => const BeritaList(),
+      binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: '/paket-list',
+      page: () => const PaketListView(),
+      binding: PaketBinding(),
     ),
   ];
 }
