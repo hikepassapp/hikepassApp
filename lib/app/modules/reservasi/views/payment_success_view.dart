@@ -8,7 +8,7 @@ class PaymentSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Get.arguments as Map<String, dynamic>?;
-    final reservasiC = Get.find<ReservasiController>(); // 🔹 ambil controller
+    final reservasiC = Get.find<ReservasiController>(); 
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -23,11 +23,10 @@ class PaymentSuccessView extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            // 🔹 Pindahkan tiket ke riwayat sebelum balik
             reservasiC.completePayment(data ?? {});
             Get.offAllNamed(
               '/bottom-navigation',
-              arguments: {'initialIndex': 0}, // tab Beranda
+              arguments: {'initialIndex': 0}, 
             );
           },
         ),
@@ -68,7 +67,6 @@ class PaymentSuccessView extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () {
-                // 🔹 Pindahkan tiket ke riwayat sebelum balik ke beranda
                 reservasiC.completePayment(data ?? {});
                 Get.offAllNamed(
                   '/bottom-navigation',
@@ -94,7 +92,6 @@ class PaymentSuccessView extends StatelessWidget {
     );
   }
 
-  // ===== DETAIL INFORMASI TIKET =====
   Widget _ticketInfo(Map<String, dynamic>? data) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),

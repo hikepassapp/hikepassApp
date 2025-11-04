@@ -15,7 +15,6 @@ class ReservationHistoryView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ================= HEADER =================
             Stack(
               children: [
                 Container(
@@ -67,8 +66,6 @@ class ReservationHistoryView extends StatelessWidget {
                 ),
               ],
             ),
-
-            // ================= ISI HALAMAN =================
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -153,7 +150,6 @@ class ReservationHistoryView extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              // Navigasi ke halaman pembayaran
               Get.toNamed(
                 Routes.reservationPayment,
                 arguments: {

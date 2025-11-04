@@ -1,8 +1,7 @@
-// lib/app/modules/privacy_policy/widgets/privacy_header_widget.dart
 import 'package:flutter/material.dart';
 
 class PrivacyHeaderWidget extends StatelessWidget {
-  const PrivacyHeaderWidget({Key? key}) : super(key: key);
+  const PrivacyHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

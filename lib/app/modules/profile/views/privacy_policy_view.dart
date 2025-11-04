@@ -7,7 +7,7 @@ import '../widgets/privacy_content_widget.dart';
 import '../widgets/privacy_action_button.dart';
 
 class PrivacyPolicyView extends GetView<ProfileController> {
-  const PrivacyPolicyView({Key? key}) : super(key: key);
+  const PrivacyPolicyView({super.key});
 
   @override
   Widget build(BuildContext context) {

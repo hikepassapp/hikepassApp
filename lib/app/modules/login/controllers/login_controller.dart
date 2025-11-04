@@ -21,7 +21,6 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get user type from arguments if coming from role selection
     if (Get.arguments != null && Get.arguments['userType'] != null) {
       userType.value = Get.arguments['userType'];
     }
@@ -40,8 +39,6 @@ class LoginController extends GetxController {
   // Check if email exists (Step 1)
   Future<void> checkEmail() async {
     final email = emailController.text.trim();
-
-    // === Validasi input ===
     if (email.isEmpty) {
       Get.snackbar(
         'Error',
@@ -63,13 +60,9 @@ class LoginController extends GetxController {
     }
 
     try {
-      // === Simulasi pemanggilan API ===
       await Future.delayed(const Duration(seconds: 1));
-
-      // === Arahkan langsung ke halaman login password ===
       Get.toNamed('/login-password');
     } catch (e) {
-      // === Tangani error tak terduga ===
       Get.snackbar(
         'Error',
         'Terjadi kesalahan. Silakan coba lagi.',
@@ -79,11 +72,8 @@ class LoginController extends GetxController {
     }
   }
 
-  // Login with password (Step 2A)
   Future<void> login() async {
     final password = passwordController.text.trim();
-
-    // === Validasi input ===
     if (password.isEmpty) {
       Get.snackbar(
         'Error',
@@ -95,10 +85,7 @@ class LoginController extends GetxController {
     }
 
     try {
-      // Simulasi loading singkat (nanti bisa diganti API)
       await Future.delayed(const Duration(seconds: 1));
-
-      // Langsung arahkan ke halaman login OTP
       Get.toNamed('/login-otp');
     } catch (e) {
       Get.snackbar(
@@ -137,8 +124,6 @@ class LoginController extends GetxController {
     try {
       isOtpLoading.value = true;
       await Future.delayed(Duration(seconds: 2));
-
-      // Simulate validation - for demo, accept "123456" as valid
       if (otp == '123456') {
         Get.snackbar(
           'Success',

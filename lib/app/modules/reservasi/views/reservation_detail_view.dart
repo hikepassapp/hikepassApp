@@ -12,7 +12,6 @@ class ReservationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: ubah ke Map<String, dynamic>
     final data = Get.arguments as Map<String, dynamic>;
 
     return Scaffold(
@@ -20,31 +19,22 @@ class ReservationDetailView extends StatelessWidget {
 
       body: CustomScrollView(
         slivers: [
-          // Header gambar dan judul
           ReservationDetailHeader(
             imagePath: data['imagePath'] ?? '',
             title: data['title'] ?? '',
           ),
 
-          // Konten utama
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Detail informasi tiket
                   ReservationDetailInfo(data: data),
                   const SizedBox(height: 16),
-
-                  // Input dropdown pos perizinan
                   _buildInputSection(),
-
                   const SizedBox(height: 16),
-
-                  // Counter jumlah tiket
                   const TicketCounter(),
-
                   const SizedBox(height: 100),
                 ],
               ),

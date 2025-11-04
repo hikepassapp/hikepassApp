@@ -2,7 +2,6 @@ import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
-  // Observable variables
   var isEditing = false.obs;
   var nik = '920214217635218'.obs;
   var namaLengkap = 'Nailong'.obs;
@@ -17,51 +16,35 @@ class ProfileController extends GetxController {
   var username = 'Nailong_imut'.obs;
   var email = 'nailong@gmail.com'.obs;
 
-  // Terms & Conditions related variables (if needed in future)
   var termsAccepted = false.obs;
-
-  // Privacy Policy related variables (if needed in future)
   var privacyPolicyAccepted = false.obs;
-
-  // About Ticket related variables (if needed in future)
   var aboutTicketViewed = false.obs;
 
-  // Toggle gender
   void setGender(String gender) {
     jenisKelamin.value = gender;
   }
 
-  // Terms & Conditions methods
   void acceptTerms() {
     termsAccepted.value = true;
   }
 
-  void viewTerms() {
-    // Add any logic needed when terms are viewed
-  }
+  void viewTerms() {}
 
-  // Privacy Policy methods
   void acceptPrivacyPolicy() {
     privacyPolicyAccepted.value = true;
   }
 
-  void viewPrivacyPolicy() {
-    // Add any logic needed when privacy policy is viewed
-  }
+  void viewPrivacyPolicy() {}
 
-  // About Ticket methods
   void markAboutTicketAsViewed() {
     aboutTicketViewed.value = true;
   }
 
-  void viewAboutTicket() {
-    // Add any logic needed when about ticket is viewed
-  }
+  void viewAboutTicket() {}
 
   // Update profile
   void updateProfile() {
-    // Logic untuk update profile
-    Get.back(); // Kembali ke halaman profil
+    Get.back();
     Get.snackbar(
       'Berhasil',
       'Profile berhasil diperbarui',
@@ -83,7 +66,6 @@ class ProfileController extends GetxController {
       textCancel: 'Tidak',
       confirmTextColor: Get.theme.colorScheme.onPrimary,
       onConfirm: () {
-        // Logic logout
         Get.back();
         Get.offAllNamed('/login');
       },
