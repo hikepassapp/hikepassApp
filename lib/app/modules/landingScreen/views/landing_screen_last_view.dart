@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/landing_screen_controller.dart';
+
+// Impor Widgets
 import '../widgets/landing_button_widget.dart';
+import '../controllers/landing_screen_controller.dart';
+
 class LandingScreenLastView extends GetView<LandingScreenController> {
   const LandingScreenLastView({super.key});
 
