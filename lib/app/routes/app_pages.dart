@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
 // Register views
 import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
@@ -48,8 +47,7 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
-import '../modules/reservasi/bindings/reservasi_binding.dart';
-import '../modules/reservasi/views/reservasi_view.dart';
+
 
 // Riwayat
 import '../modules/riwayat/bindings/riwayat_binding.dart';
@@ -65,7 +63,14 @@ import '../modules/paket/views/paket_view.dart';
 import '../modules/berita/views/berita_list.dart';
 import '../modules/paket/views/paket_list_view.dart';
 
+import '../modules/reservasi/bindings/reservasi_binding.dart';
+import '../modules/reservasi/views/reservasi_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
+
+import '../modules/profile/views/terms_view.dart';
+import '../modules/profile/views/privacy_policy_view.dart';
+import '../modules/profile/views/about_view.dart';
+import '../modules/profile/views/edit_profile_view.dart';
 
 part 'app_routes.dart';
 
@@ -226,5 +231,30 @@ class AppPages {
       page: () => const PaketListView(),
       binding: PaketBinding(),
     ),
+    GetPage(
+      name: '/edit-profile',
+      page: () => const EditProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.TERMS,
+      page: () => const TermsView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRIVACY_POLICY,
+      page: () => const PrivacyPolicyView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.ABOUT,
+      page: () => const AboutView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.reservationPayment,
+      page: () => const ReservationPaymentView(),
+    ),
+    GetPage(name: '/payment-success', page: () => const PaymentSuccessView()),
   ];
 }

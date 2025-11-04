@@ -10,7 +10,7 @@ class ProfileHeaderWidget extends StatelessWidget {
       height: 200,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('images/imagesProfile.png'),
+          image: AssetImage('assets/images/imagesProfile.png'),
           fit: BoxFit.cover,
         ),
         gradient: LinearGradient(

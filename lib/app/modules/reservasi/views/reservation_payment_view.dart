@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/reservasi_controller.dart';
 import '../widgets/payment_app_bar.dart';
 import '../widgets/ticket_summary_card.dart';
 import '../widgets/ticket_detail_section.dart';
@@ -12,7 +11,6 @@ class ReservationPaymentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ReservasiController>();
 
     // Ambil data dari halaman sebelumnya
     final Map<String, dynamic> data =
