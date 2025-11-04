@@ -65,6 +65,8 @@ import '../modules/paket/views/paket_view.dart';
 import '../modules/berita/views/berita_list.dart';
 import '../modules/paket/views/paket_list_view.dart';
 
+import '../modules/reservasi/views/payment_success_view.dart';
+
 part 'app_routes.dart';
 
 class AppPages {
