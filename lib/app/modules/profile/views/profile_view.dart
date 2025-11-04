@@ -67,15 +67,10 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                   ),
 
-                  // Content Area dengan padding untuk card profile
+                  // card profile
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        80,
-                        16,
-                        16,
-                      ), // Padding top untuk card profile
+                      padding: EdgeInsets.fromLTRB(16, 80, 16, 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -176,7 +171,7 @@ class ProfileView extends GetView<ProfileController> {
 
               // Profile Card Overlay
               Positioned(
-                top: 140, // Posisi dari atas untuk overlap dengan header
+                top: 140,
                 left: 16,
                 right: 16,
                 child: Container(
@@ -212,7 +207,7 @@ class ProfileView extends GetView<ProfileController> {
                         child: CircleAvatar(
                           radius: 40,
                           backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150', // Ganti dengan URL gambar profil
+                            'https://via.placeholder.com/150',
                           ),
                         ),
                       ),

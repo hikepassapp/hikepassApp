@@ -15,7 +15,6 @@ class EditProfileHeaderWidget extends StatelessWidget {
           fit: BoxFit.cover,
         ),
 
-        // Fallback gradient jika gambar belum ada
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -23,7 +22,7 @@ class EditProfileHeaderWidget extends StatelessWidget {
         ),
       ),
       child: Container(
-        // Overlay gelap agar text lebih terbaca (opsional)
+        // Overlay
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
