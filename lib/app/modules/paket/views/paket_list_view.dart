@@ -7,7 +7,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class PaketListView extends GetView<PaketController> {
-  const PaketListView({Key? key}) : super(key: key);
+  const PaketListView({super.key});
 
   @override
   Widget build(BuildContext context) {

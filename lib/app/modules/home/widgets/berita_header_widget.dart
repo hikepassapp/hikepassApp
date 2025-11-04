@@ -3,7 +3,7 @@ import '../controllers/home_controller.dart';
 import 'package:get/get.dart';
 
 class BeritaHeader extends GetView<HomeController> {
-  const BeritaHeader({Key? key}) : super(key: key);
+  const BeritaHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

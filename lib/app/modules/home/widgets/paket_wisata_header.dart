@@ -3,7 +3,7 @@ import '../controllers/home_controller.dart';
 import 'package:get/get.dart';
 
 class PaketWisataHeader extends GetView<HomeController> {
-  const PaketWisataHeader({Key? key}) : super(key: key);
+  const PaketWisataHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

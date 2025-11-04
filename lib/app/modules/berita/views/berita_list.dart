@@ -7,7 +7,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
 class BeritaList extends GetView<BeritaController> {
-  const BeritaList({Key? key}) : super(key: key);
+  const BeritaList({super.key});
 
   @override
   Widget build(BuildContext context) {
