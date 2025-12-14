@@ -17,6 +17,25 @@ class ProfileController extends GetxController {
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
 
+  // Text Controllers for Change Password
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  // Password visibility states for Change Password
+  var isCurrentPasswordVisible = false.obs;
+  var isNewPasswordVisible = false.obs;
+  var isConfirmPasswordVisible = false.obs;
+
+  // Password validation states for Change Password
+  var hasMinLengthChangePassword = false.obs;
+  var hasUpperCaseChangePassword = false.obs;
+  var hasLowerCaseChangePassword = false.obs;
+  var hasNumberChangePassword = false.obs;
+
+  // Loading state for Change Password
+  var isChangePasswordLoading = false.obs;
+
   // User data
   var userId = ''.obs;
   var nik = ''.obs;
@@ -48,6 +67,9 @@ class ProfileController extends GetxController {
     alamatController.dispose();
     usernameController.dispose();
     emailController.dispose();
+    currentPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
     super.onClose();
   }
 
@@ -198,6 +220,167 @@ class ProfileController extends GetxController {
       debugPrint('=== Update Profile Error ===');
       debugPrint('Error: $e');
       return false;
+    }
+  }
+
+  // Toggle password visibility for Change Password
+  void toggleCurrentPasswordVisibility() {
+    isCurrentPasswordVisible.value = !isCurrentPasswordVisible.value;
+  }
+
+  void toggleNewPasswordVisibility() {
+    isNewPasswordVisible.value = !isNewPasswordVisible.value;
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+
+  // Validate password requirements for Change Password
+  void validateChangePassword() {
+    final password = newPasswordController.text;
+    hasMinLengthChangePassword.value = password.length >= 8;
+    hasUpperCaseChangePassword.value = password.contains(RegExp(r'[A-Z]'));
+    hasLowerCaseChangePassword.value = password.contains(RegExp(r'[a-z]'));
+    hasNumberChangePassword.value = password.contains(RegExp(r'[0-9]'));
+  }
+
+  // Change password
+  Future<void> changePassword() async {
+    try {
+      // Validate inputs
+      if (currentPasswordController.text.trim().isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Password lama harus diisi',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      if (newPasswordController.text.trim().isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Password baru harus diisi',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      if (confirmPasswordController.text.trim().isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Konfirmasi password harus diisi',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      // Validate password requirements
+      if (!hasMinLengthChangePassword.value ||
+          !hasUpperCaseChangePassword.value ||
+          !hasLowerCaseChangePassword.value ||
+          !hasNumberChangePassword.value) {
+        Get.snackbar(
+          'Error',
+          'Password baru harus memenuhi semua persyaratan',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      // Validate password match
+      if (newPasswordController.text.trim() !=
+          confirmPasswordController.text.trim()) {
+        Get.snackbar(
+          'Error',
+          'Password baru dan konfirmasi password tidak cocok',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      // Validate new password is different from current
+      if (currentPasswordController.text.trim() ==
+          newPasswordController.text.trim()) {
+        Get.snackbar(
+          'Error',
+          'Password baru harus berbeda dari password lama',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        return;
+      }
+
+      isChangePasswordLoading.value = true;
+
+      // Reauthenticate user with current password to verify it
+      try {
+        await SupabaseConfig.client.auth.signInWithPassword(
+          email: email.value,
+          password: currentPasswordController.text.trim(),
+        );
+      } catch (e) {
+        debugPrint('Reauthentication error: $e');
+        Get.snackbar(
+          'Error',
+          'Password lama salah',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          icon: Icon(Icons.error, color: Colors.red[900]),
+        );
+        isChangePasswordLoading.value = false;
+        return;
+      }
+
+      // Update password
+      await _authService.updatePassword(
+        newPassword: newPasswordController.text.trim(),
+      );
+
+      // Clear controllers
+      currentPasswordController.clear();
+      newPasswordController.clear();
+      confirmPasswordController.clear();
+
+      // Reset validation states
+      hasMinLengthChangePassword.value = false;
+      hasUpperCaseChangePassword.value = false;
+      hasLowerCaseChangePassword.value = false;
+      hasNumberChangePassword.value = false;
+
+      Get.back(); // Go back to profile page
+
+      Get.snackbar(
+        'Berhasil',
+        'Password berhasil diubah',
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+        duration: Duration(seconds: 3),
+        icon: Icon(Icons.check_circle, color: Colors.green[900]),
+      );
+    } catch (e) {
+      debugPrint('Change password error: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal mengubah password. Silakan coba lagi.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        icon: Icon(Icons.error, color: Colors.red[900]),
+      );
+    } finally {
+      isChangePasswordLoading.value = false;
     }
   }
 

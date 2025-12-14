@@ -11,6 +11,26 @@ class AuthService extends GetxService {
   // Get current user
   User? get currentUser => _supabase.auth.currentUser;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // Listen to auth state changes
+    _supabase.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.signedIn) {
+        print('User signed in: ${data.session?.user.email}');
+      } else if (event == AuthChangeEvent.signedOut) {
+        print('User signed out');
+        // Only navigate if we're not already on landing screen
+        if (Get.currentRoute != '/landing-screen') {
+          Get.offAllNamed('/landing-screen');
+        }
+      } else if (event == AuthChangeEvent.tokenRefreshed) {
+        print('Token refreshed automatically');
+      }
+    });
+  }
+
   // Get user profile
   Future<Map<String, dynamic>?> getUserProfile() async {
     try {
