@@ -32,7 +32,7 @@ class ProfileView extends GetView<ProfileController> {
                     height: 200,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('images/imagesProfile.png'),
+                        image: AssetImage('assets/images/imagesProfile.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -174,70 +174,102 @@ class ProfileView extends GetView<ProfileController> {
                 top: 140,
                 left: 16,
                 right: 16,
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 15,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
+                child: Obx(
+                  () => controller.isLoading.value
+                      ? Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF26A69A),
                             ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150',
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              // Avatar
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 3,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage:
+                                      controller.avatarUrl.value.isNotEmpty
+                                      ? NetworkImage(controller.avatarUrl.value)
+                                      : NetworkImage(
+                                          'https://via.placeholder.com/150',
+                                        ),
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              // User Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controller.namaLengkap.value.isNotEmpty
+                                          ? controller.namaLengkap.value
+                                          : 'User',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      controller.email.value.isNotEmpty
+                                          ? controller.email.value
+                                          : '-',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      // User Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Nailong',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'nailong@gmail.com',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],

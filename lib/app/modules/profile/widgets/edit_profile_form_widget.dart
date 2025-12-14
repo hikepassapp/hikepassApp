@@ -90,20 +90,20 @@ class EditProfileFormWidget extends GetView<ProfileController> {
                 ),
               ),
               SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel('Usia'),
-                    _buildTextField(
-                      initialValue: controller.usia.value,
-                      readOnly: true,
-                      fillColor: Colors.grey[100],
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+              // Expanded(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       _buildLabel('Usia'),
+              //       _buildTextField(
+              //         initialValue: controller.usia.value,
+              //         readOnly: true,
+              //         fillColor: Colors.grey[100],
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 16),
