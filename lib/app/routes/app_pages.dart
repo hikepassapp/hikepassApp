@@ -28,8 +28,11 @@ import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_email_view.dart';
 import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
+import '../modules/login/views/login_reset_password_view.dart';
+import '../modules/login/views/login_otp_reset_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
+import '../modules/profile/views/profile_change_profile_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
@@ -146,6 +149,21 @@ class AppPages {
       name: '/login-password',
       page: () => const LoginPasswordView(),
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: '/login-reset-password',
+      page: () => const LoginResetPasswordView(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: '/login-otp-reset-password',
+      page: () => const LoginOtpResetPasswordView(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: '/edit-profile',
+      page: () => const ProfileChangeProfileView(),
+      binding: ProfileBinding(),
     ),
     GetPage(
       name: '/paket',
