@@ -33,6 +33,7 @@ import '../modules/login/views/login_otp_reset_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/profile_change_profile_view.dart';
+import '../modules/profile/views/profile_change_password_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
@@ -163,6 +164,11 @@ class AppPages {
     GetPage(
       name: '/edit-profile',
       page: () => const ProfileChangeProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: '/change-password',
+      page: () => const ProfileChangePasswordView(),
       binding: ProfileBinding(),
     ),
     GetPage(
