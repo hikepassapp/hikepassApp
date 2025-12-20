@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/landing_screen_controller.dart';
-
-// Impor Widgets
-import '../widgets/landing_app_bar_widget.dart';
-import '../widgets/landing_hero_card_widget.dart';
 import '../widgets/landing_button_widget.dart';
 
 class LandingScreenNextView extends GetView<LandingScreenController> {

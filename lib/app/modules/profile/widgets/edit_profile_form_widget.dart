@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/profile_controller.dart';
 
 class EditProfileFormWidget extends GetView<ProfileController> {
-  const EditProfileFormWidget({Key? key}) : super(key: key);
+  const EditProfileFormWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,20 +90,20 @@ class EditProfileFormWidget extends GetView<ProfileController> {
                 ),
               ),
               SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel('Usia'),
-                    _buildTextField(
-                      initialValue: controller.usia.value,
-                      readOnly: true,
-                      fillColor: Colors.grey[100],
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
+              // Expanded(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       _buildLabel('Usia'),
+              //       _buildTextField(
+              //         initialValue: controller.usia.value,
+              //         readOnly: true,
+              //         fillColor: Colors.grey[100],
+              //         textAlign: TextAlign.center,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 16),

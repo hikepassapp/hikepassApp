@@ -14,7 +14,6 @@ class ReservasiRulesView extends GetView<ReservasiController> {
 
   @override
   Widget build(BuildContext context) {
-    // FIX: ubah ke Map<String, dynamic>
     final data = Get.arguments as Map<String, dynamic>;
 
     return Scaffold(
@@ -37,7 +36,6 @@ class ReservasiRulesView extends GetView<ReservasiController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Box daftar aturan
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -62,23 +60,15 @@ class ReservasiRulesView extends GetView<ReservasiController> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
-                // Waktu izin pendakian
                 const PermitTimeCard(),
-
                 const SizedBox(height: 20),
-
-                // Checkbox konfirmasi
                 const ConfirmationCheckbox(),
               ],
             ),
           ),
         ),
       ),
-
-      // Tombol lanjut di bawah
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -94,7 +84,6 @@ class ReservasiRulesView extends GetView<ReservasiController> {
           ),
           child: ElevatedButton(
             onPressed: () {
-              // tetap kirim Map<String, dynamic>
               Get.to(() => ReservationFormView(), arguments: data);
             },
             style: ElevatedButton.styleFrom(

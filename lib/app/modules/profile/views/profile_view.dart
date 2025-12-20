@@ -5,7 +5,7 @@ import '../widgets/profile_menu_section_widget.dart';
 import '../../../routes/app_pages.dart';
 
 class ProfileView extends GetView<ProfileController> {
-  const ProfileView({Key? key}) : super(key: key);
+  const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class ProfileView extends GetView<ProfileController> {
                     height: 200,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('images/imagesProfile.png'),
+                        image: AssetImage('assets/images/imagesProfile.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -67,15 +67,10 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                   ),
 
-                  // Content Area dengan padding untuk card profile
+                  // card profile
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        80,
-                        16,
-                        16,
-                      ), // Padding top untuk card profile
+                      padding: EdgeInsets.fromLTRB(16, 80, 16, 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -98,12 +93,12 @@ class ProfileView extends GetView<ProfileController> {
                               ProfileMenuItem(
                                 icon: Icons.description_outlined,
                                 title: 'Syarat dan Ketentuan',
-                                onTap: () => Get.toNamed(Routes.TERMS),
+                                onTap: () => Get.toNamed(Routes.terms),
                               ),
                               ProfileMenuItem(
                                 icon: Icons.privacy_tip_outlined,
                                 title: 'Kebijakan Privasi',
-                                onTap: () => Get.toNamed(Routes.PRIVACY_POLICY),
+                                onTap: () => Get.toNamed(Routes.privacyPolicy),
                               ),
                             ],
                           ),
@@ -117,7 +112,7 @@ class ProfileView extends GetView<ProfileController> {
                               ProfileMenuItem(
                                 icon: Icons.info_outline,
                                 title: 'Tentang Tiket Pendakian',
-                                onTap: () => Get.toNamed(Routes.ABOUT),
+                                onTap: () => Get.toNamed(Routes.about),
                               ),
                             ],
                           ),
@@ -176,73 +171,105 @@ class ProfileView extends GetView<ProfileController> {
 
               // Profile Card Overlay
               Positioned(
-                top: 140, // Posisi dari atas untuk overlap dengan header
+                top: 140,
                 left: 16,
                 right: 16,
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 15,
-                        offset: Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      // Avatar
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
+                child: Obx(
+                  () => controller.isLoading.value
+                      ? Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xFF26A69A),
                             ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(
-                            'https://via.placeholder.com/150', // Ganti dengan URL gambar profil
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              // Avatar
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 3,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage:
+                                      controller.avatarUrl.value.isNotEmpty
+                                      ? NetworkImage(controller.avatarUrl.value)
+                                      : NetworkImage(
+                                          'https://via.placeholder.com/150',
+                                        ),
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              // User Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      controller.namaLengkap.value.isNotEmpty
+                                          ? controller.namaLengkap.value
+                                          : 'User',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      controller.email.value.isNotEmpty
+                                          ? controller.email.value
+                                          : '-',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      // User Info
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Nailong',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'nailong@gmail.com',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],

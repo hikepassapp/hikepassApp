@@ -14,10 +14,8 @@ class LoginEmailView extends GetView<LoginController> {
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // ===== HERO IMAGE (FULL BLEED) =====
           Stack(
             children: [
-              // Gambar full sampai ke atas layar
               ClipRRect(
                 child: Image.asset(
                   'assets/images/imgonBoarding.png',
@@ -27,7 +25,6 @@ class LoginEmailView extends GetView<LoginController> {
                 ),
               ),
 
-              // Tombol back (aman di atas status bar)
               Positioned(
                 top:
                     MediaQuery.of(context).padding.top + 8, // nambah jarak aman
@@ -35,11 +32,10 @@ class LoginEmailView extends GetView<LoginController> {
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () {
-                    // If there is something to pop, go back. Otherwise navigate to landing.
                     if (Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
                     } else {
-                      Get.offAllNamed(Routes.LANDING_SCREEN);
+                      Get.offAllNamed(Routes.landingScreen);
                     }
                   },
                 ),
@@ -47,7 +43,6 @@ class LoginEmailView extends GetView<LoginController> {
             ],
           ),
 
-          // ===== ISI FORM LOGIN =====
           Expanded(
             child: Container(
               width: double.infinity,
@@ -66,14 +61,12 @@ class LoginEmailView extends GetView<LoginController> {
                 ],
               ),
               child: SafeArea(
-                // SafeArea cuma di bagian isi form
                 top: false,
                 child: SingleChildScrollView(child: LoginEmailContentWidget()),
               ),
             ),
           ),
 
-          // ===== HELP DI BAWAH =====
           const LoginHelpWidget(),
         ],
       ),
