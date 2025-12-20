@@ -7,12 +7,13 @@ class HikingCard extends StatelessWidget {
   const HikingCard({super.key, required this.item});
   final HikingItem item;
 
-  String _formatDate(DateTime d) {
+  String _formatDate(DateTime start, DateTime end) {
     const months = [
       'Januari','Februari','Maret','April','Mei','Juni',
       'Juli','Agustus','September','Oktober','November','Desember',
     ];
-    return '${d.day} ${months[d.month - 1]} ${d.year}';
+    String format(DateTime d) => '${d.day} ${months[d.month - 1]} ${d.year}';
+    return '${format(start)} - ${format(end)}';
   }
 
   @override
@@ -25,7 +26,7 @@ class HikingCard extends StatelessWidget {
       color: Colors.white,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 150,
+        height: 175,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Row(
@@ -58,7 +59,7 @@ class HikingCard extends StatelessWidget {
                     style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                   ),
                   Text(
-                    _formatDate(item.date),
+                    _formatDate(item.startDate, item.endDate),
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.black54,
