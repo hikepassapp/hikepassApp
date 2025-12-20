@@ -16,64 +16,23 @@ extension HikeFormStrings on HikingFormMode {
   String get buttonLabel => this == HikingFormMode.checkIn ? 'Check-In' : 'Check-Out';
 }
 
-class HikingForm extends GetWidget<HikingController> {
-  const HikingForm({super.key, required this.mode, required this.onSubmit});
-
-  final HikingFormMode mode;
-  final VoidCallback onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            mode.subtitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(color: Colors.black54, fontSize: 14),
-          ),
-          const SizedBox(height: 24),
-          const Text('List Barang', style: TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 8),
-          TextField(
-            controller: controller.listController,
-            maxLines: 6,
-            decoration: InputDecoration(
-              hintText: 'List barang bawaanmu!',
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-            ),
-          ),
-          const Spacer(),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0E564A),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              ),
-              child: Text(
-                mode.buttonLabel,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class CheckInFormPage extends StatelessWidget {
   const CheckInFormPage({super.key});
+
+  static const List<String> checkInItems = [
+    'Pakaian hangat',
+    'Jas hujan',
+    'Senter',
+    'Makanan',
+    'Minuman',
+    'Kotak P3K',
+  ];
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HikingController>();
+    final item = controller.selectedItem.value;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -94,24 +53,61 @@ class CheckInFormPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Mountain and trail info
+              if (item != null) ...[
+                Text(
+                  item.title,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.subtitle,
+                  style: const TextStyle(color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+              ],
+
+              // Guidelines
               const Text(
-                'List barang bawaanmu sebelum melakukan pendakian!',
+                'Sebelum memulai pendakian, pastikan Anda memiliki semua perlengkapan yang diperlukan dan ikuti panduan berikut:',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black54, fontSize: 14),
               ),
               const SizedBox(height: 24),
-              const Text('List Barang', style: TextStyle(fontWeight: FontWeight.w700)),
+
+              // Mandatory items checkboxes
+              const Text('Perlengkapan Wajib', style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              Obx(() => Column(
+                children: List.generate(checkInItems.length, (index) {
+                  return CheckboxListTile(
+                    title: Text(checkInItems[index]),
+                    value: controller.checkInCheckboxes[index],
+                    onChanged: (value) {
+                      controller.checkInCheckboxes[index] = value ?? false;
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    dense: true,
+                  );
+                }),
+              )),
+              const SizedBox(height: 16),
+
+              // Your items textbox
+              const Text('Barang Bawaan Anda', style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               TextField(
-                controller: controller.listController,
-                maxLines: 6,
+                onChanged: (value) => controller.checkInItems.value = value,
+                maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'List barang bawaanmu!',
+                  hintText: 'Daftar barang bawaan Anda',
                   contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
                 ),
               ),
-              const SizedBox(height: 24), // ⟵ ganti Spacer dengan jarak biasa
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -119,19 +115,19 @@ class CheckInFormPage extends StatelessWidget {
 
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: SizedBox(
+        child: Obx(() => SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: controller.submitCheckInAndGoToCheckout,
+            onPressed: controller.isCheckInValid ? controller.submitCheckInAndGoToCheckout : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0E564A),
+              backgroundColor: controller.isCheckInValid ? const Color(0xFF0E564A) : Colors.grey,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             ),
             child: const Text('Check-In',
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
-        ),
+        )),
       ),
     );
   }
@@ -140,9 +136,16 @@ class CheckInFormPage extends StatelessWidget {
 class CheckOutFormPage extends StatelessWidget {
   const CheckOutFormPage({super.key});
 
+  static const List<String> checkOutItems = [
+    'Barang berharga',
+    'Perlengkapan pribadi',
+    'Sampah sisa',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<HikingController>();
+    final item = controller.selectedItem.value;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -166,26 +169,67 @@ class CheckOutFormPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Mountain and trail info
+              if (item != null) ...[
+                Text(
+                  item.title,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.subtitle,
+                  style: const TextStyle(color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                if (item.checkInDate != null)
+                  Text(
+                    'Check-in: ${item.checkInDate!.toLocal().toString().split(' ')[0]}',
+                    style: const TextStyle(color: Colors.black54, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                const SizedBox(height: 16),
+              ],
+
+              // Guidelines
               const Text(
-                'List barang bawaanmu setelah melakukan pendakian!',
+                'Setelah menyelesaikan pendakian, pastikan semua barang telah dikembalikan dan ikuti panduan berikut:',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black54, fontSize: 14),
               ),
               const SizedBox(height: 24),
-              const Text('List Barang', style: TextStyle(fontWeight: FontWeight.w700)),
+
+              // Mandatory items checkboxes
+              const Text('Pengembalian Wajib', style: TextStyle(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              Obx(() => Column(
+                children: List.generate(checkOutItems.length, (index) {
+                  return CheckboxListTile(
+                    title: Text(checkOutItems[index]),
+                    value: controller.checkOutCheckboxes[index],
+                    onChanged: (value) {
+                      controller.checkOutCheckboxes[index] = value ?? false;
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    dense: true,
+                  );
+                }),
+              )),
+              const SizedBox(height: 16),
+
+              // Your items textbox
+              const Text('Barang Bawaan Anda', style: TextStyle(fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               TextField(
-                controller: controller.listController,
-                maxLines: 6,
+                onChanged: (value) => controller.checkOutItems.value = value,
+                maxLines: 4,
                 decoration: InputDecoration(
-                  hintText: 'List barang bawaanmu!',
+                  hintText: 'Daftar barang bawaan Anda yang dikembalikan',
                   contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
                 ),
               ),
-
-              // (Opsional) tambahkan field khusus check-out di sini:
-              // - kondisi perlengkapan, catatan jalur/cuaca, dsb.
               const SizedBox(height: 24),
             ],
           ),
@@ -194,12 +238,12 @@ class CheckOutFormPage extends StatelessWidget {
 
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: SizedBox(
+        child: Obx(() => SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: controller.submitCheckOutAndFinish,
+            onPressed: controller.isCheckOutValid ? controller.submitCheckOutAndFinish : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0E564A),
+              backgroundColor: controller.isCheckOutValid ? const Color(0xFF0E564A) : Colors.grey,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             ),
@@ -208,7 +252,7 @@ class CheckOutFormPage extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-        ),
+        )),
       ),
     );
   }
