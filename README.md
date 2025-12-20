@@ -7,31 +7,31 @@ With HikePass, hikers can easily register, submit hiking requests, purchase tick
 ## 🚀 Features
 
 For Hikers:
-    1. Secure login & session handling (Supabase Auth)
-    2. Complete hiking permit submission
-    3. Digital ticket management
-    4. Real-time status updates (pending, approved, paid)
-    5. Online payment integration
-    6. Hiking history tracking
+1. Secure login & session handling (Supabase Auth)
+2. Complete hiking permit submission
+3. Digital ticket management
+4. Real-time status updates (pending, approved, paid)
+5. Online payment integration
+6. Hiking history tracking
 
 ## 🧩 Tech Stack
 
 Mobile App:
-    1. Flutter
-    2. GetX (State Management, Routing, Dependency Injection)
-    3. Dart
+1. Flutter
+2. GetX (State Management, Routing, Dependency Injection)
+3. Dart
 
 Backend & Database
-    1. Supabase
-    2. PostgreSQL Database
-    3. Authentication (Email & Password)
-    4. Session & JWT handling
-    5. Row Level Security (RLS)
-    6. Supabase Storage (optional for KTP/photo uploads)
+1. Supabase
+2. PostgreSQL Database
+3. Authentication (Email & Password)
+4. Session & JWT handling
+5. Row Level Security (RLS)
+6. Supabase Storage (optional for KTP/photo uploads)
 
 Development Tools:
-    1. Git & GitHub for version control
-    2. Modular development workflow
+1. Git & GitHub for version control
+2. Modular development workflow
 
 
 ## 🛠️ System Architecture
@@ -39,22 +39,20 @@ Development Tools:
 HikePass uses a client-driven backend model where the mobile app communicates directly with Supabase through secure RESTful APIs and authentication services.
 
 Supabase handles:
-    1. Auth & session management
-    2. Data storage and security rules
-    3. Access control via RLS
+1. Auth & session management
+2. Data storage and security rules
+3. Access control via RLS
 
 PostgreSQL stores:
-    1. User accounts
-    2. Hiker & admin details
-    3. Hiking tickets
-    4. Payments
-    5. Route configurations
+1. User accounts
+2. Hiking tickets
+3. Payments
+4. Route configurations
 
 
 ## 🎯 Purpose
 
 HikePass aims to:
-
 1. Simplify the hiking permit workflow
 2. Improve data accuracy and safety
 3. Digitize ticketing and approval processes
