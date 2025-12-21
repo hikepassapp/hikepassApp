@@ -10,14 +10,7 @@ import 'app/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Initialize Indonesian locale for date formatting
-  await initializeDateFormatting('id_ID', null);
-  Intl.defaultLocale = 'id_ID';
-  
-  // Initialize Supabase
   await SupabaseConfig.initialize();
-
-  // Initialize AuthService
   Get.put(AuthService());
 
   runApp(
@@ -31,14 +24,13 @@ void main() async {
         hintColor: AppColors.secondary,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: const AuthCheck(), // Check auth status first
+      home: const AuthCheck(), 
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
   );
 }
 
-// Widget to check authentication status on app start
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});
 
@@ -46,10 +38,8 @@ class AuthCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Get.find<AuthService>();
 
-    // Check if user is logged in
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authService.isLoggedIn) {
-        // User is logged in, go to home
         print('User already logged in: ${authService.currentUser?.email}');
         Get.offAllNamed('/bottom-navigation');
       } else {
