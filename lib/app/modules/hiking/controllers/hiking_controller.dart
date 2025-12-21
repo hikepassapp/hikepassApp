@@ -11,18 +11,16 @@ class HikingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('🏔️ HikingController initialized');
-    print('   - HikingService instance: ${_hikingService.hashCode}');
-    print('   - Current hiking items: ${_hikingService.allHikings.length}');
+    print('HikingController initialized');
+    print('HikingService instance: ${_hikingService.hashCode}');
+    print('Current hiking items: ${_hikingService.allHikings.length}');
     final args = Get.arguments;
     if (args is Map && args['tab'] is int) {
       tabIndex.value = args['tab'] as int;
     }
   }
 
-  // Make these getters access the reactive list to trigger updates
   List<HikingModel> get pendingCheckIns {
-    // Access the reactive list to trigger Obx updates
     final items = _hikingService.allHikings
         .where((h) => h.status == HikingStatus.pending)
         .toList();
@@ -31,7 +29,6 @@ class HikingController extends GetxController {
   }
 
   List<HikingModel> get checkedIns {
-    // Access the reactive list to trigger Obx updates
     final items = _hikingService.allHikings
         .where((h) => h.status == HikingStatus.checkedIn)
         .toList();

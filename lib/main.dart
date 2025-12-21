@@ -44,7 +44,7 @@ class AuthCheck extends StatelessWidget {
       if (authService.isLoggedIn) {
         Get.offAllNamed('/bottom-navigation');
       } else {
-        Get.offAllNamed('/bottom-navigation');//debug langsung ke home sementara
+        Get.offAllNamed('/bottom-navigation');
       }
     });
 
@@ -66,3 +66,4 @@ class AuthCheck extends StatelessWidget {
     );
   }
 }
+ 

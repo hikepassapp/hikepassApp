@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/riwayat_service.dart';
+import '../../../services/hiking_service.dart';
 import '../../../models/riwayat_model.dart';
+import '../../../models/reservasi_model.dart';
+import '../../../models/payment_model.dart';
+import '../../../models/hiking_model.dart';
+import '../../reservasi/controllers/reservasi_controller.dart';
 
 class RiwayatDetailView extends StatelessWidget {
   const RiwayatDetailView({super.key});
@@ -17,11 +22,101 @@ class RiwayatDetailView extends StatelessWidget {
     return '$dd/$mm/$yyyy, $hh.$min';
   }
 
+  RiwayatModel? _findItem(String? id) {
+    if (id == null) return null;
+    
+    final hikingService = Get.find<HikingService>();
+    
+    final service = Get.find<RiwayatService>();
+    final serviceItem = service.getById(id);
+    if (serviceItem != null) return serviceItem;
+
+    try {
+      final reservasiC = Get.find<ReservasiController>();
+      final mapItem = reservasiC.riwayat.firstWhere(
+        (item) => (item['id'] ?? '').toString() == id,
+        orElse: () => null as dynamic,
+      );
+      
+      if (mapItem != null) {
+        final hikersList = <HikerInfo>[];
+        if (mapItem['hikers'] != null && mapItem['hikers'] is List) {
+          for (var hiker in mapItem['hikers'] as List) {
+            hikersList.add(HikerInfo(
+              name: hiker['name'] ?? '-',
+              nik: hiker['nik'] ?? '-',
+            ));
+          }
+        }
+
+        final ticketCount = mapItem['ticketCount'] ?? 1;
+        final ticketPrice = mapItem['ticketPrice'] ?? 15000;
+        final totalPrice = mapItem['totalPrice'] ?? (ticketCount * ticketPrice);
+
+        final reservasi = ReservasiModel(
+          id: mapItem['id'] ?? '',
+          code: mapItem['code'] ?? '',
+          mountainName: mapItem['mountainName'] ?? '-',
+          hikingTrail: mapItem['hikingTrail'] ?? '-',
+          startDate: mapItem['startDate'] ?? DateTime.now(),
+          hikers: hikersList,
+          ticketPrice: ticketPrice,
+        );
+        
+        final payment = PaymentModel(
+          id: mapItem['paymentCode'] ?? '',
+          code: mapItem['paymentCode'] ?? '',
+          total: totalPrice,
+          date: DateTime.now(),
+          status: PaymentStatus.paid,
+        );
+
+        HikingHistoryStatus hikingStatus = HikingHistoryStatus.waiting;
+        DateTime? checkInDate;
+        DateTime? checkOutDate;
+        try {
+          final reservasiId = mapItem['id'];
+          final hiking = hikingService.allHikings.firstWhere(
+            (h) => h.reservasiId == reservasiId,
+            orElse: () => null as dynamic,
+          );
+          
+          if (hiking != null) {
+            if (hiking.status == HikingStatus.checkedIn) {
+              hikingStatus = HikingHistoryStatus.hiking;
+            } else if (hiking.status == HikingStatus.checkedOut) {
+              hikingStatus = HikingHistoryStatus.finished;
+            } else {
+              hikingStatus = HikingHistoryStatus.waiting;
+            }
+   
+            checkInDate = hiking.checkInDate;
+            checkOutDate = hiking.checkOutDate;
+          }
+        } catch (_) {
+          hikingStatus = HikingHistoryStatus.waiting;
+        }
+        
+        return RiwayatModel(
+          id: mapItem['id'] ?? '',
+          reservasi: reservasi,
+          payment: payment,
+          hikingStatus: hikingStatus,
+          checkInDate: checkInDate,
+          checkOutDate: checkOutDate,
+        );
+      }
+    } catch (_) {
+
+    }
+    
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final id = Get.arguments as String?;
-    final service = Get.find<RiwayatService>();
-    final item = id != null ? service.getById(id) : null;
+    final item = _findItem(id);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -50,7 +145,6 @@ class RiwayatDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Kode Reservasi
                     Center(
                       child: Text(
                         'Kode reservasi: ${item.reservasi.code}',
@@ -63,7 +157,6 @@ class RiwayatDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    // Mountain & Trail
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -118,7 +211,6 @@ class RiwayatDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
 
-                    // Check-in & Check-out
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -136,7 +228,7 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _formatDate(item.checkInDate),
+                                _formatDate(item.checkInDate, withTime: true),
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -160,7 +252,7 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _formatDate(item.checkOutDate),
+                                _formatDate(item.checkOutDate, withTime: true),
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -173,7 +265,6 @@ class RiwayatDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // Detail Pendaki Section
                     const Text(
                       'Detail Pendaki',
                       style: TextStyle(
@@ -243,7 +334,6 @@ class RiwayatDetailView extends StatelessWidget {
                     }).toList(),
                     const SizedBox(height: 24),
 
-                    // Detail Pembayaran Section
                     const Text(
                       'Detail Pembayaran',
                       style: TextStyle(
@@ -304,7 +394,7 @@ class RiwayatDetailView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -313,7 +403,7 @@ class RiwayatDetailView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Total Tiket',
+                                'Jumlah Tiket',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.black54,
@@ -322,7 +412,7 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                item.reservasi.totalTickets.toString(),
+                                '${item.reservasi.totalTickets} Tiket',
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -346,7 +436,7 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                item.payment == null ? '-' : 'Rp.${item.payment!.total}',
+                                'Rp ${item.payment?.total.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => '.') ?? '0'}',
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -357,10 +447,33 @@ class RiwayatDetailView extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
     );
+  }
+
+  String _getStatusText(HikingHistoryStatus status) {
+    switch (status) {
+      case HikingHistoryStatus.waiting:
+        return 'Menunggu Pendakian';
+      case HikingHistoryStatus.hiking:
+        return 'Sedang Mendaki';
+      case HikingHistoryStatus.finished:
+        return 'Selesai Mendaki';
+    }
+  }
+
+  Color _getStatusColor(HikingHistoryStatus status) {
+    switch (status) {
+      case HikingHistoryStatus.waiting:
+        return Colors.orange;
+      case HikingHistoryStatus.hiking:
+        return Colors.blue;
+      case HikingHistoryStatus.finished:
+        return Colors.green;
+    }
   }
 }
