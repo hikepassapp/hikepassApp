@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
 
@@ -17,6 +18,11 @@ class CheckOutFormController extends GetxController {
     // Get hiking ID from route arguments
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
+      final hiking = _hikingService.getHikingById(hikingId);
+      if (hiking != null && hiking.checkOutDate == null) {
+        _hikingService.processInitialCheckOut(hikingId);
+      }
+
       currentHiking.value = _hikingService.getHikingById(hikingId);
     }
 
@@ -62,7 +68,7 @@ class CheckOutFormController extends GetxController {
       if (historyData != null) {
         // Navigate to history feature
         // TODO: Pass historyData to history feature when it's ready
-        Get.offAllNamed('/riwayat');
+        Get.offAllNamed(Routes.riwayat);
 
         Get.snackbar(
           'Selesai',

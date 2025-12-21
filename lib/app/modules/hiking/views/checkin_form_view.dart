@@ -8,15 +8,15 @@ class CheckInFormView extends GetView<CheckInFormController> {
 
   static const List<String> mandatoryItems = [
     'Pakaian hangat',
-    'Jas hujan',
-    'Senter',
     'Makanan',
+    'Jas hujan',
     'Minuman',
+    'Senter',
     'Kotak P3K',
   ];
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd MMMM yyyy', 'id_ID').format(date);
+    return DateFormat('dd/MM/yyyy, HH:mm', 'id_ID').format(date);
   }
 
   @override
@@ -53,67 +53,184 @@ class CheckInFormView extends GetView<CheckInFormController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Mountain and trail info
-                Text(
-                  hiking.mountainName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                // Subtitle
+                const Text(
+                  'List barang bawaan sebelum melakukan pendakian!',
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  hiking.hikingTrail,
-                  style: const TextStyle(color: Colors.black54),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                if (hiking.checkInDate != null)
-                  Text(
-                    'Check-in: ${_formatDate(hiking.checkInDate!)}',
-                    style: const TextStyle(color: Colors.black54, fontSize: 14),
-                    textAlign: TextAlign.center,
-                  ),
                 const SizedBox(height: 16),
 
-                // Guidelines
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF0F9FF),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF179778)),
-                  ),
-                  child: const Text(
-                    'Sebelum memulai pendakian, pastikan Anda memiliki semua perlengkapan yang diperlukan dan ikuti panduan berikut:',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black87, fontSize: 14),
-                  ),
+                // Mountain and trail info in two columns
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Nama Gunung',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            hiking.mountainName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Jalur Pendakian',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            hiking.hikingTrail,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-                // Mandatory items checkboxes
+                // Check-in date
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tanggal Check-In',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          hiking.checkInDate != null
+                              ? _formatDate(hiking.checkInDate!)
+                              : '-',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Tanggal Check-Out',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          '-',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Guidelines with numbering
                 const Text(
-                  'Perlengkapan Wajib',
+                  'Panduan',
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
-                ...List.generate(
-                  mandatoryItems.length,
-                  (index) => Obx(
-                    () => CheckboxListTile(
-                      title: Text(mandatoryItems[index]),
-                      value: controller.checkboxes[index],
-                      onChanged: (value) =>
-                          controller.toggleCheckbox(index, value),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      dense: true,
-                      activeColor: const Color(0xFF179778),
+                const Text(
+                  '1. Pendaki wajib membawa perlengkapan standar keselamatan, termasuk pakaian hangat, jas hujan, penerangan, serta perbakalan makanan dan minuman.',
+                  style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.5),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '2. Pendaki dilarang membawa senjata tajam, minuman beralkohol, maupun barang berbahaya lainnya yang dapat mengganggu keamanan dan ketertiban.',
+                  style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.5),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '3. Pendaki wajib mematuhi jalur resmi dan arahan petugas, serta melakukan aktivitas di luar jalur pendakian yang telah ditentukan demi menjaga keselamatan diri dan kelestarian alam.',
+                  style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.5),
+                ),
+                const SizedBox(height: 20),
+
+                // Mandatory items checkboxes in grid
+                const Text(
+                  'Barang Wajib',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                ),
+                const SizedBox(height: 12),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  childAspectRatio: 3,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  children: List.generate(
+                    mandatoryItems.length,
+                    (index) => Obx(
+                      () => Row(
+                        children: [
+                          Checkbox(
+                            value: controller.checkboxes[index],
+                            onChanged: (value) =>
+                                controller.toggleCheckbox(index, value),
+                            activeColor: const Color(0xFF179778),
+                          ),
+                          Expanded(
+                            child: Text(
+                              mandatoryItems[index],
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // Your items textbox
                 const Text(
@@ -125,7 +242,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                   controller: controller.itemsController,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: 'Daftar barang bawaan Anda',
+                    hintText: 'List barang bawaan anda!',
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 12,
