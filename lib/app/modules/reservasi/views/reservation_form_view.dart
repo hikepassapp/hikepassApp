@@ -1,24 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
-import '../widgets/continue_button.dart';
 import '../controllers/reservasi_controller.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
-class ReservationFormView extends StatelessWidget {
-  ReservationFormView({super.key});
+class ReservationFormView extends StatefulWidget {
+  const ReservationFormView({super.key});
 
+  @override
+  State<ReservationFormView> createState() => _ReservationFormViewState();
+}
+
+class _ReservationFormViewState extends State<ReservationFormView> {
   final namaController = TextEditingController();
   final nikController = TextEditingController();
-  final jkController = TextEditingController();
   final alamatController = TextEditingController();
   final telpController = TextEditingController();
 
   final selectedCountry = "+62".obs;
   final nationality = "WNI".obs;
   final gender = "".obs;
-  final ReservasiController formC = Get.put(ReservasiController());
+  final ReservasiController formC = Get.find<ReservasiController>();
+
+  int hikerIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args is Map && args['index'] != null) {
+      hikerIndex = args['index'] as int;
+    }
+
+    if (hikerIndex >= 0) {
+      formC.ensureHikersCount(hikerIndex + 1);
+      final existing = formC.getHiker(hikerIndex);
+      if (existing != null && existing.isNotEmpty) {
+        namaController.text = existing['nama']?.toString() ?? '';
+        nikController.text = existing['nik']?.toString() ?? '';
+        gender.value = existing['jenisKelamin']?.toString() ?? '';
+        alamatController.text = existing['alamat']?.toString() ?? '';
+        telpController.text = existing['telepon']?.toString() ?? '';
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    namaController.dispose();
+    nikController.dispose();
+    alamatController.dispose();
+    telpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +91,7 @@ class ReservationFormView extends StatelessWidget {
             _buildNamaSection(),
             _buildNikSection(),
             _buildPhoneSection(),
+            _buildAddressSection(),
             _buildNationalitySection(),
             _buildGenderSection(),
             _buildKtpUploadSection(),
@@ -80,12 +116,40 @@ class ReservationFormView extends StatelessWidget {
             ),
           ],
         ),
-        child: ContinueButton(
-          namaController: namaController,
-          nikController: nikController,
-          jkController: jkController,
-          alamatController: alamatController,
-          telpController: telpController,
+        child: ElevatedButton(
+          onPressed: () {
+            final userData = {
+              'nama': namaController.text,
+              'nik': nikController.text,
+              'jenisKelamin': gender.value,
+              'alamat': alamatController.text,
+              'telepon': telpController.text,
+            };
+
+            if (hikerIndex >= 0) {
+              formC.saveHiker(hikerIndex, userData);
+              Get.back();
+            } else {
+              // fallback: save as first hiker
+              formC.saveHiker(0, userData);
+              Get.back();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 48),
+            backgroundColor: AppColors.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: const Text(
+            'Save',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
         ),
       ),
     );
@@ -149,6 +213,23 @@ class ReservationFormView extends StatelessWidget {
         _buildLabel("No Telepon"),
         _buildPhoneInput(),
         _buildHintText("*Nomor harus terhubung dengan WA"),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildAddressSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel("Alamat"),
+        TextField(
+          controller: alamatController,
+          maxLines: 3,
+          decoration: _inputDecoration().copyWith(
+            hintText: 'Masukan alamat lengkap',
+          ),
+        ),
         const SizedBox(height: 12),
       ],
     );
@@ -359,13 +440,5 @@ class ReservationFormView extends StatelessWidget {
         );
       },
     );
-  }
-
-  void dispose() {
-    namaController.dispose();
-    nikController.dispose();
-    jkController.dispose();
-    alamatController.dispose();
-    telpController.dispose();
   }
 }

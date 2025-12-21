@@ -8,7 +8,7 @@ class PaymentSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Get.arguments as Map<String, dynamic>?;
-    final reservasiC = Get.find<ReservasiController>(); 
+    final reservasiC = Get.find<ReservasiController>();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -26,7 +26,7 @@ class PaymentSuccessView extends StatelessWidget {
             reservasiC.completePayment(data ?? {});
             Get.offAllNamed(
               '/bottom-navigation',
-              arguments: {'initialIndex': 0}, 
+              arguments: {'initialIndex': 0},
             );
           },
         ),
@@ -55,7 +55,7 @@ class PaymentSuccessView extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
-              data?['harga'] ?? 'Rp 15.000',
+              data?['harga']?.toString() ?? 'Rp 15.000',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -109,12 +109,18 @@ class PaymentSuccessView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _infoRow('ID Pesanan', data?['id'] ?? '-'),
-          _infoRow('Nama', data?['nama'] ?? '-'),
-          _infoRow('Total Tiket', data?['total'] ?? '1 Tiket'),
-          _infoRow('Metode Pembayaran', data?['metode'] ?? '-'),
-          _infoRow('Tanggal Pemesanan', data?['tanggal'] ?? '-'),
-          _infoRow('Waktu Pemesanan', data?['waktu'] ?? '-'),
+          _infoRow('ID Pesanan', (data?['id'] ?? '-').toString()),
+          _infoRow('Nama', (data?['nama'] ?? '-').toString()),
+          _infoRow('Jalur', (data?['jalur'] ?? '-').toString()),
+          _infoRow(
+            'Jumlah Tiket',
+            (data?['hikersCount'] != null)
+                ? '${data?['hikersCount'].toString()} Pendaki'
+                : '1 Pendaki',
+          ),
+          _infoRow('Metode Pembayaran', (data?['metode'] ?? '-').toString()),
+          _infoRow('Tanggal Pemesanan', (data?['tanggal'] ?? '-').toString()),
+          _infoRow('Waktu Pemesanan', (data?['waktu'] ?? '-').toString()),
           const Divider(),
           _infoRow('Total', data?['harga'] ?? '-', isBold: true),
         ],

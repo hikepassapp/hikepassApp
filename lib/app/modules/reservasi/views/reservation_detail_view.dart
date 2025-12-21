@@ -83,7 +83,7 @@ class ReservationDetailView extends StatelessWidget {
     );
   }
 
-  // Widget dropdown pos perizinan
+  // Widget dropdown pos perizinan dan entry date selection
   Widget _buildInputSection() {
     final controller = Get.find<ReservasiController>();
     final List<String> posList = ['Cinyiruan', 'Panorama'];
@@ -132,6 +132,66 @@ class ReservationDetailView extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Entry Date Selection
+          const Text(
+            'Tanggal Masuk',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          Obx(
+            () => InkWell(
+              onTap: () async {
+                final pickedDate = await showDatePicker(
+                  context: Get.context!,
+                  initialDate: controller.selectedDate.value ?? DateTime.now(),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (pickedDate != null) {
+                  controller.selectedDate.value = pickedDate;
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      controller.selectedDate.value != null
+                          ? '${controller.selectedDate.value!.day}/${controller.selectedDate.value!.month}/${controller.selectedDate.value!.year}'
+                          : 'Pilih tanggal masuk',
+                      style: TextStyle(
+                        color: controller.selectedDate.value != null
+                            ? Colors.black87
+                            : Colors.grey[400],
+                        fontSize: 14,
+                      ),
+                    ),
+                    Icon(
+                      Icons.calendar_today,
+                      color: Colors.grey[600],
+                      size: 18,
+                    ),
+                  ],
                 ),
               ),
             ),

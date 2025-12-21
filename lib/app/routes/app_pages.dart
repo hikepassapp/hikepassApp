@@ -15,8 +15,13 @@ import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
 import '../modules/bottom_navigation/views/bottom_navigation_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
+// Hiking module imports - check-in/check-out feature
 import '../modules/hiking/bindings/hiking_binding.dart';
+import '../modules/hiking/bindings/checkin_form_binding.dart';
+import '../modules/hiking/bindings/checkout_form_binding.dart';
 import '../modules/hiking/views/hiking_view.dart';
+import '../modules/hiking/views/checkin_form_view.dart';
+import '../modules/hiking/views/checkout_form_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/informasi/bindings/informasi_binding.dart';
@@ -40,6 +45,7 @@ import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
+import '../modules/riwayat/views/riwayat_detail_view.dart';
 import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
 import '../modules/paket/bindings/paket_binding.dart';
@@ -49,7 +55,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.landingScreen;
+  static const initial = Routes.home;
 
   static final routes = [
     GetPage(
@@ -71,6 +77,16 @@ class AppPages {
       name: _Paths.hiking,
       page: () => const HikingView(),
       binding: HikingBinding(),
+    ),
+    GetPage(
+      name: '/hiking/checkin-form',
+      page: () => const CheckInFormView(),
+      binding: CheckInFormBinding(),
+    ),
+    GetPage(
+      name: '/hiking/checkout-form',
+      page: () => const CheckOutFormView(),
+      binding: CheckOutFormBinding(),
     ),
     GetPage(
       name: _Paths.profile,
@@ -95,6 +111,11 @@ class AppPages {
     GetPage(
       name: _Paths.riwayat,
       page: () => const RiwayatView(),
+      binding: RiwayatBinding(),
+    ),
+    GetPage(
+      name: '${_Paths.riwayat}/detail',
+      page: () => const RiwayatDetailView(),
       binding: RiwayatBinding(),
     ),
     GetPage(

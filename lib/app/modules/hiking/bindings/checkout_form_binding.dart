@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
-import '../controllers/reservasi_controller.dart';
 import '../../../services/hiking_service.dart';
+import '../controllers/checkout_form_controller.dart';
 
-class ReservasiBinding extends Bindings {
+class CheckOutFormBinding extends Bindings {
   @override
   void dependencies() {
-    // Ensure HikingService is available for ReservasiController
     if (!Get.isRegistered<HikingService>()) {
       Get.put<HikingService>(HikingService(), permanent: true);
     }
-    Get.put(ReservasiController(), permanent: true);
+
+    Get.lazyPut<CheckOutFormController>(() => CheckOutFormController());
   }
 }
