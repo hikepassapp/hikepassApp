@@ -4,7 +4,6 @@ class ReservasiModel {
   final String mountainName;
   final String hikingTrail;
   final DateTime startDate;
-  final DateTime endDate;
   final String hikerName;
   final String hikerNik;
 
@@ -14,7 +13,6 @@ class ReservasiModel {
     required this.mountainName,
     required this.hikingTrail,
     required this.startDate,
-    required this.endDate,
     required this.hikerName,
     required this.hikerNik,
   });
@@ -25,7 +23,6 @@ class ReservasiModel {
         mountainName: 'Gunung Malabar',
         hikingTrail: 'Jalur Ciniriyuan',
         startDate: DateTime(2025, 12, 21),
-        endDate: DateTime(2025, 12, 23),
         hikerName: 'John Doe',
         hikerNik: '1111111111111111',
       );

@@ -30,7 +30,6 @@ class RiwayatService extends GetxService {
       mountainName: history['mountainName'] ?? '-',
       hikingTrail: history['hikingTrail'] ?? '-',
       startDate: DateTime.tryParse(history['startDate'] ?? '') ?? DateTime.now(),
-      endDate: DateTime.tryParse(history['endDate'] ?? '') ?? DateTime.now(),
       hikerName: history['hikerName'] ?? 'John Doe',
       hikerNik: history['hikerNik'] ?? '1111111111111111',
     );

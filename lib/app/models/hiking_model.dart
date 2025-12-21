@@ -5,7 +5,6 @@ class HikingModel {
   final String mountainName;
   final String hikingTrail;
   final DateTime startDate;
-  final DateTime endDate;
   final DateTime? checkInDate;
   final DateTime? checkOutDate;
   final String? checkInItems;
@@ -21,7 +20,6 @@ class HikingModel {
     required this.mountainName,
     required this.hikingTrail,
     required this.startDate,
-    required this.endDate,
     this.checkInDate,
     this.checkOutDate,
     this.checkInItems,
@@ -39,7 +37,6 @@ class HikingModel {
       mountainName: json['mountainName'] as String,
       hikingTrail: json['hikingTrail'] as String,
       startDate: DateTime.parse(json['startDate'] as String),
-      endDate: DateTime.parse(json['endDate'] as String),
       checkInDate: json['checkInDate'] != null
           ? DateTime.parse(json['checkInDate'] as String)
           : null,
@@ -69,7 +66,6 @@ class HikingModel {
       'mountainName': mountainName,
       'hikingTrail': hikingTrail,
       'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
       'checkInDate': checkInDate?.toIso8601String(),
       'checkOutDate': checkOutDate?.toIso8601String(),
       'checkInItems': checkInItems,
@@ -87,7 +83,6 @@ class HikingModel {
     String? mountainName,
     String? hikingTrail,
     DateTime? startDate,
-    DateTime? endDate,
     DateTime? checkInDate,
     DateTime? checkOutDate,
     String? checkInItems,
@@ -103,7 +98,6 @@ class HikingModel {
       mountainName: mountainName ?? this.mountainName,
       hikingTrail: hikingTrail ?? this.hikingTrail,
       startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
       checkInDate: checkInDate ?? this.checkInDate,
       checkOutDate: checkOutDate ?? this.checkOutDate,
       checkInItems: checkInItems ?? this.checkInItems,
