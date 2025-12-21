@@ -8,7 +8,7 @@ class PaymentSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = Get.arguments as Map<String, dynamic>?;
-    final reservasiC = Get.find<ReservasiController>(); 
+    final reservasiC = Get.find<ReservasiController>();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
@@ -26,7 +26,7 @@ class PaymentSuccessView extends StatelessWidget {
             reservasiC.completePayment(data ?? {});
             Get.offAllNamed(
               '/bottom-navigation',
-              arguments: {'initialIndex': 0}, 
+              arguments: {'initialIndex': 0},
             );
           },
         ),

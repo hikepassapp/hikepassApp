@@ -4,14 +4,41 @@ import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ReservasiController extends GetxController {
-  final reservations = <Map<String, dynamic>>[].obs; 
-  final riwayat = <Map<String, dynamic>>[].obs; 
+  final reservations = <Map<String, dynamic>>[].obs;
+  final riwayat = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
   final selectedPos = ''.obs;
   final ticketCount = 1.obs;
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+  // Per-hiker data stored as a list of maps. Each map stores a hiker's form data.
+  final hikers = <Map<String, dynamic>>[].obs;
+
+  /// Ensure the hikers list has exactly [count] items.
+  /// New entries are empty maps; if larger, the list is truncated.
+  void ensureHikersCount(int count) {
+    if (hikers.length < count) {
+      for (var i = hikers.length; i < count; i++) {
+        hikers.add({});
+      }
+    } else if (hikers.length > count) {
+      hikers.removeRange(count, hikers.length);
+    }
+  }
+
+  /// Save hiker data at [index]. If index is out of range, expands the list.
+  void saveHiker(int index, Map<String, dynamic> data) {
+    if (index < 0) return;
+    ensureHikersCount(index + 1);
+    hikers[index] = data;
+    update();
+  }
+
+  Map<String, dynamic>? getHiker(int index) {
+    if (index < 0 || index >= hikers.length) return null;
+    return hikers[index];
+  }
 
   @override
   void onInit() {
@@ -71,6 +98,7 @@ class ReservasiController extends GetxController {
       ktpImage.value = image;
     }
   }
+
   void completePayment(Map<String, dynamic> data) {
     final now = DateTime.now();
     final formattedDate =
