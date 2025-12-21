@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'dart:typed_data';
-import '../widgets/continue_button.dart';
 import '../controllers/reservasi_controller.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
-class ReservationFormView extends StatelessWidget {
-  ReservationFormView({super.key});
+class ReservationFormView extends StatefulWidget {
+  const ReservationFormView({super.key});
 
+  @override
+  State<ReservationFormView> createState() => _ReservationFormViewState();
+}
+
+class _ReservationFormViewState extends State<ReservationFormView> {
   final namaController = TextEditingController();
   final nikController = TextEditingController();
   final jkController = TextEditingController();
@@ -18,7 +22,40 @@ class ReservationFormView extends StatelessWidget {
   final selectedCountry = "+62".obs;
   final nationality = "WNI".obs;
   final gender = "".obs;
-  final ReservasiController formC = Get.put(ReservasiController());
+  final ReservasiController formC = Get.find<ReservasiController>();
+
+  int hikerIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args is Map && args['index'] != null) {
+      hikerIndex = args['index'] as int;
+    }
+
+    if (hikerIndex >= 0) {
+      formC.ensureHikersCount(hikerIndex + 1);
+      final existing = formC.getHiker(hikerIndex);
+      if (existing != null && existing.isNotEmpty) {
+        namaController.text = existing['nama']?.toString() ?? '';
+        nikController.text = existing['nik']?.toString() ?? '';
+        jkController.text = existing['jenisKelamin']?.toString() ?? '';
+        alamatController.text = existing['alamat']?.toString() ?? '';
+        telpController.text = existing['telepon']?.toString() ?? '';
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    namaController.dispose();
+    nikController.dispose();
+    jkController.dispose();
+    alamatController.dispose();
+    telpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,12 +117,40 @@ class ReservationFormView extends StatelessWidget {
             ),
           ],
         ),
-        child: ContinueButton(
-          namaController: namaController,
-          nikController: nikController,
-          jkController: jkController,
-          alamatController: alamatController,
-          telpController: telpController,
+        child: ElevatedButton(
+          onPressed: () {
+            final userData = {
+              'nama': namaController.text,
+              'nik': nikController.text,
+              'jenisKelamin': jkController.text,
+              'alamat': alamatController.text,
+              'telepon': telpController.text,
+            };
+
+            if (hikerIndex >= 0) {
+              formC.saveHiker(hikerIndex, userData);
+              Get.back();
+            } else {
+              // fallback: save as first hiker
+              formC.saveHiker(0, userData);
+              Get.back();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 48),
+            backgroundColor: AppColors.secondary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: const Text(
+            'Save',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
         ),
       ),
     );
@@ -359,13 +424,5 @@ class ReservationFormView extends StatelessWidget {
         );
       },
     );
-  }
-
-  void dispose() {
-    namaController.dispose();
-    nikController.dispose();
-    jkController.dispose();
-    alamatController.dispose();
-    telpController.dispose();
   }
 }
