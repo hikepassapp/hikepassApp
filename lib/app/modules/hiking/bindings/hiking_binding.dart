@@ -5,8 +5,10 @@ import '../controllers/hiking_controller.dart';
 class HikingBinding extends Bindings {
   @override
   void dependencies() {
-    // Initialize service first
-    Get.lazyPut<HikingService>(() => HikingService(), fenix: true);
+    // Initialize a single persistent service instance
+    if (!Get.isRegistered<HikingService>()) {
+      Get.put<HikingService>(HikingService(), permanent: true);
+    }
 
     // Then initialize controller
     Get.lazyPut<HikingController>(() => HikingController());

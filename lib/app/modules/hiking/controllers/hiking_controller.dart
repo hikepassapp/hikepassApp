@@ -6,6 +6,7 @@ class HikingController extends GetxController {
   final HikingService _hikingService = Get.find<HikingService>();
 
   final tabIndex = 0.obs;
+  bool _routeTabApplied = false;
 
   @override
   void onInit() {
@@ -26,6 +27,16 @@ class HikingController extends GetxController {
 
   void switchTab(int index) {
     if (tabIndex.value != index) tabIndex.value = index;
+  }
+
+  /// Apply tab from current route arguments once (used when returning from forms)
+  void applyRouteTabIfPresent() {
+    if (_routeTabApplied) return;
+    final args = Get.arguments;
+    if (args is Map && args['tab'] is int) {
+      tabIndex.value = args['tab'] as int;
+      _routeTabApplied = true;
+    }
   }
 
   void navigateToCheckIn(HikingModel hiking) {

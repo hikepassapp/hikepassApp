@@ -7,7 +7,7 @@ class CheckInFormBinding extends Bindings {
   void dependencies() {
     // Ensure service is available
     if (!Get.isRegistered<HikingService>()) {
-      Get.lazyPut<HikingService>(() => HikingService(), fenix: true);
+      Get.put<HikingService>(HikingService(), permanent: true);
     }
 
     Get.lazyPut<CheckInFormController>(() => CheckInFormController());
