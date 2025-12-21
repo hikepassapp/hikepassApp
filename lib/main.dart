@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_file.dart';
+import 'package:intl/intl.dart';
 import 'app/routes/app_pages.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'app/config/supabase_config.dart';
@@ -9,7 +11,7 @@ import 'app/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('id_ID', null);
+  await initializeDateFormatting('id_ID','');
   Intl.defaultLocale = 'id_ID';
   await SupabaseConfig.initialize();
   await dotenv.load(fileName: ".env");
@@ -21,9 +23,6 @@ void main() async {
       theme: ThemeData(
         useMaterial3: false,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondary),
-        primaryColor: AppColors.secondary,
-        focusColor: AppColors.secondary,
-        hintColor: AppColors.secondary,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: const AuthCheck(),
@@ -44,7 +43,7 @@ class AuthCheck extends StatelessWidget {
       if (authService.isLoggedIn) {
         Get.offAllNamed('/bottom-navigation');
       } else {
-        Get.offAllNamed('/bottom-navigation');//debug langsung ke home sementara
+        Get.offAllNamed('/landing-screen');
       }
     });
 

@@ -32,8 +32,6 @@ class _ReservationQrisViewState extends State<ReservationQrisView> {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, dynamic>?;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pembayaran - QRIS'),

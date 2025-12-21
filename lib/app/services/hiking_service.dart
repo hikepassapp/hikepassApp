@@ -19,7 +19,7 @@ class HikingService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    print('🏔️ HikingService initialized - Instance: ${hashCode}');
+    print('🏔️ HikingService initialized - Instance: $hashCode');
     // No mock data - start empty until reservations are made
   }
 
@@ -34,7 +34,7 @@ class HikingService extends GetxService {
     print('   - Mountain: $mountainName');
     print('   - Trail: $hikingTrail');
     print('   - Date: $startDate');
-    print('   - Service Instance: ${hashCode}');
+    print('   - Service Instance: $hashCode');
     
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
