@@ -87,11 +87,14 @@ class LaporanView extends GetView<LaporanController> {
               return const SizedBox.shrink();
             }),
             const SizedBox(height: 24),
-            CustomButton(
-              text: 'Kirim',
-              backgroundColor: AppColors.primary,
-              textColor: Colors.white,
-              onPressed: controller.submitLaporan,
+            Obx(
+              () => CustomButton(
+                text: 'Kirim',
+                backgroundColor: AppColors.primary,
+                textColor: Colors.white,
+                isLoading: controller.isLoading.value,
+                onPressed: controller.submitLaporan,
+              ),
             ),
             const SizedBox(height: 24),
           ],

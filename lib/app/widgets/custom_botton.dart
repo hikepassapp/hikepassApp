@@ -6,6 +6,8 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Color backgroundColor;
   final Color textColor;
+  final bool isLoading;
+  final Color? disabledBackgroundColor;
 
   const CustomButton({
     super.key,
@@ -13,6 +15,8 @@ class CustomButton extends StatelessWidget {
     required this.onPressed,
     required this.backgroundColor,
     required this.textColor,
+    required this.isLoading,
+    this.disabledBackgroundColor,
   });
 
   @override
@@ -23,13 +27,23 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
+          disabledBackgroundColor: disabledBackgroundColor ?? Colors.grey[400],
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
-        child: Text(
-          text,
-          style: AppTypography.xlBold.copyWith(color: textColor),
-        ),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: textColor,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                text,
+                style: AppTypography.xlBold.copyWith(color: textColor),
+              ),
       ),
     );
   }
