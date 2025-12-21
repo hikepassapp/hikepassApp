@@ -1,5 +1,3 @@
-// lib/app/modules/register/widgets/custom_button.dart
-
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {

@@ -24,7 +24,7 @@ void main() async {
         hintColor: AppColors.secondary,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: const AuthCheck(), 
+      home: const AuthCheck(),
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
@@ -40,12 +40,9 @@ class AuthCheck extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authService.isLoggedIn) {
-        print('User already logged in: ${authService.currentUser?.email}');
         Get.offAllNamed('/bottom-navigation');
       } else {
-        // User not logged in, go to landing
-        print('No active session, showing landing screen');
-        Get.offAllNamed('/landing-screen');
+        Get.offAllNamed('/bottom-navigation');//debug langsung ke home sementara
       }
     });
 
