@@ -118,15 +118,16 @@ class PaymentPriceSection extends StatelessWidget {
             final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
               'nama': mainHiker,
-              'title': data?['title'] ?? 'Puncak Malabar',
-              'jalur': data?['jalur'] ?? controller.selectedPos.value,
-              'image':
-                  data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
+              'title': data?['title'] ?? '',
+              'jalur': controller.selectedPos.value,
+              'image': data?['imagePath'] ?? '',
               'metode': 'QRIS',
               'tanggal': entryDate,
               'waktu': formattedTime,
-              'harga': data?['harga'] ?? 'Rp 15.000',
+              'harga': _formatRupiah(total),
+              'hargaPerTiket': data?['harga'] ?? '',
               'status': 'Selesai',
+              'hikersCount': controller.ticketCount.value,
             };
 
             // Add to riwayat (history)
