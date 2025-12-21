@@ -32,8 +32,8 @@ class CheckInFormView extends GetView<CheckInFormController> {
           'Formulir Check-In',
           style: TextStyle(
             color: Colors.black,
-            fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
         ),
         centerTitle: true,
@@ -76,7 +76,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                           const Text(
                             'Nama Gunung',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               color: Colors.black54,
                               fontWeight: FontWeight.w500,
                             ),
@@ -85,7 +85,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                           Text(
                             hiking.mountainName,
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -100,7 +100,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                           const Text(
                             'Jalur Pendakian',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               color: Colors.black54,
                               fontWeight: FontWeight.w500,
                             ),
@@ -109,7 +109,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                           Text(
                             hiking.hikingTrail,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -124,50 +124,55 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Tanggal Check-In',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Tanggal Check-In',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          hiking.checkInDate != null
-                              ? _formatDate(hiking.checkInDate!)
-                              : '-',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                          const SizedBox(height: 4),
+                          Text(
+                            hiking.checkInDate != null
+                                ? _formatDate(hiking.checkInDate!)
+                                : '-',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Tanggal Check-Out',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Tanggal Check-Out',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          '-',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black54,
+                          const SizedBox(height: 4),
+                          const Text(
+                            '-',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black54,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -176,7 +181,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 // Guidelines with numbering
                 const Text(
                   'Panduan',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
                 const Text(
@@ -198,7 +203,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 // Mandatory items checkboxes in grid
                 const Text(
                   'Barang Wajib',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 12),
                 GridView.count(
@@ -235,7 +240,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 // Your items textbox
                 const Text(
                   'Barang Bawaan Anda',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 TextField(
@@ -243,6 +248,7 @@ class CheckInFormView extends GetView<CheckInFormController> {
                   maxLines: 4,
                   decoration: InputDecoration(
                     hintText: 'List barang bawaan anda!',
+                    hintStyle: const TextStyle(fontSize: 13),
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 12,

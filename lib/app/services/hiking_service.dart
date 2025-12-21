@@ -31,10 +31,10 @@ class HikingService extends GetxService {
       HikingModel(
         id: 'hiking-001',
         reservasiId: 'reservasi-001',
-        mountainName: 'Puncak Besar Malabar',
+        mountainName: 'Gunung Malabar',
         hikingTrail: 'Jalur Panorama',
-        startDate: DateTime(2025, 11, 4),
-        endDate: DateTime(2025, 11, 5),
+        startDate: DateTime(2025, 12, 21),
+        endDate: DateTime(2025, 12, 23),
         status: HikingStatus.pending,
       ),
     );

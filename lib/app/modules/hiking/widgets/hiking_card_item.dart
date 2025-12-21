@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../../../models/hiking_model.dart';
 import '../controllers/hiking_controller.dart';
 
@@ -9,11 +8,13 @@ class HikingCardItem extends StatelessWidget {
   final HikingModel hiking;
 
   String _formatDate(DateTime start, DateTime end) {
-    String format(DateTime d) {
-      return DateFormat('d MMMM yyyy', 'id_ID').format(d);
+    String fmt(DateTime d) {
+      final day = d.day.toString().padLeft(2, '0');
+      final m = d.month.toString().padLeft(2, '0');
+      final y = d.year.toString();
+      return '$day/$m/$y';
     }
-
-    return '${format(start)} - ${format(end)}';
+    return '${fmt(start)} - ${fmt(end)}';
   }
 
   @override
