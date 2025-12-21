@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
 import '../../../services/hiking_service.dart';
-import '../controllers/hiking_controller.dart';
+import '../controllers/checkin_form_controller.dart';
 
-class HikingBinding extends Bindings {
+class CheckInFormBinding extends Bindings {
   @override
   void dependencies() {
     if (!Get.isRegistered<HikingService>()) {
       Get.put<HikingService>(HikingService(), permanent: true);
     }
 
-    Get.lazyPut<HikingController>(() => HikingController());
+    Get.lazyPut<CheckInFormController>(() => CheckInFormController());
   }
 }

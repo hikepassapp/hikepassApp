@@ -37,12 +37,7 @@ class HikingTabBar extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          tab('Check-In', 0),
-          tab('Check-Out', 1),
-        ],
-      ),
+      child: Row(children: [tab('Check-In', 0), tab('Check-Out', 1)]),
     );
   }
 }

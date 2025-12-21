@@ -14,8 +14,18 @@ class HikingHeader extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           Image.asset(
-            'assets/images/hiking.jpg',
+            'assets/images/hiking/hiking.jpg',
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: const Color(0xFF179778),
+                child: const Icon(
+                  Icons.image,
+                  size: 80,
+                  color: Colors.white,
+                ),
+              );
+            },
           ),
           Container(
             decoration: BoxDecoration(
@@ -26,7 +36,6 @@ class HikingHeader extends StatelessWidget {
               ),
             ),
           ),
-          // Tombol back
           Positioned(
             top: 12,
             left: 12,
@@ -35,7 +44,6 @@ class HikingHeader extends StatelessWidget {
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
-          // Judul
           Align(
             alignment: Alignment.center,
             child: Column(
@@ -55,7 +63,7 @@ class HikingHeader extends StatelessWidget {
                   'Kelola pendakianmu disini!',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
