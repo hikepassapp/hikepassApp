@@ -5,7 +5,6 @@ import '../controllers/checkout_form_controller.dart';
 class CheckOutFormBinding extends Bindings {
   @override
   void dependencies() {
-    // Ensure service is available
     if (!Get.isRegistered<HikingService>()) {
       Get.put<HikingService>(HikingService(), permanent: true);
     }

@@ -13,7 +13,6 @@ class HikingHeader extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // Background image
           Image.asset(
             'assets/images/hiking/hiking.jpg',
             fit: BoxFit.cover,
@@ -28,7 +27,6 @@ class HikingHeader extends StatelessWidget {
               );
             },
           ),
-          // Overlay gelap tipis
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -38,7 +36,6 @@ class HikingHeader extends StatelessWidget {
               ),
             ),
           ),
-          // Tombol back
           Positioned(
             top: 12,
             left: 12,
@@ -47,7 +44,6 @@ class HikingHeader extends StatelessWidget {
               icon: const Icon(Icons.arrow_back, color: Colors.white),
             ),
           ),
-          // Judul
           Align(
             alignment: Alignment.center,
             child: Column(

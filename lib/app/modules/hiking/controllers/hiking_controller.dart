@@ -11,7 +11,6 @@ class HikingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Allow callers to open directly on a specific tab (0 = check-in, 1 = check-out)
     final args = Get.arguments;
     if (args is Map && args['tab'] is int) {
       tabIndex.value = args['tab'] as int;
@@ -29,7 +28,6 @@ class HikingController extends GetxController {
     if (tabIndex.value != index) tabIndex.value = index;
   }
 
-  /// Apply tab from current route arguments once (used when returning from forms)
   void applyRouteTabIfPresent() {
     if (_routeTabApplied) return;
     final args = Get.arguments;

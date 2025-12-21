@@ -1,6 +1,7 @@
 class HikingModel {
   final String id;
   final String reservasiId;
+  final String? paymentId;
   final String mountainName;
   final String hikingTrail;
   final DateTime startDate;
@@ -16,6 +17,7 @@ class HikingModel {
   HikingModel({
     required this.id,
     required this.reservasiId,
+    this.paymentId,
     required this.mountainName,
     required this.hikingTrail,
     required this.startDate,
@@ -33,6 +35,7 @@ class HikingModel {
     return HikingModel(
       id: json['id'] as String,
       reservasiId: json['reservasiId'] as String,
+      paymentId: json['paymentId'] as String?,
       mountainName: json['mountainName'] as String,
       hikingTrail: json['hikingTrail'] as String,
       startDate: DateTime.parse(json['startDate'] as String),
@@ -62,6 +65,7 @@ class HikingModel {
     return {
       'id': id,
       'reservasiId': reservasiId,
+      'paymentId': paymentId,
       'mountainName': mountainName,
       'hikingTrail': hikingTrail,
       'startDate': startDate.toIso8601String(),
@@ -79,6 +83,7 @@ class HikingModel {
   HikingModel copyWith({
     String? id,
     String? reservasiId,
+    String? paymentId,
     String? mountainName,
     String? hikingTrail,
     DateTime? startDate,
@@ -94,6 +99,7 @@ class HikingModel {
     return HikingModel(
       id: id ?? this.id,
       reservasiId: reservasiId ?? this.reservasiId,
+      paymentId: paymentId ?? this.paymentId,
       mountainName: mountainName ?? this.mountainName,
       hikingTrail: hikingTrail ?? this.hikingTrail,
       startDate: startDate ?? this.startDate,

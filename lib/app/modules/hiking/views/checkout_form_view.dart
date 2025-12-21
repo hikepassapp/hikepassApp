@@ -50,7 +50,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Subtitle
                 const Text(
                   'List barang bawaan setelah melakukan pendakian!',
                   style: TextStyle(
@@ -62,7 +61,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Mountain and trail info in two columns
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -117,7 +115,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Check-in and check-out dates
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -177,7 +174,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Guidelines with numbering
                 const Text(
                   'Panduan',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -199,7 +195,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Mandatory items checkboxes in grid
                 const Text(
                   'Barang Wajib',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -233,7 +228,6 @@ class CheckOutFormView extends GetView<CheckOutFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Your items textbox
                 const Text(
                   'Barang Bawaan Anda',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),

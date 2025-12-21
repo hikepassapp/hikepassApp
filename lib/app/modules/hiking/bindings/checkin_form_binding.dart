@@ -5,7 +5,6 @@ import '../controllers/checkin_form_controller.dart';
 class CheckInFormBinding extends Bindings {
   @override
   void dependencies() {
-    // Ensure service is available
     if (!Get.isRegistered<HikingService>()) {
       Get.put<HikingService>(HikingService(), permanent: true);
     }

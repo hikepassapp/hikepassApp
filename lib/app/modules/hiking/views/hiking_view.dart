@@ -17,7 +17,6 @@ class HikingView extends GetView<HikingController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Ensure tab reflects any route argument (e.g., from check-in -> check-out)
             Builder(
               builder: (context) {
                 controller.applyRouteTabIfPresent();

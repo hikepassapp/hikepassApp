@@ -1,13 +1,10 @@
 import 'package:get/get.dart';
 import '../models/hiking_model.dart';
 
-/// Service to manage hiking check-in and check-out operations
-/// Handles business logic for hiking data management
 class HikingService extends GetxService {
-  // Observable list for hiking data
+
   final RxList<HikingModel> _hikingList = <HikingModel>[].obs;
 
-  // Getters for accessing data
   List<HikingModel> get allHikings => _hikingList;
 
   List<HikingModel> get pendingCheckIns =>
@@ -25,12 +22,12 @@ class HikingService extends GetxService {
     _loadMockData();
   }
 
-  /// Load mock data for development and testing
   void _loadMockData() {
     _hikingList.add(
       HikingModel(
         id: 'hiking-001',
         reservasiId: 'reservasi-001',
+        paymentId: 'payment-001',
         mountainName: 'Gunung Malabar',
         hikingTrail: 'Jalur Panorama',
         startDate: DateTime(2025, 12, 21),
@@ -40,10 +37,9 @@ class HikingService extends GetxService {
     );
   }
 
-  /// Create hiking data from reservation (placeholder for future integration)
-  /// This will be connected to the reservation feature later
   HikingModel createFromReservation({
     required String reservasiId,
+    String? paymentId,
     required String mountainName,
     required String hikingTrail,
     required DateTime startDate,
@@ -52,6 +48,7 @@ class HikingService extends GetxService {
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
       reservasiId: reservasiId,
+      paymentId: paymentId,
       mountainName: mountainName,
       hikingTrail: hikingTrail,
       startDate: startDate,
@@ -63,7 +60,6 @@ class HikingService extends GetxService {
     return hiking;
   }
 
-  /// Get hiking by ID
   HikingModel? getHikingById(String id) {
     try {
       return _hikingList.firstWhere((h) => h.id == id);
@@ -72,7 +68,6 @@ class HikingService extends GetxService {
     }
   }
 
-  /// Process initial check-in (save timestamp)
   void processInitialCheckIn(String hikingId) {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
     if (index != -1) {
@@ -82,7 +77,6 @@ class HikingService extends GetxService {
     }
   }
 
-  /// Process check-in form submission
   void processCheckInForm({
     required String hikingId,
     required String checkInItems,
@@ -98,7 +92,6 @@ class HikingService extends GetxService {
     }
   }
 
-  /// Process initial check-out (save timestamp)
   void processInitialCheckOut(String hikingId) {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
     if (index != -1) {
@@ -108,7 +101,6 @@ class HikingService extends GetxService {
     }
   }
 
-  /// Process check-out form submission
   void processCheckOutForm({
     required String hikingId,
     required String checkOutItems,
@@ -124,9 +116,6 @@ class HikingService extends GetxService {
     }
   }
 
-  /// Complete check-out and prepare for history
-  /// This will be integrated with the history feature later
-  /// Returns a map containing all the necessary data for history
   Map<String, dynamic>? completeCheckOut(String hikingId) {
     final hiking = getHikingById(hikingId);
     if (hiking == null ||
@@ -138,6 +127,8 @@ class HikingService extends GetxService {
     final historyData = {
       'id': 'riwayat-${DateTime.now().millisecondsSinceEpoch}',
       'hikingId': hiking.id,
+      'reservasiId': hiking.reservasiId,
+      'paymentId': hiking.paymentId,
       'mountainName': hiking.mountainName,
       'hikingTrail': hiking.hikingTrail,
       'startDate': hiking.startDate.toIso8601String(),
@@ -148,13 +139,11 @@ class HikingService extends GetxService {
       'checkOutItems': hiking.checkOutItems ?? '',
     };
 
-    // Remove from hiking list after completing check-out
     _hikingList.removeWhere((h) => h.id == hikingId);
 
     return historyData;
   }
 
-  /// Clear all data (for testing purposes)
   void clearAll() {
     _hikingList.clear();
   }

@@ -15,7 +15,6 @@ class CheckOutFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get hiking ID from route arguments
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
       final hiking = _hikingService.getHikingById(hikingId);
@@ -24,9 +23,9 @@ class CheckOutFormController extends GetxController {
       }
 
       currentHiking.value = _hikingService.getHikingById(hikingId);
+      
     }
 
-    // Listen to text changes
     itemsController.addListener(() {
       items.value = itemsController.text;
     });
@@ -53,21 +52,18 @@ class CheckOutFormController extends GetxController {
     }
 
     if (currentHiking.value != null) {
-      // Save check-out data
       _hikingService.processCheckOutForm(
         hikingId: currentHiking.value!.id,
         checkOutItems: items.value,
         checkOutCheckboxes: checkboxes.toList(),
       );
 
-      // Complete check-out and prepare history data
       final historyData = _hikingService.completeCheckOut(
         currentHiking.value!.id,
       );
 
       if (historyData != null) {
-        // Navigate to history feature
-        // TODO: Pass historyData to history feature when it's ready
+        
         Get.offAllNamed(Routes.riwayat);
 
         Get.snackbar(
