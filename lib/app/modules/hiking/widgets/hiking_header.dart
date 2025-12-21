@@ -14,10 +14,7 @@ class HikingHeader extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // Background image
-          Image.asset(
-            'assets/images/hiking.jpg',
-            fit: BoxFit.cover,
-          ),
+          Image.asset('assets/images/hiking.jpg', fit: BoxFit.cover),
           // Overlay gelap tipis
           Container(
             decoration: BoxDecoration(
