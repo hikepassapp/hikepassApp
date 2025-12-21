@@ -34,6 +34,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/images/hiking/
 
 flutter_native_splash:
   color: "#093731"
