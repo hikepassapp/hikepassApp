@@ -30,7 +30,6 @@ class AuthService extends GetxService {
       }
     });
   }
-
   // Get user profile
   Future<Map<String, dynamic>?> getUserProfile() async {
     try {
