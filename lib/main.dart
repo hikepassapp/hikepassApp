@@ -10,6 +10,8 @@ import 'app/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
+  Intl.defaultLocale = 'id_ID';
   await SupabaseConfig.initialize();
   Get.put(AuthService());
 

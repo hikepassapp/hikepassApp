@@ -97,50 +97,21 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Get entry date from arguments or controller
-            final entryDate =
-                data?['tanggal'] ??
-                (controller.selectedDate.value != null
-                    ? '${controller.selectedDate.value!.day.toString().padLeft(2, '0')}-${controller.selectedDate.value!.month.toString().padLeft(2, '0')}-${controller.selectedDate.value!.year}'
-                    : '');
-
-            // Format payment time
+            // Create complete ticket data to pass to payment success view
             final now = DateTime.now();
-            final formattedTime =
-                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
-            // Get main hiker (first hiker in list)
-            final mainHiker = controller.hikers.isNotEmpty
-                ? controller.hikers[0]['nama'] ?? 'Pendaki'
-                : 'Pendaki';
-
-            // Create complete ticket data from all previous steps
             final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
-              'nama': mainHiker,
               'title': data?['title'] ?? '',
               'jalur': controller.selectedPos.value,
+              'selectedPos': controller.selectedPos.value,
               'image': data?['imagePath'] ?? '',
-              'metode': 'QRIS',
-              'tanggal': entryDate,
-              'waktu': formattedTime,
+              'imagePath': data?['imagePath'] ?? '',
               'harga': _formatRupiah(total),
               'hargaPerTiket': data?['harga'] ?? '',
-              'status': 'Selesai',
               'hikersCount': controller.ticketCount.value,
             };
 
-            // Add to riwayat (history)
-            controller.riwayat.add(ticketData);
-
-            // Reset form for next reservation
-            controller.selectedDate.value = null;
-            controller.selectedPos.value = '';
-            controller.ticketCount.value = 1;
-            controller.isAgreed.value = false;
-            controller.hikers.clear();
-
-            // Navigate to success page
+            // Navigate to success page - completePayment will be called there
             Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
