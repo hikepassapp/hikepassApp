@@ -8,11 +8,6 @@ class RiwayatService extends GetxService {
 
   List<RiwayatModel> get all => _items;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // No placeholder data - start empty until hikes are completed
-  }
 
   RiwayatModel? getById(String id) {
     try {

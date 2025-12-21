@@ -224,7 +224,7 @@ class RegisterController extends GetxController {
             // Still navigate to OTP page, user can resend after 60 seconds
             Get.toNamed('/register-otp');
           } else {
-            throw otpError;
+            rethrow;
           }
         }
       }
