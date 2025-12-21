@@ -10,6 +10,24 @@ class PaymentPriceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
+    // compute per-ticket price (attempt to parse from data['harga']) and total
+    int _parsePrice(String? priceStr) {
+      if (priceStr == null) return 0;
+      final digits = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
+      if (digits.isEmpty) return 0;
+      return int.tryParse(digits) ?? 0;
+    }
+
+    String _formatRupiah(int value) {
+      if (value <= 0) return 'Rp 0';
+      final s = value.toString();
+      final formatted = s.replaceAllMapped(RegExp(r"\B(?=(\d{3})+(?!\d))"), (m) => '.');
+      return 'Rp $formatted';
+    }
+
+    final perTicket = _parsePrice(data?['harga']?.toString());
+    final total = perTicket * controller.ticketCount.value;
+    final totalStr = _formatRupiah(total);
 
     return Column(
       children: [
@@ -39,7 +57,7 @@ class PaymentPriceSection extends StatelessWidget {
                 ),
               ),
               Text(
-                data?['harga'] ?? 'Rp 15.000',
+                totalStr,
                 style: const TextStyle(
                   color: Color(0xFF2D9F8C),
                   fontWeight: FontWeight.bold,
