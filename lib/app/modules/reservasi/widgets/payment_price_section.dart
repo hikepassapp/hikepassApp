@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
 
 class PaymentPriceSection extends StatelessWidget {
-  const PaymentPriceSection({super.key});
+  final Map<String, dynamic>? data;
+
+  const PaymentPriceSection({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -25,20 +27,20 @@ class PaymentPriceSection extends StatelessWidget {
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Harga Tiket',
-                style: TextStyle(
+                'Harga Tiket (${controller.ticketCount.value} Pendaki)',
+                style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
               Text(
-                'Rp 15.000',
-                style: TextStyle(
+                data?['harga'] ?? 'Rp 15.000',
+                style: const TextStyle(
                   color: Color(0xFF2D9F8C),
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -53,11 +55,12 @@ class PaymentPriceSection extends StatelessWidget {
         // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // ✅ 1. Validasi tanggal
-            if (controller.selectedDate.value == null) {
+            // Validate all required data
+            if ((data == null || data!['tanggal'] == null) &&
+                controller.selectedDate.value == null) {
               Get.snackbar(
                 'Peringatan',
-                'Silakan pilih tanggal pendakian terlebih dahulu!',
+                'Data tanggal tidak lengkap!',
                 backgroundColor: Colors.orange,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.BOTTOM,
@@ -65,41 +68,61 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // ✅ 2. Ambil data & format waktu
+            if (controller.hikers.isEmpty) {
+              Get.snackbar(
+                'Peringatan',
+                'Silakan isi data pendaki terlebih dahulu!',
+                backgroundColor: Colors.orange,
+                colorText: Colors.white,
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              return;
+            }
+
+            // Get entry date from arguments or controller
+            final entryDate =
+                data?['tanggal'] ??
+                (controller.selectedDate.value != null
+                    ? '${controller.selectedDate.value!.day.toString().padLeft(2, '0')}-${controller.selectedDate.value!.month.toString().padLeft(2, '0')}-${controller.selectedDate.value!.year}'
+                    : '');
+
+            // Format payment time
             final now = DateTime.now();
-            final selected = controller.selectedDate.value!;
-            final formattedDate =
-                '${selected.day.toString().padLeft(2, '0')}-${selected.month.toString().padLeft(2, '0')}-${selected.year}';
             final formattedTime =
                 '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-            // ✅ 3. Buat data tiket baru
-            final data = {
+            // Get main hiker (first hiker in list)
+            final mainHiker = controller.hikers.isNotEmpty
+                ? controller.hikers[0]['nama'] ?? 'Pendaki'
+                : 'Pendaki';
+
+            // Create complete ticket data from all previous steps
+            final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
-              'nama': 'Dhea',
-              'title': 'Puncak Besar Malabar',
-              'jalur': controller.selectedPos.value.isNotEmpty
-                  ? controller.selectedPos.value
-                  : 'Panorama',
+              'nama': mainHiker,
+              'title': data?['title'] ?? 'Puncak Malabar',
+              'jalur': data?['jalur'] ?? controller.selectedPos.value,
+              'image':
+                  data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
               'metode': 'QRIS',
-              'tanggal': formattedDate,
+              'tanggal': entryDate,
               'waktu': formattedTime,
-              'harga': 'Rp 15.000',
-              'durasi': '2 Hari',
-              'imagePath': 'assets/images/reservasi_panorama.png',
+              'harga': data?['harga'] ?? 'Rp 15.000',
+              'status': 'Selesai',
             };
 
-            // ✅ 4. Tambahkan ke riwayat (pasti cuma sekali)
-            controller.completePayment(data);
+            // Add to riwayat (history)
+            controller.riwayat.add(ticketData);
 
-            // ✅ 5. Reset form (biar bisa reservasi lagi)
+            // Reset form for next reservation
             controller.selectedDate.value = null;
             controller.selectedPos.value = '';
             controller.ticketCount.value = 1;
             controller.isAgreed.value = false;
+            controller.hikers.clear();
 
-            // ✅ 6. Arahkan ke halaman sukses
-            Get.offNamed('/payment-success', arguments: data);
+            // Navigate to success page
+            Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),
