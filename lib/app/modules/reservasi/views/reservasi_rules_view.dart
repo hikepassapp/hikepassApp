@@ -5,6 +5,7 @@ import '../widgets/confirmation_checkbox_widget.dart';
 import '../widgets/permit_time_widget.dart';
 import '../widgets/rules_header_widget.dart';
 import '../widgets/rules_list_widget.dart';
+import 'hikers_list_view.dart';
 import 'reservation_form_view.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
@@ -84,7 +85,7 @@ class ReservasiRulesView extends GetView<ReservasiController> {
           ),
           child: ElevatedButton(
             onPressed: () {
-              Get.to(() => ReservationFormView(), arguments: data);
+              Get.to(() => const HikersListView(), arguments: data);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.secondary,
