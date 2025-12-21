@@ -10,7 +10,6 @@ class LoginController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final otpController = TextEditingController();
   final newPasswordController = TextEditingController();
   final confirmNewPasswordController = TextEditingController();
   final resetOtpController = TextEditingController();
@@ -21,13 +20,16 @@ class LoginController extends GetxController {
   final isConfirmNewPasswordVisible = false.obs;
   final rememberMe = false.obs;
   final isLoginLoading = false.obs;
-  final isOtpLoading = false.obs;
-  final isOtpValid = false.obs;
-  final otpError = ''.obs;
+  // REMOVED OTP: Comment out OTP-related observables
+  // final isOtpLoading = false.obs;
+  // final isOtpValid = false.obs;
+  // final otpError = ''.obs;
   final isResetLoading = false.obs;
-  final isResetOtpLoading = false.obs;
-  final isResetOtpValid = false.obs;
-  final resetOtpError = ''.obs;
+
+  // OTP resend timer for password reset
+  final resetOtpCountdown = 0.obs;
+  final canResendResetOtp = false.obs;
+  Timer? _resetOtpTimer;
 
   // Password validation for reset
   final hasMinLengthNewPassword = false.obs;
@@ -44,6 +46,22 @@ class LoginController extends GetxController {
     if (Get.arguments != null && Get.arguments['userType'] != null) {
       userType.value = Get.arguments['userType'];
     }
+    // Add listener for new password validation
+    newPasswordController.addListener(validateNewPassword);
+  }
+
+  void startResetOtpTimer() {
+    resetOtpCountdown.value = 60;
+    canResendResetOtp.value = false;
+    _resetOtpTimer?.cancel();
+    _resetOtpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (resetOtpCountdown.value > 0) {
+        resetOtpCountdown.value--;
+      } else {
+        canResendResetOtp.value = true;
+        timer.cancel();
+      }
+    });
   }
 
   // Toggle password visibility for reset
@@ -72,7 +90,8 @@ class LoginController extends GetxController {
         hasNumberNewPassword.value;
   }
 
-  // Send OTP for password reset
+  // REMOVED OTP: Comment out sendResetOtp method
+  /*
   Future<void> sendResetOtp() async {
     final newPassword = newPasswordController.text.trim();
     final confirmPassword = confirmNewPasswordController.text.trim();
@@ -160,8 +179,10 @@ class LoginController extends GetxController {
       isResetLoading.value = false;
     }
   }
+  */
 
-  // Verify OTP and update password
+  // REMOVED OTP: Comment out verifyResetOtp method
+  /*
   Future<void> verifyResetOtp() async {
     final otp = resetOtpController.text.trim();
 
@@ -229,8 +250,10 @@ class LoginController extends GetxController {
       isResetOtpLoading.value = false;
     }
   }
+  */
 
-  // Resend reset OTP
+  // REMOVED OTP: Comment out resendResetOtp method
+  /*
   Future<void> resendResetOtp() async {
     try {
       final email = emailController.text.trim();
@@ -270,6 +293,7 @@ class LoginController extends GetxController {
       );
     }
   }
+  */
 
   // Navigate to reset password page
   void navigateToResetPassword() {
@@ -355,19 +379,226 @@ class LoginController extends GetxController {
     }
   }
 
+  // Direct password reset - now sends OTP
+  Future<void> resetPasswordDirect() async {
+    print('=== START RESET PASSWORD (SEND OTP) ===');
+
+    final email = emailController.text.trim();
+    final newPassword = newPasswordController.text.trim();
+    final confirmPassword = confirmNewPasswordController.text.trim();
+
+    print('Email: $email');
+    print('New Password Length: ${newPassword.length}');
+    print('Confirm Password Length: ${confirmPassword.length}');
+    print('Is Password Strong: $isNewPasswordStrong');
+
+    if (email.isEmpty) {
+      print('ERROR: Email is empty');
+      Get.snackbar(
+        'Error',
+        'Email tidak ditemukan.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      print('ERROR: Password fields are empty');
+      Get.snackbar(
+        'Error',
+        'Password tidak boleh kosong.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
+    if (!isNewPasswordStrong) {
+      print('ERROR: Password not strong enough');
+      print('Min Length: ${hasMinLengthNewPassword.value}');
+      print('Has Uppercase: ${hasUpperCaseNewPassword.value}');
+      print('Has Lowercase: ${hasLowerCaseNewPassword.value}');
+      print('Has Number: ${hasNumberNewPassword.value}');
+      Get.snackbar(
+        'Error',
+        'Password harus minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      print('ERROR: Passwords do not match');
+      Get.snackbar(
+        'Error',
+        'Password tidak sama.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
+    try {
+      isResetLoading.value = true;
+      print('Sending password reset OTP to email...');
+
+      // Send password reset OTP to email
+      await _authService.sendPasswordResetOtp(email: email);
+
+      print('SUCCESS: Password reset link sent to email');
+
+      Get.snackbar(
+        'OTP Terkirim',
+        'Kode OTP telah dikirim ke email Anda. Silakan cek inbox atau folder spam.',
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+        duration: const Duration(seconds: 3),
+      );
+
+      // Start countdown timer
+      startResetOtpTimer();
+
+      // Navigate to OTP verification page
+      Get.toNamed('/login-otp-reset-password');
+    } on AuthException catch (e) {
+      print('=== AUTH EXCEPTION ===');
+      print('Error Message: ${e.message}');
+      print('Error Code: ${e.statusCode}');
+      print('Full Error: $e');
+
+      String errorMessage = 'Gagal mengirim OTP.';
+
+      if (e.message.contains('not found')) {
+        errorMessage = 'Email tidak terdaftar.';
+      } else if (e.message.contains('rate')) {
+        errorMessage = 'Terlalu banyak permintaan. Tunggu beberapa saat.';
+      } else if (e.message.contains('magic link')) {
+        errorMessage =
+            'Gagal mengirim email. Periksa konfigurasi SMTP Anda di Supabase Dashboard → Authentication → Email Templates → SMTP Settings.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        duration: const Duration(seconds: 5),
+      );
+    } catch (e) {
+      print('=== GENERAL EXCEPTION ===');
+      print('Error Type: ${e.runtimeType}');
+      print('Error Details: $e');
+
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan. Silakan coba lagi.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    } finally {
+      isResetLoading.value = false;
+      print('=== END RESET PASSWORD (SEND OTP) ===');
+    }
+  }
+
+  // Verify OTP and update password
+  Future<void> verifyOtpAndResetPassword() async {
+    print('=== START VERIFY OTP AND RESET PASSWORD ===');
+
+    final email = emailController.text.trim();
+    final otp = resetOtpController.text.trim();
+    final newPassword = newPasswordController.text.trim();
+
+    print('Email: $email');
+    print('OTP Length: ${otp.length}');
+
+    if (otp.length != 6) {
+      Get.snackbar(
+        'Error',
+        'Kode OTP harus 6 digit',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
+    try {
+      isResetLoading.value = true;
+
+      // Verify OTP - this creates an authenticated session
+      await _authService.verifyOtp(email: email, token: otp);
+
+      print('OTP verified successfully');
+
+      // Update password using the session created by OTP verification
+      await _authService.updatePassword(newPassword: newPassword);
+
+      print('SUCCESS: Password updated');
+
+      // Stop loading first
+      isResetLoading.value = false;
+
+      // Show success message
+      Get.snackbar(
+        'Berhasil',
+        'Password berhasil direset! Silakan login dengan password baru.',
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+        duration: const Duration(seconds: 2),
+      );
+
+      // Wait briefly for snackbar
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // Delete the current controller to prevent disposal errors
+      Get.delete<LoginController>();
+
+      // Navigate to login with fresh controller
+      Get.offAllNamed('/login');
+    } on AuthException catch (e) {
+      print('=== AUTH EXCEPTION ===');
+      print('Error: ${e.message}');
+
+      String errorMessage = 'Gagal memverifikasi OTP.';
+
+      if (e.message.contains('expired')) {
+        errorMessage = 'Kode OTP sudah expired. Silakan kirim ulang.';
+      } else if (e.message.contains('invalid')) {
+        errorMessage = 'Kode OTP salah. Silakan cek kembali.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    } catch (e) {
+      print('=== GENERAL EXCEPTION ===');
+      print('Error: $e');
+
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan. Silakan coba lagi.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    } finally {
+      isResetLoading.value = false;
+      print('=== END VERIFY OTP AND RESET PASSWORD ===');
+    }
+  }
+
   // Show reset password dialog
   void showResetPasswordDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Reset Password',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -375,10 +606,7 @@ class LoginController extends GetxController {
           children: [
             Text(
               'Kami akan mengirim link reset password ke email:',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
             SizedBox(height: 12),
             Text(
@@ -403,39 +631,35 @@ class LoginController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'Batal',
-              style: TextStyle(
-                color: Colors.grey[600],
+            child: Text('Batal', style: TextStyle(color: Colors.grey[600])),
+          ),
+          Obx(
+            () => ElevatedButton(
+              onPressed: isResetLoading.value ? null : resetPassword,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF26A69A),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
+              child: isResetLoading.value
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text(
+                      'Kirim',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ),
-          Obx(() => ElevatedButton(
-                onPressed: isResetLoading.value ? null : resetPassword,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF26A69A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: isResetLoading.value
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        'Kirim',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-              )),
         ],
       ),
     );
@@ -535,7 +759,7 @@ class LoginController extends GetxController {
         }
 
         debugPrint('✅ Login successful! Navigating to home...');
-        
+
         // Navigate directly to home (skip OTP for now)
         Get.snackbar(
           'Berhasil',
@@ -544,14 +768,14 @@ class LoginController extends GetxController {
           colorText: Colors.green[900],
           duration: const Duration(seconds: 2),
         );
-        
+
         Get.offAllNamed('/bottom-navigation');
       }
     } on AuthException catch (e) {
       debugPrint('=== AUTH EXCEPTION ===');
       debugPrint('Status Code: ${e.statusCode}');
       debugPrint('Message: ${e.message}');
-      
+
       String errorMessage = _handleAuthError(e);
 
       Get.snackbar(
@@ -591,7 +815,8 @@ class LoginController extends GetxController {
     }
   }
 
-  // Send OTP to user's email
+  // REMOVED OTP: Comment out sendOtp method
+  /*
   Future<void> sendOtp() async {
     try {
       final email = emailController.text.trim();
@@ -641,8 +866,10 @@ class LoginController extends GetxController {
       debugPrint('Send OTP error: ${e.toString()}');
     }
   }
+  */
 
-  // Validate OTP input
+  // REMOVED OTP: Comment out validateOtp method
+  /*
   void validateOtp(String otp) {
     if (otp.length == 6) {
       isOtpValid.value = true;
@@ -656,8 +883,10 @@ class LoginController extends GetxController {
       }
     }
   }
+  */
 
-  // Verify OTP (Step 3)
+  // REMOVED OTP: Comment out verifyOtp method
+  /*
   Future<void> verifyOtp() async {
     final email = emailController.text.trim();
     final otp = otpController.text.trim();
@@ -746,8 +975,10 @@ class LoginController extends GetxController {
       isOtpLoading.value = false;
     }
   }
+  */
 
-  // Resend OTP
+  // REMOVED OTP: Comment out resendOtp method
+  /*
   Future<void> resendOtp() async {
     try {
       isOtpLoading.value = true;
@@ -789,6 +1020,7 @@ class LoginController extends GetxController {
       isOtpLoading.value = false;
     }
   }
+  */
 
   // Helper method to handle authentication errors
   String _handleAuthError(AuthException e) {
@@ -819,9 +1051,12 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
+    _resetOtpTimer?.cancel();
     emailController.dispose();
     passwordController.dispose();
-    otpController.dispose();
+    newPasswordController.dispose();
+    confirmNewPasswordController.dispose();
+    resetOtpController.dispose();
     super.onClose();
   }
 }

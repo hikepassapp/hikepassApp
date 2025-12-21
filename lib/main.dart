@@ -25,7 +25,7 @@ void main() async {
         hintColor: AppColors.secondary,
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: const AuthCheck(), // Check auth status first
+      home: const AuthCheck(), 
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),

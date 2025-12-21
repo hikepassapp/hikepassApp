@@ -66,47 +66,50 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
 
           // OTP Input
           Center(
-            child: Obx(
-              () => Pinput(
-                controller: controller.resetOtpController,
-                length: 6,
-                defaultPinTheme: defaultPinTheme,
-                focusedPinTheme: focusedPinTheme,
-                errorPinTheme: errorPinTheme,
-                forceErrorState: controller.resetOtpError.value.isNotEmpty,
-                onChanged: (value) {
-                  controller.resetOtpError.value = '';
-                  if (value.length == 6) {
-                    controller.isResetOtpValid.value = true;
-                  } else {
-                    controller.isResetOtpValid.value = false;
-                  }
-                },
-                pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                showCursor: true,
-                cursor: Container(
-                  width: 2,
-                  height: 24,
-                  color: Color(0xFF26A69A),
-                ),
+            child: Pinput(
+              controller: controller.resetOtpController,
+              length: 6,
+              defaultPinTheme: defaultPinTheme,
+              focusedPinTheme: focusedPinTheme,
+              errorPinTheme: errorPinTheme,
+              onChanged: (value) {
+                if (value.length == 6) {
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+              showCursor: true,
+              cursor: Container(
+                width: 2,
+                height: 24,
+                color: const Color(0xFF26A69A),
               ),
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-          // Error Message
-          Obx(
-            () => controller.resetOtpError.value.isNotEmpty
-                ? Center(
-                    child: Text(
-                      controller.resetOtpError.value,
-                      style: TextStyle(color: Colors.red, fontSize: 12),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : SizedBox.shrink(),
+          // Info Box
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue[200]!),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Jangan bagikan kode ini kepada siapapun',
+                    style: TextStyle(fontSize: 12, color: Colors.blue[900]),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // Resend OTP
           Center(
@@ -117,21 +120,33 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
                   'Tidak menerima kode? ',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
-                GestureDetector(
-                  onTap: controller.resendResetOtp,
-                  child: Text(
-                    'Kirim Ulang',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF26A69A),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                Obx(
+                  () => controller.canResendResetOtp.value
+                      ? GestureDetector(
+                          onTap: () {
+                            controller.resetPasswordDirect();
+                          },
+                          child: const Text(
+                            'Kirim Ulang',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF26A69A),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          'Kirim ulang dalam ${controller.resetOtpCountdown.value}s',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 32),
+          const SizedBox(height: 32),
 
           // Verify Button
           SizedBox(
@@ -139,18 +154,18 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
             height: 50,
             child: Obx(
               () => ElevatedButton(
-                onPressed: controller.isResetOtpLoading.value
+                onPressed: controller.isResetLoading.value
                     ? null
-                    : controller.verifyResetOtp,
+                    : controller.verifyOtpAndResetPassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF26A69A),
+                  backgroundColor: const Color(0xFF26A69A),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 0,
                 ),
-                child: controller.isResetOtpLoading.value
-                    ? SizedBox(
+                child: controller.isResetLoading.value
+                    ? const SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
@@ -160,8 +175,8 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
                           ),
                         ),
                       )
-                    : Text(
-                        'Lanjutkan',
+                    : const Text(
+                        'Verifikasi OTP',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

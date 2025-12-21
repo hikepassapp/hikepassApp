@@ -86,6 +86,7 @@ class AuthService extends GetxService {
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: null, // Don't send confirmation email
       );
 
       print('=== Auth Response ===');
@@ -161,13 +162,20 @@ class AuthService extends GetxService {
     }
   }
 
-  // Send OTP to email
+  // Send OTP to email for registration/login
   Future<void> sendOtpToEmail({required String email}) async {
     try {
-      await _supabase.auth.signInWithOtp(
-        email: email,
-        shouldCreateUser: false, // Don't create user, just send OTP
-      );
+      await _supabase.auth.signInWithOtp(email: email, shouldCreateUser: false);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Send OTP for password reset
+  Future<void> sendPasswordResetOtp({required String email}) async {
+    try {
+      // For password reset, use the same OTP mechanism as login
+      await _supabase.auth.signInWithOtp(email: email, shouldCreateUser: false);
     } catch (e) {
       rethrow;
     }
