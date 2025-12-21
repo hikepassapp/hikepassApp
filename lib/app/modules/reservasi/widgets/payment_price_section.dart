@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
-import '../views/reservation_qris_view.dart';
 
 class PaymentPriceSection extends StatelessWidget {
   final Map<String, dynamic>? data;
@@ -19,7 +18,7 @@ class PaymentPriceSection extends StatelessWidget {
       return int.tryParse(cleaned) ?? 15000;
     }
 
-    String _formatRupiah(int value) {
+    String formatRupiah(int value) {
       final s = value.toString();
       final buffer = StringBuffer();
       int count = 0;
@@ -37,7 +36,7 @@ class PaymentPriceSection extends StatelessWidget {
 
     final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
     final total = perTicket * controller.ticketCount.value;
-    final totalStr = _formatRupiah(total);
+    final totalStr = formatRupiah(total);
 
     return Column(
       children: [
@@ -121,7 +120,7 @@ class PaymentPriceSection extends StatelessWidget {
               'selectedPos': controller.selectedPos.value,
               'image': data?['imagePath'] ?? '',
               'imagePath': data?['imagePath'] ?? '',
-              'harga': _formatRupiah(total),
+              'harga': formatRupiah(total),
               'hargaPerTiket': data?['harga'] ?? '',
               'hikersCount': controller.ticketCount.value,
 
