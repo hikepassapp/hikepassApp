@@ -19,21 +19,8 @@ class HikingService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    _loadMockData();
-  }
-
-  void _loadMockData() {
-    _hikingList.add(
-      HikingModel(
-        id: 'hiking-001',
-        reservasiId: 'reservasi-001',
-        paymentId: 'payment-001',
-        mountainName: 'Gunung Malabar',
-        hikingTrail: 'Jalur Panorama',
-        startDate: DateTime(2025, 12, 21),
-        status: HikingStatus.pending,
-      ),
-    );
+    print('🏔️ HikingService initialized - Instance: ${hashCode}');
+    // No mock data - start empty until reservations are made
   }
 
   HikingModel createFromReservation({
@@ -43,6 +30,12 @@ class HikingService extends GetxService {
     required String hikingTrail,
     required DateTime startDate,
   }) {
+    print('🎫 Creating hiking from reservation:');
+    print('   - Mountain: $mountainName');
+    print('   - Trail: $hikingTrail');
+    print('   - Date: $startDate');
+    print('   - Service Instance: ${hashCode}');
+    
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
       reservasiId: reservasiId,
@@ -54,6 +47,7 @@ class HikingService extends GetxService {
     );
 
     _hikingList.add(hiking);
+    print('✅ Hiking added. Total items: ${_hikingList.length}');
     return hiking;
   }
 

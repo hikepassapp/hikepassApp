@@ -182,58 +182,65 @@ class RiwayatDetailView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Nama Pendaki',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                    ...item.reservasi.hikers.asMap().entries.map((entry) {
+                      final index = entry.key + 1;
+                      final hiker = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Pendaki $index',
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    hiker.name,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.reservasi.hikerName,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'NIK',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    hiker.nik,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'NIK',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.reservasi.hikerNik,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    }).toList(),
                     const SizedBox(height: 24),
 
                     // Detail Pembayaran Section
@@ -277,7 +284,7 @@ class RiwayatDetailView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Total Pembayaran',
+                                'Tanggal Pembayaran',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.black54,
@@ -286,7 +293,7 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                item.payment == null ? '-' : 'Rp.${item.payment!.total}',
+                                _formatDate(item.payment?.date, withTime: true),
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -306,7 +313,7 @@ class RiwayatDetailView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Tanggal Pembayaran',
+                                'Total Tiket',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.black54,
@@ -315,7 +322,31 @@ class RiwayatDetailView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                _formatDate(item.payment?.date, withTime: true),
+                                item.reservasi.totalTickets.toString(),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Total Pembayaran',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                item.payment == null ? '-' : 'Rp.${item.payment!.total}',
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,

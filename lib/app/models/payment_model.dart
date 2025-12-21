@@ -3,7 +3,7 @@ enum PaymentStatus { waiting, paid }
 class PaymentModel {
   final String id;
   final String code; // Payment code
-  final int total; // in IDR
+  final int total; // Total payment in IDR (ticket price × total tickets)
   final DateTime date;
   final PaymentStatus status;
 
@@ -21,5 +21,13 @@ class PaymentModel {
         total: 15000,
         date: DateTime(2025, 12, 20, 17, 0),
         status: PaymentStatus.paid,
+      );
+
+  factory PaymentModel.placeholderWaiting() => PaymentModel(
+        id: 'payment-002',
+        code: 'PAY-002',
+        total: 30000,
+        date: DateTime.now(),
+        status: PaymentStatus.waiting,
       );
 }

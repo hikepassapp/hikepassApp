@@ -109,56 +109,22 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Get entry date from arguments or controller
-            final entryDate =
-                data?['tanggal'] ??
-                (controller.selectedDate.value != null
-                    ? '${controller.selectedDate.value!.day.toString().padLeft(2, '0')}-${controller.selectedDate.value!.month.toString().padLeft(2, '0')}-${controller.selectedDate.value!.year}'
-                    : '');
-
-            // Format payment time
+            // Create complete ticket data to pass to payment success view
             final now = DateTime.now();
-            final formattedTime =
-                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
-            // Get main hiker (first hiker in list)
-            final mainHiker = controller.hikers.isNotEmpty
-                ? controller.hikers[0]['nama'] ?? 'Pendaki'
-                : 'Pendaki';
-
-            // Create complete ticket data from all previous steps
-            // Prefer controller.selectedPos as the single source of truth for the selected route.
-            final selectedJalur = (controller.selectedPos.value != null && controller.selectedPos.value.isNotEmpty)
-                ? controller.selectedPos.value
-                : (data?['jalur']?.toString() ?? '');
-
             final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
-              'nama': mainHiker,
-              'title': data?['title'] ?? 'Puncak Malabar',
-              'jalur': selectedJalur,
-              'image': data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
-              'metode': 'QRIS',
-              'tanggal': entryDate,
-              'waktu': formattedTime,
-              'harga': totalStr,
+              'title': data?['title'] ?? '',
+              'jalur': controller.selectedPos.value,
+              'selectedPos': controller.selectedPos.value,
+              'image': data?['imagePath'] ?? '',
+              'imagePath': data?['imagePath'] ?? '',
+              'harga': _formatRupiah(total),
+              'hargaPerTiket': data?['harga'] ?? '',
               'hikersCount': controller.ticketCount.value,
-              'status': 'Selesai',
             };
 
-            // Add to riwayat (history)
-            controller.riwayat.add(ticketData);
-
-            // Reset form for next reservation
-            controller.selectedDate.value = null;
-            controller.selectedPos.value = '';
-            controller.ticketCount.value = 1;
-            controller.isAgreed.value = false;
-            controller.hikers.clear();
-
-            // Navigate to QRIS payment simulation screen first,
-            // then that screen will forward to the success page after a short delay.
-            Get.to(() => const ReservationQrisView(), arguments: ticketData);
+            // Navigate to success page - completePayment will be called there
+            Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),

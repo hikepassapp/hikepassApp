@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../services/hiking_service.dart';
 
 class ReservasiController extends GetxController {
+  late final HikingService _hikingService;
   final reservations = <Map<String, dynamic>>[].obs;
   final riwayat = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
@@ -43,6 +45,9 @@ class ReservasiController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _hikingService = Get.find<HikingService>();
+    print('🎟️ ReservasiController initialized');
+    print('   - HikingService instance: ${_hikingService.hashCode}');
     loadReservations();
   }
 
@@ -101,45 +106,44 @@ class ReservasiController extends GetxController {
 
   void completePayment(Map<String, dynamic> data) {
     final now = DateTime.now();
-    final formattedDate =
-        "${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}";
-    final formattedTime =
-        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-
-    final riwayatItem = {
-      'id': (data['id'] ?? 'D${now.millisecondsSinceEpoch}').toString(),
-      'nama': data['nama']?.toString() ?? 'Pendaki',
-      'jalur':
-          (data['selectedPos'] ??
-                  data['jalur'] ??
-                  data['title'] ??
-                  'Jalur Panorama')
-              .toString(),
-      'tanggal': formattedDate,
-      'waktu': formattedTime,
-      'image': (data['imagePath'] ?? 'assets/images/reservasi_panorama.png')
-          .toString(),
-      'harga': (data['harga'] ?? 'Rp 15.000').toString(),
-      'status': 'Selesai',
-    };
-
-    if (!riwayat.any((r) => r['id'] == riwayatItem['id'])) {
-      riwayat.add(riwayatItem);
-    }
-
+    
+    print('💳 CompletePayment called with data: $data');
+    print('   - selectedDate: ${selectedDate.value}');
+    print('   - selectedPos: ${selectedPos.value}');
+    
+    // Extract reservation data
+    final reservasiId = data['id']?.toString() ?? 'R${now.millisecondsSinceEpoch}';
+    final mountainName = (data['title'] ?? 'Puncak Besar Malabar').toString();
+    final jalur = (data['selectedPos'] ?? data['jalur'] ?? 'Jalur Panorama').toString();
+    final startDate = selectedDate.value ?? now;
+    
+    print('   - Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
+    
+    // Create hiking session from reservation using HikingService
+    _hikingService.createFromReservation(
+      reservasiId: reservasiId,
+      mountainName: mountainName,
+      hikingTrail: jalur,
+      startDate: startDate,
+    );
+    
+    // Reset form
     resetTicketCount();
     selectedDate.value = null;
     selectedPos.value = '';
     isAgreed.value = false;
+    hikers.clear();
+    ktpImage.value = null;
 
     update();
 
     Get.snackbar(
       'Pembayaran Berhasil',
-      'Tiket telah ditambahkan ke Riwayat Pembayaran',
+      'Tiket telah ditambahkan. Silakan lakukan check-in di pendakian.',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green.shade600,
       colorText: Colors.white,
+      duration: const Duration(seconds: 4),
     );
   }
 }
