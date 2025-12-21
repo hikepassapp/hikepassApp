@@ -63,7 +63,7 @@ class HikingHeader extends StatelessWidget {
                   'Kelola pendakianmu disini!',
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                   ),
                 ),

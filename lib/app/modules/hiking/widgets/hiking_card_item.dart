@@ -36,12 +36,21 @@ class HikingCardItem extends StatelessWidget {
               height: 96,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: const Color(0xFF179778).withOpacity(0.1),
               ),
-              child: const Icon(
-                Icons.landscape,
-                size: 48,
-                color: Color(0xFF179778),
+              clipBehavior: Clip.antiAlias,
+              child: Image.asset(
+                'assets/images/hiking/hiking.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: const Color(0xFF179778).withOpacity(0.1),
+                    child: const Icon(
+                      Icons.landscape,
+                      size: 48,
+                      color: Color(0xFF179778),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),
@@ -72,7 +81,7 @@ class HikingCardItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     _formatDate(hiking.startDate, hiking.endDate),
-                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                   const SizedBox(height: 8),
                   Align(
