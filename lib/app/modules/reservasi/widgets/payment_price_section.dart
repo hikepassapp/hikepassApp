@@ -10,7 +10,8 @@ class PaymentPriceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
-    int parsePrice(String? priceStr) {
+
+    int _parsePrice(String? priceStr) {
       if (priceStr == null) return 15000;
       final cleaned = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
       if (cleaned.isEmpty) return 15000;
@@ -33,8 +34,7 @@ class PaymentPriceSection extends StatelessWidget {
       return 'Rp $reversed';
     }
 
-    // Compute per-ticket and total price based on reservation data and ticket count
-    final perTicket = parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
+    final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
     final total = perTicket * controller.ticketCount.value;
     final totalStr = formatRupiah(total);
 
@@ -82,7 +82,6 @@ class PaymentPriceSection extends StatelessWidget {
         // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // Validate all required data
             if ((data == null || data!['tanggal'] == null) &&
                 controller.selectedDate.value == null) {
               Get.snackbar(
@@ -106,10 +105,16 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Create complete ticket data to pass to payment success view
             final now = DateTime.now();
+            final mainHiker = controller.hikers.isNotEmpty
+                ? controller.hikers[0]['nama'] ?? 'Pendaki'
+                : 'Pendaki';
+
+            final reservationCode = controller.generateReservationCode();
+            
             final ticketData = {
-              'id': 'D${now.millisecondsSinceEpoch}',
+              'id': reservationCode,
+              'reservationCode': reservationCode,
               'title': data?['title'] ?? '',
               'jalur': controller.selectedPos.value,
               'selectedPos': controller.selectedPos.value,
@@ -118,9 +123,13 @@ class PaymentPriceSection extends StatelessWidget {
               'harga': formatRupiah(total),
               'hargaPerTiket': data?['harga'] ?? '',
               'hikersCount': controller.ticketCount.value,
+
+              'nama': mainHiker,
+              'metode': 'QRIS',
+              'tanggal': '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
+              'waktu': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
-            // Navigate to success page - completePayment will be called there
             Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(

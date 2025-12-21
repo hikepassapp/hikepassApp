@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../views/reservation_detail_view.dart';
@@ -14,11 +15,9 @@ class ReservasiController extends GetxController {
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
-  // Per-hiker data stored as a list of maps. Each map stores a hiker's form data.
+
   final hikers = <Map<String, dynamic>>[].obs;
 
-  /// Ensure the hikers list has exactly [count] items.
-  /// New entries are empty maps; if larger, the list is truncated.
   void ensureHikersCount(int count) {
     if (hikers.length < count) {
       for (var i = hikers.length; i < count; i++) {
@@ -29,7 +28,6 @@ class ReservasiController extends GetxController {
     }
   }
 
-  /// Save hiker data at [index]. If index is out of range, expands the list.
   void saveHiker(int index, Map<String, dynamic> data) {
     if (index < 0) return;
     ensureHikersCount(index + 1);
@@ -46,8 +44,8 @@ class ReservasiController extends GetxController {
   void onInit() {
     super.onInit();
     _hikingService = Get.find<HikingService>();
-    print('🎟️ ReservasiController initialized');
-    print('   - HikingService instance: ${_hikingService.hashCode}');
+    print('ReservasiController initialized');
+    print('HikingService instance: ${_hikingService.hashCode}');
     loadReservations();
   }
 
@@ -74,6 +72,11 @@ class ReservasiController extends GetxController {
   }
 
   void toggleAgreement(bool? value) => isAgreed.value = value ?? false;
+
+  String generateReservationCode() {
+    final rand = Random().nextInt(900000) + 100000;
+    return 'RSV-$rand';
+  }
 
   void incrementTicket() {
     if (ticketCount.value < 8) ticketCount.value++;
@@ -107,27 +110,49 @@ class ReservasiController extends GetxController {
   void completePayment(Map<String, dynamic> data) {
     final now = DateTime.now();
     
-    print('💳 CompletePayment called with data: $data');
-    print('   - selectedDate: ${selectedDate.value}');
-    print('   - selectedPos: ${selectedPos.value}');
-    
-    // Extract reservation data
-    final reservasiId = data['id']?.toString() ?? 'R${now.millisecondsSinceEpoch}';
-    final mountainName = (data['title'] ?? 'Puncak Besar Malabar').toString();
-    final jalur = (data['selectedPos'] ?? data['jalur'] ?? 'Jalur Panorama').toString();
+    print('CompletePayment called with data: $data');
+    print('selectedDate: ${selectedDate.value}');
+    print('selectedPos: ${selectedPos.value}');
+
+    final reservasiCode = data['reservationCode']?.toString() ?? data['id']?.toString() ?? generateReservationCode();
+    final reservasiId = 'R${now.millisecondsSinceEpoch}';
+    final mountainName = (data['title'] ?? data['mountainName'] ?? 'Puncak Besar Malabar').toString();
+    final jalur = (data['selectedPos'] ?? data['jalur'] ?? data['hikingTrail'] ?? 'Jalur Panorama').toString();
     final startDate = selectedDate.value ?? now;
     
-    print('   - Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
-    
-    // Create hiking session from reservation using HikingService
+    print('Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
+
     _hikingService.createFromReservation(
       reservasiId: reservasiId,
       mountainName: mountainName,
       hikingTrail: jalur,
       startDate: startDate,
     );
+  
+    final payRand = Random().nextInt(900000) + 100000;
+    final paymentCode = 'PAY-$payRand';
+    final totalPrice = ticketCount.value * 15000;
     
-    // Reset form
+    riwayat.add({
+      'id': reservasiId,
+      'code': reservasiCode,
+      'mountainName': mountainName,
+      'hikingTrail': jalur,
+      'startDate': startDate,
+      'paymentStatus': 'Lunas',
+      'hikingStatus': 'Menunggu',
+      'paymentCode': paymentCode,
+      'paymentDate': now,
+    
+      'ticketCount': ticketCount.value,
+      'ticketPrice': 15000,
+      'totalPrice': totalPrice,
+      'hikers': hikers.map((h) => {
+        'name': h['nama'] ?? '-',
+        'nik': h['nik'] ?? '-',
+      }).toList(),
+    });
+
     resetTicketCount();
     selectedDate.value = null;
     selectedPos.value = '';
