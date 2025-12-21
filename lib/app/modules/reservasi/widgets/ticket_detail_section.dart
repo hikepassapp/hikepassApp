@@ -2,61 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
 
-class TicketDetailSection extends StatefulWidget {
-  const TicketDetailSection({super.key});
+class TicketDetailSection extends StatelessWidget {
+  final Map<String, dynamic>? data;
 
-  @override
-  State<TicketDetailSection> createState() => _TicketDetailSectionState();
-}
-
-class _TicketDetailSectionState extends State<TicketDetailSection> {
-  late final ReservasiController controller;
-  DateTime? selectedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    // pastikan controller diinisialisasi dengan aman
-    controller = Get.find<ReservasiController>();
-    selectedDate = controller.selectedDate.value;
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime now = DateTime.now();
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? now,
-      firstDate: now,
-      lastDate: DateTime(now.year, now.month + 3),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFF2D9F8C),
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-      controller.setSelectedDate(picked); // simpan ke controller
-    }
-  }
+  const TicketDetailSection({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<ReservasiController>();
+
+    // Get entry date from arguments or controller
+    String displayDate = 'Tidak ditentukan';
+    if (data != null && data!['tanggal'] != null) {
+      displayDate = data!['tanggal'].toString();
+    } else if (controller.selectedDate.value != null) {
+      final date = controller.selectedDate.value!;
+      displayDate =
+          '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}';
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Detail Tiket',
+          'Tanggal Masuk',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 12),
@@ -76,20 +45,16 @@ class _TicketDetailSectionState extends State<TicketDetailSection> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // tampilkan tanggal terpilih
+              // Display date as read-only
               Text(
-                selectedDate == null
-                    ? 'Pilih tanggal pendakian'
-                    : '${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}',
+                displayDate,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
+                  fontSize: 14,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.calendar_today, color: Colors.grey),
-                onPressed: () => _selectDate(context),
-              ),
+              const Icon(Icons.calendar_today, color: Colors.grey),
             ],
           ),
         ),

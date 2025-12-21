@@ -43,11 +43,13 @@ class TicketSummaryCard extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'LMDH',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                Text(
+                  data?['subtitle'] ?? 'LMDH',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
               ],
             ),
