@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
+import '../../../services/riwayat_service.dart';
 
 class CheckOutFormController extends GetxController {
   final HikingService _hikingService = Get.find<HikingService>();
@@ -63,7 +64,12 @@ class CheckOutFormController extends GetxController {
       );
 
       if (historyData != null) {
-        
+        // Ensure RiwayatService available then store the new history item
+        final riwayatService = Get.isRegistered<RiwayatService>()
+            ? Get.find<RiwayatService>()
+            : Get.put(RiwayatService(), permanent: true);
+        riwayatService.addFromHikingHistory(historyData);
+
         Get.offAllNamed(Routes.riwayat);
 
         Get.snackbar(

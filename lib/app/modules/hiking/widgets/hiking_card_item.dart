@@ -64,7 +64,7 @@ class HikingCardItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -81,9 +81,12 @@ class HikingCardItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     _formatDate(hiking.startDate, hiking.endDate),
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    style: const TextStyle(
+                      fontSize: 13, 
+                      fontWeight: FontWeight.w500, 
+                      color: Colors.black54),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: ElevatedButton(
@@ -109,8 +112,8 @@ class HikingCardItem extends StatelessWidget {
                         isCheckIn ? 'Check-In' : 'Check-Out',
                         style: const TextStyle(
                           fontSize: 13,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
