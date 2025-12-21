@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/intl.dart';
 import 'app/routes/app_pages.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
@@ -11,11 +10,14 @@ import 'app/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('id_ID','');
   Intl.defaultLocale = 'id_ID';
   await SupabaseConfig.initialize();
   await dotenv.load(fileName: ".env");
-  Get.put(AuthService());
+  final authService = Get.put(AuthService());
+  await Future.delayed(const Duration(milliseconds: 100));
+  final initialRoute = authService.isLoggedIn
+      ? Routes.bottomNavigation
+      : Routes.landingScreen;
 
   runApp(
     GetMaterialApp(
@@ -25,43 +27,9 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondary),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      home: const AuthCheck(),
+      initialRoute: initialRoute,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
   );
-}
-
-class AuthCheck extends StatelessWidget {
-  const AuthCheck({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authService = Get.find<AuthService>();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authService.isLoggedIn) {
-        Get.offAllNamed('/bottom-navigation');
-      } else {
-        Get.offAllNamed('/landing-screen');
-      }
-    });
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(color: AppColors.secondary),
-            SizedBox(height: 16),
-            Text(
-              'Loading...',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
