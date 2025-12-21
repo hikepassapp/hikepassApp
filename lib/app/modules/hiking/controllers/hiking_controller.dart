@@ -7,6 +7,16 @@ class HikingController extends GetxController {
 
   final tabIndex = 0.obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    // Allow callers to open directly on a specific tab (0 = check-in, 1 = check-out)
+    final args = Get.arguments;
+    if (args is Map && args['tab'] is int) {
+      tabIndex.value = args['tab'] as int;
+    }
+  }
+
   List<HikingModel> get pendingCheckIns => _hikingService.pendingCheckIns;
   List<HikingModel> get checkedIns => _hikingService.checkedIns;
 
@@ -19,10 +29,12 @@ class HikingController extends GetxController {
   }
 
   void navigateToCheckIn(HikingModel hiking) {
-    Get.toNamed('/hiking/initial-checkin', arguments: hiking.id);
+    _hikingService.processInitialCheckIn(hiking.id);
+    Get.toNamed('/hiking/checkin-form', arguments: hiking.id);
   }
 
   void navigateToCheckOut(HikingModel hiking) {
-    Get.toNamed('/hiking/initial-checkout', arguments: hiking.id);
+    _hikingService.processInitialCheckOut(hiking.id);
+    Get.toNamed('/hiking/checkout-form', arguments: hiking.id);
   }
 }

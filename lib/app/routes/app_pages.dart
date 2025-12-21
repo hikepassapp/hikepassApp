@@ -16,14 +16,10 @@ import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 // Hiking module imports - check-in/check-out feature
 import '../modules/hiking/bindings/hiking_binding.dart';
-import '../modules/hiking/bindings/initial_checkin_binding.dart';
 import '../modules/hiking/bindings/checkin_form_binding.dart';
-import '../modules/hiking/bindings/initial_checkout_binding.dart';
 import '../modules/hiking/bindings/checkout_form_binding.dart';
 import '../modules/hiking/views/hiking_view.dart';
-import '../modules/hiking/views/initial_checkin_view.dart';
 import '../modules/hiking/views/checkin_form_view.dart';
-import '../modules/hiking/views/initial_checkout_view.dart';
 import '../modules/hiking/views/checkout_form_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -81,19 +77,9 @@ class AppPages {
       binding: HikingBinding(),
     ),
     GetPage(
-      name: '/hiking/initial-checkin',
-      page: () => const InitialCheckInView(),
-      binding: InitialCheckInBinding(),
-    ),
-    GetPage(
       name: '/hiking/checkin-form',
       page: () => const CheckInFormView(),
       binding: CheckInFormBinding(),
-    ),
-    GetPage(
-      name: '/hiking/initial-checkout',
-      page: () => const InitialCheckOutView(),
-      binding: InitialCheckOutBinding(),
     ),
     GetPage(
       name: '/hiking/checkout-form',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
 
@@ -17,6 +18,11 @@ class CheckInFormController extends GetxController {
     // Get hiking ID from route arguments
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
+      final hiking = _hikingService.getHikingById(hikingId);
+      if (hiking != null && hiking.checkInDate == null) {
+        _hikingService.processInitialCheckIn(hikingId);
+      }
+
       currentHiking.value = _hikingService.getHikingById(hikingId);
     }
 
@@ -54,10 +60,10 @@ class CheckInFormController extends GetxController {
         checkInCheckboxes: checkboxes.toList(),
       );
 
-      // Navigate to initial check-out page
-      Get.offNamed(
-        '/hiking/initial-checkout',
-        arguments: currentHiking.value!.id,
+      // Return to hiking list on Check-Out tab
+      Get.offAllNamed(
+        Routes.hiking,
+        arguments: {'tab': 1},
       );
 
       Get.snackbar(
