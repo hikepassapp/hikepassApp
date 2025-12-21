@@ -15,7 +15,6 @@ class ReservationFormView extends StatefulWidget {
 class _ReservationFormViewState extends State<ReservationFormView> {
   final namaController = TextEditingController();
   final nikController = TextEditingController();
-  final jkController = TextEditingController();
   final alamatController = TextEditingController();
   final telpController = TextEditingController();
 
@@ -40,7 +39,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       if (existing != null && existing.isNotEmpty) {
         namaController.text = existing['nama']?.toString() ?? '';
         nikController.text = existing['nik']?.toString() ?? '';
-        jkController.text = existing['jenisKelamin']?.toString() ?? '';
+        gender.value = existing['jenisKelamin']?.toString() ?? '';
         alamatController.text = existing['alamat']?.toString() ?? '';
         telpController.text = existing['telepon']?.toString() ?? '';
       }
@@ -51,7 +50,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
   void dispose() {
     namaController.dispose();
     nikController.dispose();
-    jkController.dispose();
     alamatController.dispose();
     telpController.dispose();
     super.dispose();
@@ -93,6 +91,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
             _buildNamaSection(),
             _buildNikSection(),
             _buildPhoneSection(),
+            _buildAddressSection(),
             _buildNationalitySection(),
             _buildGenderSection(),
             _buildKtpUploadSection(),
@@ -122,7 +121,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
             final userData = {
               'nama': namaController.text,
               'nik': nikController.text,
-              'jenisKelamin': jkController.text,
+              'jenisKelamin': gender.value,
               'alamat': alamatController.text,
               'telepon': telpController.text,
             };
@@ -214,6 +213,23 @@ class _ReservationFormViewState extends State<ReservationFormView> {
         _buildLabel("No Telepon"),
         _buildPhoneInput(),
         _buildHintText("*Nomor harus terhubung dengan WA"),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildAddressSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLabel("Alamat"),
+        TextField(
+          controller: alamatController,
+          maxLines: 3,
+          decoration: _inputDecoration().copyWith(
+            hintText: 'Masukan alamat lengkap',
+          ),
+        ),
         const SizedBox(height: 12),
       ],
     );

@@ -6,7 +6,7 @@ import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 class ContinueButton extends StatelessWidget {
   final TextEditingController namaController;
   final TextEditingController nikController;
-  final TextEditingController jkController;
+  final String jkValue;
   final TextEditingController alamatController;
   final TextEditingController telpController;
 
@@ -14,7 +14,7 @@ class ContinueButton extends StatelessWidget {
     super.key,
     required this.namaController,
     required this.nikController,
-    required this.jkController,
+    required this.jkValue,
     required this.alamatController,
     required this.telpController,
   });
@@ -26,7 +26,7 @@ class ContinueButton extends StatelessWidget {
         final userData = {
           'nama': namaController.text,
           'nik': nikController.text,
-          'jenisKelamin': jkController.text,
+          'jenisKelamin': jkValue,
           'alamat': alamatController.text,
           'telepon': telpController.text,
           'jalur': 'Jalur Panorama',

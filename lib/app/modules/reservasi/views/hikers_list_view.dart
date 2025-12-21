@@ -110,7 +110,44 @@ class HikersListView extends GetView<ReservasiController> {
                 ),
               ),
               onPressed: () {
-                // Navigate to reservation payment page with current reservation data
+                // Validate that all hikers have required data before continuing
+                final count = controller.ticketCount.value;
+                controller.ensureHikersCount(count);
+                int firstIncomplete = -1;
+                for (var i = 0; i < count; i++) {
+                  final h = controller.getHiker(i) ?? {};
+                  if ((h['nama'] == null ||
+                          (h['nama'] as String).trim().isEmpty) ||
+                      (h['nik'] == null ||
+                          (h['nik'] as String).trim().isEmpty) ||
+                      (h['jenisKelamin'] == null ||
+                          (h['jenisKelamin'] as String).trim().isEmpty) ||
+                      (h['alamat'] == null ||
+                          (h['alamat'] as String).trim().isEmpty) ||
+                      (h['telepon'] == null ||
+                          (h['telepon'] as String).trim().isEmpty)) {
+                    firstIncomplete = i;
+                    break;
+                  }
+                }
+
+                if (firstIncomplete >= 0) {
+                  Get.snackbar(
+                    'Data belum lengkap',
+                    'Silakan lengkapi data untuk Pendaki ${firstIncomplete + 1}',
+                    backgroundColor: Colors.orange,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                  // Open the form for the first incomplete hiker
+                  Get.to(
+                    () => ReservationFormView(),
+                    arguments: {'index': firstIncomplete, 'reservation': data},
+                  );
+                  return;
+                }
+
+                // All hikers complete — navigate to payment page with reservation data
                 Get.toNamed('/reservation-payment', arguments: data);
               },
               child: const Text(
