@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/riwayat_service.dart';
-import '../../../models/riwayat_model.dart';
 
 class RiwayatDetailView extends StatelessWidget {
   const RiwayatDetailView({super.key});
