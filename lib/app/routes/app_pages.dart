@@ -44,6 +44,7 @@ import '../modules/reservasi/bindings/reservasi_binding.dart';
 import '../modules/reservasi/views/reservasi_view.dart';
 import '../modules/riwayat/bindings/riwayat_binding.dart';
 import '../modules/riwayat/views/riwayat_view.dart';
+import '../modules/riwayat/views/riwayat_detail_view.dart';
 import '../modules/roleSelection/bindings/role_selection_binding.dart';
 import '../modules/roleSelection/views/role_selection_view.dart';
 import '../modules/paket/bindings/paket_binding.dart';
@@ -109,6 +110,11 @@ class AppPages {
     GetPage(
       name: _Paths.riwayat,
       page: () => const RiwayatView(),
+      binding: RiwayatBinding(),
+    ),
+    GetPage(
+      name: '${_Paths.riwayat}/detail',
+      page: () => const RiwayatDetailView(),
       binding: RiwayatBinding(),
     ),
     GetPage(

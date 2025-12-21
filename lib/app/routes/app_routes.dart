@@ -34,6 +34,7 @@ abstract class _Paths {
   static const laporan = '/laporan';
   static const reservasi = '/reservasi';
   static const riwayat = '/riwayat';
+  // detail route is composed as '/riwayat/detail'
   static const informasi = '/informasi';
   static const landingScreen = '/landing-screen';
   static const terms = '/terms';

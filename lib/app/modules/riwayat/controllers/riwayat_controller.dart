@@ -1,16 +1,14 @@
 import 'package:get/get.dart';
-import '../../reservasi/controllers/reservasi_controller.dart';
+import '../../../services/riwayat_service.dart';
+import '../../../models/riwayat_model.dart';
+import '../../../routes/app_pages.dart';
 
 class RiwayatController extends GetxController {
-  late ReservasiController reservasiC;
+  final RiwayatService _service = Get.find<RiwayatService>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Ambil instance dari ReservasiController yang sudah aktif
-    reservasiC = Get.find<ReservasiController>();
+  List<RiwayatModel> get items => _service.all;
+
+  void openDetail(RiwayatModel item) {
+    Get.toNamed('${Routes.riwayat}/detail', arguments: item.id);
   }
-
-  // Getter untuk ambil riwayat tiket dari ReservasiController
-  List<Map<String, dynamic>> get riwayat => reservasiC.riwayat;
 }
