@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
+import '../views/reservation_qris_view.dart';
 
 class PaymentPriceSection extends StatelessWidget {
   final Map<String, dynamic>? data;
@@ -10,22 +11,33 @@ class PaymentPriceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
-    // compute per-ticket price (attempt to parse from data['harga']) and total
+
+    // Helpers to parse and format Indonesian Rupiah strings
     int _parsePrice(String? priceStr) {
-      if (priceStr == null) return 0;
-      final digits = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
-      if (digits.isEmpty) return 0;
-      return int.tryParse(digits) ?? 0;
+      if (priceStr == null) return 15000;
+      final cleaned = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
+      if (cleaned.isEmpty) return 15000;
+      return int.tryParse(cleaned) ?? 15000;
     }
 
     String _formatRupiah(int value) {
-      if (value <= 0) return 'Rp 0';
       final s = value.toString();
-      final formatted = s.replaceAllMapped(RegExp(r"\B(?=(\d{3})+(?!\d))"), (m) => '.');
-      return 'Rp $formatted';
+      final buffer = StringBuffer();
+      int count = 0;
+      for (int i = s.length - 1; i >= 0; i--) {
+        buffer.write(s[i]);
+        count++;
+        if (count == 3 && i != 0) {
+          buffer.write('.');
+          count = 0;
+        }
+      }
+      final reversed = buffer.toString().split('').reversed.join();
+      return 'Rp $reversed';
     }
 
-    final perTicket = _parsePrice(data?['harga']?.toString());
+    // Compute per-ticket and total price based on reservation data and ticket count
+    final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
     final total = perTicket * controller.ticketCount.value;
     final totalStr = _formatRupiah(total);
 
@@ -118,16 +130,16 @@ class PaymentPriceSection extends StatelessWidget {
             final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
               'nama': mainHiker,
-              'title': data?['title'] ?? '',
-              'jalur': controller.selectedPos.value,
-              'image': data?['imagePath'] ?? '',
+              'title': data?['title'] ?? 'Puncak Malabar',
+              'jalur': data?['jalur'] ?? controller.selectedPos.value,
+              'image':
+                  data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
               'metode': 'QRIS',
               'tanggal': entryDate,
               'waktu': formattedTime,
-              'harga': _formatRupiah(total),
-              'hargaPerTiket': data?['harga'] ?? '',
-              'status': 'Selesai',
+              'harga': totalStr,
               'hikersCount': controller.ticketCount.value,
+              'status': 'Selesai',
             };
 
             // Add to riwayat (history)
@@ -140,8 +152,9 @@ class PaymentPriceSection extends StatelessWidget {
             controller.isAgreed.value = false;
             controller.hikers.clear();
 
-            // Navigate to success page
-            Get.offNamed('/payment-success', arguments: ticketData);
+            // Navigate to QRIS payment simulation screen first,
+            // then that screen will forward to the success page after a short delay.
+            Get.to(() => const ReservationQrisView(), arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),
