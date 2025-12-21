@@ -24,7 +24,7 @@ class ReservationPaymentView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TicketSummaryCard(data: data),
+            TicketSummaryCard(data: data, controller: controller),
             const SizedBox(height: 24),
 
             // Entry Date (Read-only)
