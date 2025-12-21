@@ -127,13 +127,17 @@ class PaymentPriceSection extends StatelessWidget {
                 : 'Pendaki';
 
             // Create complete ticket data from all previous steps
+            // Prefer controller.selectedPos as the single source of truth for the selected route.
+            final selectedJalur = (controller.selectedPos.value != null && controller.selectedPos.value.isNotEmpty)
+                ? controller.selectedPos.value
+                : (data?['jalur']?.toString() ?? '');
+
             final ticketData = {
               'id': 'D${now.millisecondsSinceEpoch}',
               'nama': mainHiker,
               'title': data?['title'] ?? 'Puncak Malabar',
-              'jalur': data?['jalur'] ?? controller.selectedPos.value,
-              'image':
-                  data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
+              'jalur': selectedJalur,
+              'image': data?['imagePath'] ?? 'assets/images/reservasi_panorama.png',
               'metode': 'QRIS',
               'tanggal': entryDate,
               'waktu': formattedTime,
