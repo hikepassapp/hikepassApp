@@ -6,7 +6,6 @@ import '../widgets/permit_time_widget.dart';
 import '../widgets/rules_header_widget.dart';
 import '../widgets/rules_list_widget.dart';
 import 'hikers_list_view.dart';
-import 'reservation_form_view.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 
