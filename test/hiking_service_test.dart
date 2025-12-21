@@ -52,16 +52,14 @@ void main() {
     test('Process initial check-out saves timestamp', () {
       final hiking = service.pendingCheckIns.first;
       final id = hiking.id;
-      
-      // First do check-in
+
       service.processInitialCheckIn(id);
       service.processCheckInForm(
         hikingId: id,
         checkInItems: 'Test items',
         checkInCheckboxes: List.generate(6, (_) => true),
       );
-      
-      // Then do initial check-out
+
       service.processInitialCheckOut(id);
       
       final updated = service.getHikingById(id);
@@ -71,16 +69,14 @@ void main() {
     test('Process check-out form changes status to checkedOut', () {
       final hiking = service.pendingCheckIns.first;
       final id = hiking.id;
-      
-      // Complete check-in
+
       service.processInitialCheckIn(id);
       service.processCheckInForm(
         hikingId: id,
         checkInItems: 'Test items',
         checkInCheckboxes: List.generate(6, (_) => true),
       );
-      
-      // Complete check-out
+
       service.processInitialCheckOut(id);
       service.processCheckOutForm(
         hikingId: id,
@@ -97,7 +93,6 @@ void main() {
       final hiking = service.pendingCheckIns.first;
       final id = hiking.id;
 
-      // Complete full flow
       service.processInitialCheckIn(id);
       service.processCheckInForm(
         hikingId: id,

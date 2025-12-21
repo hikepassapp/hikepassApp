@@ -15,7 +15,6 @@ class CheckInFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Get hiking ID from route arguments
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
       final hiking = _hikingService.getHikingById(hikingId);
@@ -26,7 +25,6 @@ class CheckInFormController extends GetxController {
       currentHiking.value = _hikingService.getHikingById(hikingId);
     }
 
-    // Listen to text changes
     itemsController.addListener(() {
       items.value = itemsController.text;
     });
@@ -53,14 +51,12 @@ class CheckInFormController extends GetxController {
     }
 
     if (currentHiking.value != null) {
-      // Save check-in data
       _hikingService.processCheckInForm(
         hikingId: currentHiking.value!.id,
         checkInItems: items.value,
         checkInCheckboxes: checkboxes.toList(),
       );
 
-      // Return to hiking list on Check-Out tab
       Get.offAllNamed(
         Routes.hiking,
         arguments: {'tab': 1},

@@ -31,7 +31,6 @@ class HikingCardItem extends StatelessWidget {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
-            // Image placeholder
             Container(
               width: 96,
               height: 96,

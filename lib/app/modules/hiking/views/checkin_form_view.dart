@@ -53,7 +53,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Subtitle
                 const Text(
                   'List barang bawaan sebelum melakukan pendakian!',
                   style: TextStyle(
@@ -65,7 +64,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Mountain and trail info in two columns
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -120,7 +118,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Check-in date
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -178,7 +175,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Guidelines with numbering
                 const Text(
                   'Panduan',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -200,7 +196,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Mandatory items checkboxes in grid
                 const Text(
                   'Barang Wajib',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
@@ -237,7 +232,6 @@ class CheckInFormView extends GetView<CheckInFormController> {
                 ),
                 const SizedBox(height: 20),
 
-                // Your items textbox
                 const Text(
                   'Barang Bawaan Anda',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
