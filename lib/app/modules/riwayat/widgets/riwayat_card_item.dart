@@ -17,9 +17,6 @@ class RiwayatCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final start = _fmt(riwayat.reservasi.startDate);
-    final hikersInfo = riwayat.reservasi.totalTickets > 1
-        ? '${riwayat.reservasi.hikerName} +${riwayat.reservasi.totalTickets - 1}'
-        : riwayat.reservasi.hikerName;
 
     final bool isPaid = riwayat.payment?.status == PaymentStatus.paid;
     final paymentTagColor = isPaid ? const Color(0xFFE1F6EB) : const Color(0xFFFFE4C7);
@@ -110,12 +107,6 @@ class RiwayatCardItem extends StatelessWidget {
                         style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
                       Text(start, style: const TextStyle(color: Colors.black54, fontSize: 13)),
-                      Text(
-                        'Pendaki: $hikersInfo',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.black54, fontSize: 12),
-                      ),
                     ],
                   ),
                 ),
