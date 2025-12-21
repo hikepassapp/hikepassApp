@@ -17,7 +17,6 @@ class RiwayatCardItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final start = _fmt(riwayat.reservasi.startDate);
-    final end = _fmt(riwayat.reservasi.endDate);
 
     final bool isPaid = riwayat.payment?.status == PaymentStatus.paid;
     final paymentTagColor = isPaid ? const Color(0xFFE1F6EB) : const Color(0xFFFFE4C7);
@@ -107,7 +106,7 @@ class RiwayatCardItem extends StatelessWidget {
                         riwayat.reservasi.hikingTrail,
                         style: const TextStyle(color: Colors.black54, fontSize: 13),
                       ),
-                      Text('$start - $end', style: const TextStyle(color: Colors.black54, fontSize: 13)),
+                      Text(start, style: const TextStyle(color: Colors.black54, fontSize: 13)),
                     ],
                   ),
                 ),

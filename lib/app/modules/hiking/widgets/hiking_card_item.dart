@@ -7,14 +7,11 @@ class HikingCardItem extends StatelessWidget {
   const HikingCardItem({super.key, required this.hiking});
   final HikingModel hiking;
 
-  String _formatDate(DateTime start, DateTime end) {
-    String fmt(DateTime d) {
-      final day = d.day.toString().padLeft(2, '0');
-      final m = d.month.toString().padLeft(2, '0');
-      final y = d.year.toString();
-      return '$day/$m/$y';
-    }
-    return '${fmt(start)} - ${fmt(end)}';
+  String _formatDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final m = date.month.toString().padLeft(2, '0');
+    final y = date.year.toString();
+    return '$day/$m/$y';
   }
 
   @override
@@ -80,7 +77,7 @@ class HikingCardItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _formatDate(hiking.startDate, hiking.endDate),
+                    _formatDate(hiking.startDate),
                     style: const TextStyle(
                       fontSize: 13, 
                       fontWeight: FontWeight.w500, 

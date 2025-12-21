@@ -31,7 +31,6 @@ class HikingService extends GetxService {
         mountainName: 'Gunung Malabar',
         hikingTrail: 'Jalur Panorama',
         startDate: DateTime(2025, 12, 21),
-        endDate: DateTime(2025, 12, 23),
         status: HikingStatus.pending,
       ),
     );
@@ -43,7 +42,6 @@ class HikingService extends GetxService {
     required String mountainName,
     required String hikingTrail,
     required DateTime startDate,
-    required DateTime endDate,
   }) {
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
@@ -52,7 +50,6 @@ class HikingService extends GetxService {
       mountainName: mountainName,
       hikingTrail: hikingTrail,
       startDate: startDate,
-      endDate: endDate,
       status: HikingStatus.pending,
     );
 
@@ -132,7 +129,6 @@ class HikingService extends GetxService {
       'mountainName': hiking.mountainName,
       'hikingTrail': hiking.hikingTrail,
       'startDate': hiking.startDate.toIso8601String(),
-      'endDate': hiking.endDate.toIso8601String(),
       'checkInDate': hiking.checkInDate!.toIso8601String(),
       'checkOutDate': hiking.checkOutDate!.toIso8601String(),
       'checkInItems': hiking.checkInItems ?? '',
