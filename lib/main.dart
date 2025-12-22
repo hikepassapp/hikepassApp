@@ -11,6 +11,10 @@ import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
 
 void main() async {
+  FlutterError.onError = (details) {
+    debugPrint(details.exceptionAsString());
+  };
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load();

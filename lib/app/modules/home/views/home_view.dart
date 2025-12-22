@@ -23,6 +23,7 @@ class HomeView extends GetView<HomeController> {
         statusBarIconBrightness: Brightness.light,
       ),
     );
+
     return Scaffold(
       backgroundColor: AppColors.secondary,
       body: SafeArea(
@@ -41,35 +42,34 @@ class HomeView extends GetView<HomeController> {
                       color: AppColors.secondary,
                     ),
                   ),
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Obx(
-                          () => WeatherCardWidget(
-                            temperature: controller.temperature.value,
-                            weatherCondition: controller.weatherCondition.value,
-                            location: controller.location.value,
+                  RefreshIndicator(
+                    onRefresh: controller.refreshWeather,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Weather Card - Sudah ada Obx di dalam widget
+                          const WeatherCardWidget(),
+                          const SizedBox(height: 24),
+                          const MenuGridWidget(),
+                          const SizedBox(height: 24),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: PaketWisataHeader(),
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        const MenuGridWidget(),
-                        const SizedBox(height: 24),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: PaketWisataHeader(),
-                        ),
-                        const SizedBox(height: 12),
-                        const PaketWisataList(),
-                        const SizedBox(height: 24),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: BeritaHeader(),
-                        ),
-                        const SizedBox(height: 12),
-                        const BeritaListWidget(),
-                        const SizedBox(height: 24),
-                      ],
+                          const SizedBox(height: 12),
+                          const PaketWisataList(),
+                          const SizedBox(height: 24),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: BeritaHeader(),
+                          ),
+                          const SizedBox(height: 12),
+                          const BeritaListWidget(),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
                     ),
                   ),
                 ],
