@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
+import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
 import 'riwayat_service.dart';
 
 class ReservasiService extends GetxService {
   SupabaseClient get _client => SupabaseConfig.client;
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> upsertReservation(Map<String, dynamic> data) async {
     final payload = {
@@ -175,7 +179,9 @@ class ReservasiService extends GetxService {
   }
 
   /// Fetch payment for a reservation
-  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(String reservasiId) async {
+  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(
+    String reservasiId,
+  ) async {
     try {
       final response = await _client
           .from('payment')
@@ -190,7 +196,10 @@ class ReservasiService extends GetxService {
   }
 
   /// Update reservation status
-  Future<void> updateReservationStatus(String reservasiId, String status) async {
+  Future<void> updateReservationStatus(
+    String reservasiId,
+    String status,
+  ) async {
     try {
       await _client
           .from('reservasi')
@@ -204,7 +213,10 @@ class ReservasiService extends GetxService {
   }
 
   /// Subscribe to changes for a specific reservation
-  RealtimeChannel subscribeReservation(String reservasiId, void Function() onChange) {
+  RealtimeChannel subscribeReservation(
+    String reservasiId,
+    void Function() onChange,
+  ) {
     final channel = _client
         .channel('reservasi-$reservasiId')
         .onPostgresChanges(
@@ -235,5 +247,18 @@ class ReservasiService extends GetxService {
       print('❌ Error getting reservation count: $e');
       return 0;
     }
+  }
+
+  Future<String> uploadFoto(File foto) async {
+    final supabase = SupabaseConfig.client;
+
+    final fileName =
+        'ktp_${DateTime.now().millisecondsSinceEpoch}${path.extension(foto.path)}';
+
+    await supabase.storage
+        .from('ktp')
+        .upload(fileName, foto, fileOptions: const FileOptions(upsert: false));
+
+    return supabase.storage.from('ktp').getPublicUrl(fileName);
   }
 }

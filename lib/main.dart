@@ -10,15 +10,12 @@ import 'app/services/auth_service.dart';
 import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
 import 'package:intl/date_symbol_data_local.dart';
-void main() async {
-  FlutterError.onError = (details) {
-    debugPrint(details.exceptionAsString());
-  };
 
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load();
-await initializeDateFormatting('id_ID', null);
+  await initializeDateFormatting('id_ID', null);
   await SupabaseConfig.initialize();
   Get.put(ErrorHandlingService());
   Get.put(AuthService());
