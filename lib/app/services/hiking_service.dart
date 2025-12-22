@@ -316,7 +316,7 @@ class HikingService extends GetxService {
       'check_in_date': (at ?? DateTime.now()).toIso8601String(),
     };
     final row = await client.from('hiking').insert(payload).select().single();
-    return row as Map<String, dynamic>;
+    return row;
   }
 
   Future<Map<String, dynamic>> dbCheckOut({
@@ -340,7 +340,7 @@ class HikingService extends GetxService {
         .eq('user_id', userId)
         .select()
         .single();
-    return row as Map<String, dynamic>;
+    return row;
   }
 
   RealtimeChannel subscribeUserHiking(String userId, void Function() onChange) {

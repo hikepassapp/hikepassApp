@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
 import '../../../services/reservasi_service.dart';
 import '../../../services/riwayat_service.dart';
-import '../../../config/supabase_config.dart';
 
 
 class ReservasiController extends GetxController {

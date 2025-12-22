@@ -66,7 +66,7 @@ class ImageOptimizationService {
   // Validate image dimensions
   static Future<Map<String, int>?> getImageDimensions(File imageFile) async {
     try {
-      final bytes = await imageFile.readAsBytes();
+      await imageFile.readAsBytes();
       // This is a simplified version - in production, use image package
       // to get actual dimensions
       return {'width': 0, 'height': 0};

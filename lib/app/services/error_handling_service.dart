@@ -247,8 +247,7 @@ class ErrorHandlingService extends GetxService {
     print(StackTrace.current);
     print('===============================');
 
-    // TODO: Send to Firebase Crashlytics
-    // FirebaseCrashlytics.instance.recordError(error, StackTrace.current);
+    
   }
 
   // Show loading with timeout
