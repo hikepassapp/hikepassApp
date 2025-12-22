@@ -23,7 +23,7 @@ class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => Navigator.of(context).pop(),
           child: Text(
             'Tidak',
             style: TextStyle(
@@ -34,7 +34,7 @@ class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Get.back(); // Close dialog
+            Navigator.of(context).pop();
             onConfirm();
           },
           style: ElevatedButton.styleFrom(

@@ -14,7 +14,7 @@ class HeaderImageWidget extends GetView<PaketController> {
       backgroundColor: AppColors.secondary,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Get.back(),
+        onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
         controller.paketTitle.value,
