@@ -5,6 +5,7 @@ import '../../chat/controllers/chat_controller.dart';
 import '../../chat/views/chat_view.dart';
 import '../../hiking/controllers/hiking_controller.dart';
 import '../../hiking/views/hiking_view.dart';
+import '../../../services/hiking_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_typography.dart';
 import '../../home/views/home_view.dart';
@@ -32,6 +33,10 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
               return const ChatView();
             case 2:
               if (!Get.isRegistered<HikingController>()) {
+                // Ensure HikingService is available before creating HikingController
+                if (!Get.isRegistered<HikingService>()) {
+                  Get.put<HikingService>(HikingService(), permanent: true);
+                }
                 Get.lazyPut(() => HikingController());
               }
               return const HikingView();

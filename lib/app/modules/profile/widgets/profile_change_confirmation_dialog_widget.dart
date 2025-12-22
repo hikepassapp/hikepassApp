@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
   final VoidCallback onConfirm;
@@ -7,11 +6,11 @@ class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
   final String message;
 
   const ProfileChangeConfirmationDialogWidget({
-    Key? key,
+    super.key,
     required this.onConfirm,
     required this.title,
     required this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

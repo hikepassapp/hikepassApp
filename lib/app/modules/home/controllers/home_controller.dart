@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/services/auth_service.dart';
 import '../../../routes/app_pages.dart';
@@ -8,7 +7,7 @@ import '../../../models/weather_repository.dart';
 import '../../../models/weather_model.dart';
 import '../../../repositories/paket_wisata_repository.dart';
 import '../../../repositories/berita_repository.dart';
-import '../../../services/auth_service.dart';
+// auth service already imported above
 import 'package:geolocator/geolocator.dart';
 
 class HomeController extends GetxController {

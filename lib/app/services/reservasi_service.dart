@@ -167,7 +167,7 @@ class ReservasiService extends GetxService {
           .select('*')
           .eq('id', reservasiId)
           .single();
-      return response as Map<String, dynamic>;
+      return response;
     } catch (e) {
       print('❌ Error fetching reservation: $e');
       return null;
@@ -175,14 +175,16 @@ class ReservasiService extends GetxService {
   }
 
   /// Fetch payment for a reservation
-  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(String reservasiId) async {
+  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(
+    String reservasiId,
+  ) async {
     try {
       final response = await _client
           .from('payment')
           .select('*')
           .eq('reservasi_id', reservasiId)
           .single();
-      return response as Map<String, dynamic>;
+      return response;
     } catch (e) {
       print('⚠️ No payment found for reservation: $e');
       return null;
@@ -190,7 +192,10 @@ class ReservasiService extends GetxService {
   }
 
   /// Update reservation status
-  Future<void> updateReservationStatus(String reservasiId, String status) async {
+  Future<void> updateReservationStatus(
+    String reservasiId,
+    String status,
+  ) async {
     try {
       await _client
           .from('reservasi')
@@ -204,7 +209,10 @@ class ReservasiService extends GetxService {
   }
 
   /// Subscribe to changes for a specific reservation
-  RealtimeChannel subscribeReservation(String reservasiId, void Function() onChange) {
+  RealtimeChannel subscribeReservation(
+    String reservasiId,
+    void Function() onChange,
+  ) {
     final channel = _client
         .channel('reservasi-$reservasiId')
         .onPostgresChanges(
