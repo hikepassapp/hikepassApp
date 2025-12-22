@@ -210,32 +210,42 @@ class ProfileView extends GetView<ProfileController> {
                           ),
                           child: Row(
                             children: [
-                              // Avatar
-                              Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 3,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 8,
-                                      offset: Offset(0, 2),
+                              // Avatar (Display Only)
+                              Obx(
+                                () => Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 3,
                                     ),
-                                  ],
-                                ),
-                                child: CircleAvatar(
-                                  radius: 40,
-                                  backgroundImage:
-                                      controller.avatarUrl.value.isNotEmpty
-                                      ? NetworkImage(controller.avatarUrl.value)
-                                      : NetworkImage(
-                                          'https://via.placeholder.com/150',
-                                        ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 40,
+                                    backgroundColor: Colors.grey[300],
+                                    backgroundImage:
+                                        controller.avatarUrl.value.isNotEmpty
+                                        ? NetworkImage(
+                                            controller.avatarUrl.value,
+                                          )
+                                        : null,
+                                    child: controller.avatarUrl.value.isEmpty
+                                        ? Icon(
+                                            Icons.person,
+                                            size: 40,
+                                            color: Colors.grey[600],
+                                          )
+                                        : null,
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 16),
