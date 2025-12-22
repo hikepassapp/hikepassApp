@@ -85,7 +85,7 @@ class RegisterController extends GetxController {
   }
 
   void startOtpTimer() {
-    otpCountdown.value = 60;
+    otpCountdown.value = 45;
     canResendOtp.value = false;
     _otpTimer?.cancel();
     _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -373,7 +373,7 @@ class RegisterController extends GetxController {
         }
       }
     } on AuthException catch (e) {
-      String errorMessage='';
+      String errorMessage = '';
 
       if (e.message.contains('expired')) {
         errorMessage = 'Kode OTP sudah kadaluarsa. Silakan minta kode baru.';
@@ -621,7 +621,7 @@ class RegisterController extends GetxController {
 
       print('=== Data Saved Successfully ===');
 
-      // Clear all registration data BEFORE showing snackbar
+      // Clear all registration data
       emailController.clear();
       passwordController.clear();
       confirmPasswordController.clear();
@@ -632,27 +632,25 @@ class RegisterController extends GetxController {
       tanggalLahirController.clear();
       selectedGender.value = '';
 
-      // Stop loading before navigation
+      // Stop loading
       isLoading.value = false;
 
       // Show success message
       Get.snackbar(
-        'Sukses',
-        'Akun berhasil dibuat! Silakan login untuk melanjutkan.',
+        'Registrasi Berhasil! 🎉',
+        'Akun Anda telah dibuat. Silakan login untuk melanjutkan.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(16),
       );
 
-      // Small delay for snackbar to show
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Wait for snackbar to show
+      await Future.delayed(const Duration(milliseconds: 1000));
 
-      // User is already logged in, navigate to home
-      print('Registration complete - navigating to home');
-
-      // Navigate to home page and remove all previous routes
-      Get.offAllNamed('/bottom-navigation');
+      // Clear all routes and go back to landing screen
+      Get.offAllNamed('/landing-screen');
     } on PostgrestException catch (e) {
       String errorMessage = 'Gagal menyimpan data.';
 

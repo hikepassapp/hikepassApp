@@ -1,9 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SupabaseConfig {
-  static const String supabaseUrl = 'https://kckgkzmshbjbxpfwukty.supabase.co';
-  static const String supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtja2drem1zaGJqYnhwZnd1a3R5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUwOTU3ODEsImV4cCI6MjA4MDY3MTc4MX0.bglGCm9X1EZEH_QGQzBDKkrjJtelu-6Mbv17NzaTekc';
+  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
+  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 
   static Future<void> initialize() async {
     await Supabase.initialize(
@@ -11,7 +11,6 @@ class SupabaseConfig {
       anonKey: supabaseAnonKey,
       authOptions: const FlutterAuthClientOptions(
         authFlowType: AuthFlowType.pkce,
-        // Automatically refresh token before expiry
         autoRefreshToken: true,
       ),
     );

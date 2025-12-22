@@ -541,23 +541,28 @@ class LoginController extends GetxController {
       // Stop loading first
       isResetLoading.value = false;
 
+      // Clear all form fields
+      emailController.clear();
+      resetOtpController.clear();
+      newPasswordController.clear();
+      confirmNewPasswordController.clear();
+
       // Show success message
       Get.snackbar(
-        'Berhasil',
-        'Password berhasil direset! Silakan login dengan password baru.',
+        'Berhasil! 🎉',
+        'Password berhasil direset. Silakan login dengan password baru.',
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(16),
       );
 
-      // Wait briefly for snackbar
-      await Future.delayed(const Duration(milliseconds: 300));
+      // Wait for snackbar to show
+      await Future.delayed(const Duration(milliseconds: 1000));
 
-      // Delete the current controller to prevent disposal errors
-      Get.delete<LoginController>();
-
-      // Navigate to login with fresh controller
-      Get.offAllNamed('/login');
+      // Clear all routes and go back to landing screen
+      Get.offAllNamed('/landing-screen');
     } on AuthException catch (e) {
       print('=== AUTH EXCEPTION ===');
       print('Error: ${e.message}');
