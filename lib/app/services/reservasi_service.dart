@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
+import 'riwayat_service.dart';
 
 class ReservasiService extends GetxService {
   SupabaseClient get _client => SupabaseConfig.client;
@@ -44,6 +45,38 @@ class ReservasiService extends GetxService {
       print('📤 Upserting payment: ${data["paymentCode"]}');
       await _client.from('payment').upsert(payload).select();
       print('✅ Payment upserted successfully: ${payload["id"]}');
+
+      // Also create a history entry immediately so History shows the card
+      try {
+        print(
+          '📝 Fetching reservasi row for history creation: ${data['reservasiId']}',
+        );
+        final reservasiRow = await _client
+            .from('reservasi')
+            .select('*')
+            .eq('id', data['reservasiId'])
+            .single();
+        print('✅ Fetched reservasi row: ${reservasiRow['id']}');
+
+        final riwayatService = Get.isRegistered<RiwayatService>()
+            ? Get.find<RiwayatService>()
+            : Get.put(RiwayatService(), permanent: true);
+
+        final userId =
+            data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
+        print(
+          '📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}',
+        );
+        await riwayatService.addFromPaymentAndUpsert(
+          reservasiRow: reservasiRow as Map<String, dynamic>,
+          paymentRow: payload,
+          userId: userId,
+        );
+        print('✅ History entry created successfully');
+      } catch (e) {
+        print('❌ ERROR creating immediate history after payment: $e');
+        rethrow;
+      }
     } catch (e) {
       print('❌ Error upserting payment: $e');
       rethrow;
@@ -92,7 +125,9 @@ class ReservasiService extends GetxService {
     return inserted as Map<String, dynamic>;
   }
 
-  Future<List<Map<String, dynamic>>> fetchReservationsByUser(String userId) async {
+  Future<List<Map<String, dynamic>>> fetchReservationsByUser(
+    String userId,
+  ) async {
     try {
       final rows = await _client
           .from('reservasi')

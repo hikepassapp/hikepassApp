@@ -102,14 +102,14 @@ class LoginEmailContentWidget extends GetView<LoginController> {
             children: [
               Text(
                 'Belum Punya akun Hikepass ? ',
-                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
               ),
               GestureDetector(
                 onTap: () => Get.toNamed('/register'),
                 child: Text(
                   'Daftar Sekarang',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: Color(0xFF26A69A),
                     fontWeight: FontWeight.w600,
                   ),

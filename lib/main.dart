@@ -9,6 +9,7 @@ import 'app/config/supabase_config.dart';
 import 'app/services/auth_service.dart';
 import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
+import 'app/services/error_handling_service.dart';
 
 void main() async {
   FlutterError.onError = (details) {
@@ -22,6 +23,9 @@ void main() async {
   Intl.defaultLocale = 'id_ID';
 
   await SupabaseConfig.initialize();
+
+  // Initialize Error Handling Service
+  Get.put(ErrorHandlingService());
 
   Get.put(AuthService());
   Get.put(HikingService());
@@ -51,9 +55,9 @@ class AuthCheck extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authService.isLoggedIn) {
-        Get.offAllNamed('/bottom-navigation');
+        Get.offNamed('/bottom-navigation');
       } else {
-        Get.offAllNamed('/landing-screen');
+        Get.offNamed('/landing-screen');
       }
     });
 

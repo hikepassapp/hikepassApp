@@ -1,13 +1,15 @@
-import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/error_handling_service.dart';
+import '../../../utils/validators.dart';
 
 class LoginController extends GetxController {
   // Text Controllers
   late final AuthService _authService;
+  late final ErrorHandlingService _errorService;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final newPasswordController = TextEditingController();
@@ -44,6 +46,7 @@ class LoginController extends GetxController {
   void onInit() {
     super.onInit();
     _authService = Get.find<AuthService>();
+    _errorService = Get.find<ErrorHandlingService>();
     if (Get.arguments != null && Get.arguments['userType'] != null) {
       userType.value = Get.arguments['userType'];
     }
@@ -722,6 +725,18 @@ class LoginController extends GetxController {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
+    // Validate email
+    final emailError = Validators.validateEmail(email);
+    if (emailError != null) {
+      Get.snackbar(
+        'Validasi Gagal',
+        emailError,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      return;
+    }
+
     if (password.isEmpty) {
       Get.snackbar(
         'Error',
@@ -738,10 +753,11 @@ class LoginController extends GetxController {
       debugPrint('=== LOGIN ATTEMPT ===');
       debugPrint('Email: $email');
 
-      // Sign in with Supabase
-      final response = await _authService.signInWithEmail(
-        email: email,
-        password: password,
+      // Sign in with Supabase with retry mechanism
+      final response = await _errorService.retryOperation(
+        operation: () =>
+            _authService.signInWithEmail(email: email, password: password),
+        maxRetries: 3,
       );
 
       debugPrint('Login Response:');
@@ -778,45 +794,18 @@ class LoginController extends GetxController {
 
         Get.offAllNamed('/bottom-navigation');
       }
-    } on AuthException catch (e) {
-      debugPrint('=== AUTH EXCEPTION ===');
-      debugPrint('Status Code: ${e.statusCode}');
-      debugPrint('Message: ${e.message}');
-
-      String errorMessage = _handleAuthError(e);
-
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        duration: const Duration(seconds: 4),
-      );
-    } on SocketException catch (_) {
-      Get.snackbar(
-        'Error',
-        'Tidak ada koneksi internet. Periksa koneksi Anda dan coba lagi.',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        duration: const Duration(seconds: 4),
-      );
-    } on TimeoutException catch (_) {
-      Get.snackbar(
-        'Error',
-        'Koneksi timeout. Silakan coba lagi.',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        duration: const Duration(seconds: 4),
-      );
     } catch (e) {
+      debugPrint('=== LOGIN ERROR ===');
+      debugPrint('Error: $e');
+
+      _errorService.handleError(e);
       Get.snackbar(
         'Error',
-        'Terjadi kesalahan tidak terduga. Silakan coba lagi.',
+        'Terjadi kesalahan saat login. Silakan coba lagi.',
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
       );
-      debugPrint('Login error: ${e.toString()}');
     } finally {
       isLoginLoading.value = false;
     }
@@ -1028,33 +1017,6 @@ class LoginController extends GetxController {
     }
   }
   */
-
-  // Helper method to handle authentication errors
-  String _handleAuthError(AuthException e) {
-    final message = e.message.toLowerCase();
-
-    if (message.contains('invalid login') ||
-        message.contains('invalid credentials')) {
-      return 'Email atau password salah. Silakan coba lagi.';
-    } else if (message.contains('email not confirmed')) {
-      return 'Email belum diverifikasi. Periksa inbox Anda untuk link verifikasi.';
-    } else if (message.contains('user not found')) {
-      return 'Akun tidak ditemukan. Silakan daftar terlebih dahulu.';
-    } else if (message.contains('too many requests')) {
-      return 'Terlalu banyak percobaan login. Tunggu beberapa saat.';
-    } else if (message.contains('network')) {
-      return 'Masalah koneksi jaringan. Periksa internet Anda.';
-    } else if (message.contains('timeout')) {
-      return 'Koneksi timeout. Silakan coba lagi.';
-    } else if (message.contains('account locked') ||
-        message.contains('suspended')) {
-      return 'Akun Anda telah diblokir. Hubungi administrator.';
-    } else if (message.contains('password')) {
-      return 'Password salah. Silakan coba lagi atau reset password Anda.';
-    }
-
-    return 'Terjadi kesalahan saat login. Silakan coba lagi.';
-  }
 
   @override
   void onClose() {
