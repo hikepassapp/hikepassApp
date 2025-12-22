@@ -21,7 +21,7 @@ class ChatView extends GetView<ChatController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Get.back();
           },
@@ -32,13 +32,20 @@ class ChatView extends GetView<ChatController> {
         ),
         centerTitle: true,
         backgroundColor: AppColors.secondary,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         toolbarHeight: 60,
+        actions: [
+          // Tombol reset chat
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: controller.resetChat,
+            tooltip: 'Reset Chat',
+          ),
+        ],
       ),
       body: Column(
         children: [
-          // Header Section
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -89,8 +96,11 @@ class ChatView extends GetView<ChatController> {
               ),
             ),
           ),
-
-          // Input Field
+          Obx(
+            () => controller.isStreaming.value
+                ? const SizedBox.shrink()
+                : const SizedBox.shrink(),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -103,46 +113,66 @@ class ChatView extends GetView<ChatController> {
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller.messageController,
-                    decoration: InputDecoration(
-                      hintText: 'Tanyakan apa saja!',
-                      hintStyle: AppTypography.mRegular.copyWith(
-                        color: AppColors.gray,
+            child: SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller.messageController,
+                      decoration: InputDecoration(
+                        hintText: 'Tanyakan apa saja!',
+                        hintStyle: AppTypography.mRegular.copyWith(
+                          color: AppColors.gray,
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF5F5F5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
-                      filled: true,
-                      fillColor: const Color(0xFFF5F5F5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
+                      maxLines: null,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => controller.sendMessage(),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Obx(
+                    () => InkWell(
+                      onTap: controller.isLoading.value
+                          ? null
+                          : controller.sendMessage,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: controller.isLoading.value
+                              ? Colors.grey[400]
+                              : AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: controller.isLoading.value
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.send,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: controller.sendMessage,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.send,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

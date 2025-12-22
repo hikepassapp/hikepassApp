@@ -7,8 +7,38 @@ import '../widgets/ticket_counter.dart';
 import 'reservasi_rules_view.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 
-class ReservationDetailView extends StatelessWidget {
+class ReservationDetailView extends StatefulWidget {
   const ReservationDetailView({super.key});
+
+  @override
+  State<ReservationDetailView> createState() => _ReservationDetailViewState();
+}
+
+class _ReservationDetailViewState extends State<ReservationDetailView> {
+  final ReservasiController controller = Get.find<ReservasiController>();
+
+  void _handleContinuePressed() {
+    // Validate reservation data
+    String? validationError = controller.validateReservation();
+
+    if (validationError != null) {
+      // Show snackbar with error message
+      Get.snackbar(
+        'Validasi Gagal',
+        validationError,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        icon: const Icon(Icons.error, color: Colors.white),
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+
+    // All validations passed, proceed to next step
+    final data = Get.arguments as Map<String, dynamic>;
+    Get.to(() => const ReservasiRulesView(), arguments: data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +46,6 @@ class ReservationDetailView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-
       body: CustomScrollView(
         slivers: [
           ReservationDetailHeader(
@@ -43,7 +72,7 @@ class ReservationDetailView extends StatelessWidget {
         ],
       ),
 
-      // Tombol lanjut di bawah
+      // Continue button at the bottom
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -57,24 +86,29 @@ class ReservationDetailView extends StatelessWidget {
               ),
             ],
           ),
-          child: ElevatedButton(
-            onPressed: () {
-              // arguments tetap Map<String, dynamic>
-              Get.to(() => const ReservasiRulesView(), arguments: data);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.secondary,
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: Obx(
+            () => ElevatedButton(
+              onPressed: controller.isReservationValid.value
+                  ? _handleContinuePressed
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: controller.isReservationValid.value
+                    ? AppColors.secondary
+                    : Colors.grey[400],
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            child: const Text(
-              'Lanjutkan',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+              child: Text(
+                'Lanjutkan',
+                style: TextStyle(
+                  color: controller.isReservationValid.value
+                      ? Colors.white
+                      : Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
@@ -83,9 +117,8 @@ class ReservationDetailView extends StatelessWidget {
     );
   }
 
-  // Widget dropdown pos perizinan dan entry date selection
+  // Widget dropdown for entry point and entry date selection
   Widget _buildInputSection() {
-    final controller = Get.find<ReservasiController>();
     final List<String> posList = ['Cinyiruan', 'Panorama'];
 
     return Container(
@@ -107,9 +140,10 @@ class ReservationDetailView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Dropdown reactive dengan GetX
-          Obx(
-            () => DropdownButtonFormField<String>(
+          // Dropdown for entry point with error indication
+          Obx(() {
+            final isError = controller.selectedPos.value.isEmpty;
+            return DropdownButtonFormField<String>(
               value: controller.selectedPos.value.isEmpty
                   ? null
                   : controller.selectedPos.value,
@@ -124,18 +158,27 @@ class ReservationDetailView extends StatelessWidget {
                 hintStyle: TextStyle(color: Colors.grey[400]),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
+                  borderSide: BorderSide(
+                    color: isError ? Colors.red[300]! : Colors.grey[300]!,
+                  ),
                 ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF2D9F8C)),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: isError ? Colors.red : const Color(0xFF2D9F8C),
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
                 ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.red[300]!),
+                ),
               ),
-            ),
-          ),
+            );
+          }),
 
           const SizedBox(height: 16),
 
@@ -150,11 +193,12 @@ class ReservationDetailView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          Obx(
-            () => InkWell(
+          Obx(() {
+            final isError = controller.selectedDate.value == null;
+            return InkWell(
               onTap: () async {
                 final pickedDate = await showDatePicker(
-                  context: Get.context!,
+                  context: context,
                   initialDate: controller.selectedDate.value ?? DateTime.now(),
                   firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(const Duration(days: 365)),
@@ -169,7 +213,9 @@ class ReservationDetailView extends StatelessWidget {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
+                  border: Border.all(
+                    color: isError ? Colors.red[300]! : Colors.grey[300]!,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -188,14 +234,14 @@ class ReservationDetailView extends StatelessWidget {
                     ),
                     Icon(
                       Icons.calendar_today,
-                      color: Colors.grey[600],
+                      color: isError ? Colors.red : Colors.grey[600],
                       size: 18,
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );

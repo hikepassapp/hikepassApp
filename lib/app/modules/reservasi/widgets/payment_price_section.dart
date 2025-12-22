@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
-import '../views/reservation_qris_view.dart';
 
 class PaymentPriceSection extends StatelessWidget {
   final Map<String, dynamic>? data;
@@ -12,7 +11,6 @@ class PaymentPriceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
 
-    // Helpers to parse and format Indonesian Rupiah strings
     int _parsePrice(String? priceStr) {
       if (priceStr == null) return 15000;
       final cleaned = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
@@ -20,7 +18,7 @@ class PaymentPriceSection extends StatelessWidget {
       return int.tryParse(cleaned) ?? 15000;
     }
 
-    String _formatRupiah(int value) {
+    String formatRupiah(int value) {
       final s = value.toString();
       final buffer = StringBuffer();
       int count = 0;
@@ -36,10 +34,9 @@ class PaymentPriceSection extends StatelessWidget {
       return 'Rp $reversed';
     }
 
-    // Compute per-ticket and total price based on reservation data and ticket count
     final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
     final total = perTicket * controller.ticketCount.value;
-    final totalStr = _formatRupiah(total);
+    final totalStr = formatRupiah(total);
 
     return Column(
       children: [
@@ -85,7 +82,6 @@ class PaymentPriceSection extends StatelessWidget {
         // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // Validate all required data
             if ((data == null || data!['tanggal'] == null) &&
                 controller.selectedDate.value == null) {
               Get.snackbar(
@@ -109,21 +105,33 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // Create complete ticket data to pass to payment success view
             final now = DateTime.now();
+            final mainHiker = controller.hikers.isNotEmpty
+                ? controller.hikers[0]['nama'] ?? 'Pendaki'
+                : 'Pendaki';
+
+            final reservationCode = controller.generateReservationCode();
+
             final ticketData = {
-              'id': 'D${now.millisecondsSinceEpoch}',
+              'id': reservationCode,
+              'reservationCode': reservationCode,
               'title': data?['title'] ?? '',
               'jalur': controller.selectedPos.value,
               'selectedPos': controller.selectedPos.value,
               'image': data?['imagePath'] ?? '',
               'imagePath': data?['imagePath'] ?? '',
-              'harga': _formatRupiah(total),
+              'harga': formatRupiah(total),
               'hargaPerTiket': data?['harga'] ?? '',
               'hikersCount': controller.ticketCount.value,
+
+              'nama': mainHiker,
+              'metode': 'QRIS',
+              'tanggal':
+                  '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
+              'waktu':
+                  '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
-            // Navigate to success page - completePayment will be called there
             Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
