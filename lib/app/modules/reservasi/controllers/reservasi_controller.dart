@@ -6,7 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
 import '../../../services/reservasi_service.dart';
 import '../../../services/riwayat_service.dart';
-import '../../../services/auth_service.dart';
+import '../../../config/supabase_config.dart';
+
 
 class ReservasiController extends GetxController {
   late final HikingService _hikingService;
@@ -127,6 +128,7 @@ class ReservasiController extends GetxController {
     return null; // No errors
   }
 
+
   /// Checks if a single hiker's data is complete
   bool _isHikerComplete(Map<String, dynamic> hiker) {
     if (hiker.isEmpty) return false;
@@ -179,9 +181,9 @@ class ReservasiController extends GetxController {
   Future<void> completePayment(Map<String, dynamic> data) async {
     final now = DateTime.now();
 
-    print('CompletePayment called with data: $data');
-    print('selectedDate: ${selectedDate.value}');
-    print('selectedPos: ${selectedPos.value}');
+    print('💳 === CompletePayment START ===');
+    print('   selectedDate: ${selectedDate.value}');
+    print('   selectedPos: ${selectedPos.value}');
 
     final reservasiCode =
         data['reservationCode']?.toString() ??
@@ -199,25 +201,7 @@ class ReservasiController extends GetxController {
             .toString();
     final startDate = selectedDate.value ?? now;
 
-    print('Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
-
-    // Get the current user ID from Supabase auth
-    final authService = Get.find<AuthService>();
-    final currentUser = authService.currentUser;
-    final userId = currentUser?.id;
-    
-    print('🔐 Auth Debug: currentUser=$currentUser, userId=$userId');
-    if (userId == null) {
-      print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
-    }
-
-    await _hikingService.createFromReservation(
-      reservasiId: reservasiId,
-      mountainName: mountainName,
-      hikingTrail: jalur,
-      startDate: startDate,
-      userId: userId,
-    );
+    print('   Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
 
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
@@ -233,7 +217,6 @@ class ReservasiController extends GetxController {
       'hikingStatus': 'Menunggu',
       'paymentCode': paymentCode,
       'paymentDate': now,
-
       'ticketCount': ticketCount.value,
       'ticketPrice': 15000,
       'totalPrice': totalPrice,
@@ -245,12 +228,14 @@ class ReservasiController extends GetxController {
     riwayat.add(historyMap);
 
     try {
-      print('💾 Starting payment save flow...');
+      print('💾 STEP 1: Save reservation...');
       final reservasiService = Get.isRegistered<ReservasiService>()
           ? Get.find<ReservasiService>()
           : Get.put(ReservasiService(), permanent: true);
       
-      print('📝 Upserting reservation with userId: $userId');
+      final userId = SupabaseConfig.client.auth.currentUser?.id;
+      print('   userId: $userId');
+      
       await reservasiService.upsertReservation({
         'id': reservasiId,
         'code': reservasiCode,
@@ -261,9 +246,9 @@ class ReservasiController extends GetxController {
         'hikers': historyMap['hikers'],
         'userId': userId,
       });
-      print('✅ Reservation saved');
+      print('   ✅ Reservation saved');
       
-      print('💳 Upserting payment with userId: $userId');
+      print('💾 STEP 2: Save payment and create history...');
       await reservasiService.upsertPayment({
         'reservasiId': reservasiId,
         'paymentCode': paymentCode,
@@ -271,21 +256,31 @@ class ReservasiController extends GetxController {
         'paymentDate': now,
         'userId': userId,
       });
-      print('✅ Payment saved, history should be created automatically');
+      print('   ✅ Payment saved & history created');
       
-      // Ensure RiwayatService loads the new data
-      try {
-        if (Get.isRegistered<RiwayatService>()) {
-          final riwayatService = Get.find<RiwayatService>();
-          print('🔄 Refreshing history data from Supabase...');
-          await riwayatService.loadFromSupabase();
-          print('✅ History refreshed');
-        }
-      } catch (e) {
-        print('⚠️ Could not refresh history after payment: $e');
+      print('💾 STEP 3: Create hiking record (NOW that payment is saved)...');
+      await _hikingService.createFromReservation(
+        reservasiId: reservasiId,
+        mountainName: mountainName,
+        hikingTrail: jalur,
+        startDate: startDate,
+      );
+      print('   ✅ Hiking record created');
+      
+      print('💾 STEP 4: Refresh history...');
+      if (Get.isRegistered<RiwayatService>()) {
+        final riwayatService = Get.find<RiwayatService>();
+        await riwayatService.loadFromSupabase();
+        print('   ✅ History refreshed');
       }
+      
+      print('💾 STEP 5: Refresh hiking...');
+      await _hikingService.loadFromSupabase();
+      print('   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}');
+      
+      print('💳 === CompletePayment SUCCESS ===');
     } catch (e) {
-      print('❌ ERROR in payment save flow: $e');
+      print('❌ ERROR in completePayment: $e');
       Get.snackbar(
         'Error',
         'Gagal menyimpan pembayaran: $e',
