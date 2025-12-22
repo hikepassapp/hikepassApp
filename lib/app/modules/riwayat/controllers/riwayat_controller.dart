@@ -18,6 +18,18 @@ class RiwayatController extends GetxController {
     // Initialize services here instead of in class definition
     _service = Get.find<RiwayatService>();
     _hikingService = Get.find<HikingService>();
+    
+    // Load history from Supabase
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    await _service.loadFromSupabase();
+  }
+
+  /// Public method to refresh history from Supabase
+  Future<void> refreshHistory() async {
+    await _service.loadFromSupabase();
   }
 
   List<RiwayatModel> get items {

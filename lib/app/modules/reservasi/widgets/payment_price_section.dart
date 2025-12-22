@@ -132,7 +132,8 @@ class PaymentPriceSection extends StatelessWidget {
                   '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
-            Get.offNamed('/payment-success', arguments: ticketData);
+            // Navigate to QRIS payment view (auto-transitions to success after 3 seconds)
+            Get.toNamed('/reservation-qris', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),

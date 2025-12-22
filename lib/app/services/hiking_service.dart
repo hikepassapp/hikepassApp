@@ -27,6 +27,57 @@ class HikingService extends GetxService {
     // No mock data - start empty until reservations are made
   }
 
+  /// Load hiking records from Supabase for the current user
+  Future<void> loadFromSupabase({String? status}) async {
+    final userId = _userId;
+    if (userId == null) {
+      print('⚠️ Cannot load hiking: user not logged in');
+      return;
+    }
+
+    try {
+      print('📥 Loading hiking records from Supabase for user: $userId');
+      final rows = await fetchHikingByUser(userId, status: status);
+      
+      _hikingList.clear();
+      
+      for (var row in rows) {
+        final hiking = HikingModel(
+          id: row['id'],
+          reservasiId: row['reservasi_id'] ?? '',
+          paymentId: row['payment_id'],
+          mountainName: row['mountain_name'] ?? '-',
+          hikingTrail: row['hiking_trail'] ?? '-',
+          startDate: DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
+          checkInDate: DateTime.tryParse(row['check_in_date'] ?? ''),
+          checkOutDate: DateTime.tryParse(row['check_out_date'] ?? ''),
+          status: _parseStatus(row['status']),
+          checkInItems: row['check_in_items'],
+          checkInCheckboxes: (row['check_in_checkboxes'] as List?)?.cast<bool>(),
+          checkOutItems: row['check_out_items'],
+          checkOutCheckboxes: (row['check_out_checkboxes'] as List?)?.cast<bool>(),
+        );
+        
+        _hikingList.add(hiking);
+      }
+
+      print('✅ Loaded ${_hikingList.length} hiking records from Supabase');
+    } catch (e) {
+      print('❌ Error loading hiking from Supabase: $e');
+    }
+  }
+
+  HikingStatus _parseStatus(String? status) {
+    switch (status) {
+      case 'checkedIn':
+        return HikingStatus.checkedIn;
+      case 'checkedOut':
+        return HikingStatus.checkedOut;
+      default:
+        return HikingStatus.pending;
+    }
+  }
+
   Future<HikingModel> createFromReservation({
     required String reservasiId,
     String? paymentId,
@@ -88,56 +139,68 @@ class HikingService extends GetxService {
     }
   }
 
-  void processInitialCheckIn(String hikingId) {
+  Future<void> processInitialCheckIn(String hikingId) async {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
-    if (index != -1) {
-      _hikingList[index] = _hikingList[index].copyWith(
-        checkInDate: DateTime.now(),
-      );
-      _upsertHiking(_hikingList[index]);
+    if (index == -1) {
+      print('❌ Hiking not found: $hikingId');
+      return;
     }
+
+    _hikingList[index] = _hikingList[index].copyWith(
+      checkInDate: DateTime.now(),
+    );
+    await _upsertHiking(_hikingList[index]);
   }
 
-  void processCheckInForm({
+  Future<void> processCheckInForm({
     required String hikingId,
     required String checkInItems,
     required List<bool> checkInCheckboxes,
-  }) {
+  }) async {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
-    if (index != -1) {
-      _hikingList[index] = _hikingList[index].copyWith(
-        checkInItems: checkInItems,
-        checkInCheckboxes: checkInCheckboxes,
-        status: HikingStatus.checkedIn,
-      );
-      _upsertHiking(_hikingList[index]);
+    if (index == -1) {
+      print('❌ Hiking not found: $hikingId');
+      return;
     }
+
+    _hikingList[index] = _hikingList[index].copyWith(
+      checkInItems: checkInItems,
+      checkInCheckboxes: checkInCheckboxes,
+      status: HikingStatus.checkedIn,
+    );
+    await _upsertHiking(_hikingList[index]);
   }
 
-  void processInitialCheckOut(String hikingId) {
+  Future<void> processInitialCheckOut(String hikingId) async {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
-    if (index != -1) {
-      _hikingList[index] = _hikingList[index].copyWith(
-        checkOutDate: DateTime.now(),
-      );
-      _upsertHiking(_hikingList[index]);
+    if (index == -1) {
+      print('❌ Hiking not found: $hikingId');
+      return;
     }
+
+    _hikingList[index] = _hikingList[index].copyWith(
+      checkOutDate: DateTime.now(),
+    );
+    await _upsertHiking(_hikingList[index]);
   }
 
-  void processCheckOutForm({
+  Future<void> processCheckOutForm({
     required String hikingId,
     required String checkOutItems,
     required List<bool> checkOutCheckboxes,
-  }) {
+  }) async {
     final index = _hikingList.indexWhere((h) => h.id == hikingId);
-    if (index != -1) {
-      _hikingList[index] = _hikingList[index].copyWith(
-        checkOutItems: checkOutItems,
-        checkOutCheckboxes: checkOutCheckboxes,
-        status: HikingStatus.checkedOut,
-      );
-      _upsertHiking(_hikingList[index]);
+    if (index == -1) {
+      print('❌ Hiking not found: $hikingId');
+      return;
     }
+
+    _hikingList[index] = _hikingList[index].copyWith(
+      checkOutItems: checkOutItems,
+      checkOutCheckboxes: checkOutCheckboxes,
+      status: HikingStatus.checkedOut,
+    );
+    await _upsertHiking(_hikingList[index]);
   }
 
   Future<Map<String, dynamic>?> completeCheckOut(String hikingId) async {
