@@ -84,6 +84,69 @@ class RiwayatService extends GetxService {
     }
   }
 
+  /// Create a history item immediately after payment and upsert to Supabase
+  /// This shows a card in History with status `waiting` (not yet hiking).
+  Future<void> addFromPaymentAndUpsert({
+    required Map<String, dynamic> reservasiRow,
+    required Map<String, dynamic> paymentRow,
+    String? userId,
+  }) async {
+    try {
+      final hikers = (reservasiRow['hikers'] as List?)
+              ?.map((h) => HikerInfo(
+                    name: h['name'] ?? '-',
+                    nik: h['nik'] ?? '-',
+                  ))
+              .toList() ??
+          [];
+
+      final reservasi = ReservasiModel(
+        id: (reservasiRow['id'] ?? '').toString(),
+        code: (reservasiRow['code'] ?? '-') as String,
+        mountainName: reservasiRow['mountain_name'] ?? '-',
+        hikingTrail: reservasiRow['hiking_trail'] ?? '-',
+        startDate:
+            DateTime.tryParse(reservasiRow['start_date'] ?? '') ?? DateTime.now(),
+        hikers: hikers,
+        ticketPrice: (reservasiRow['ticket_price'] ?? 15000) as int,
+      );
+
+      final payment = PaymentModel(
+        id: (paymentRow['id'] ?? 'payment-unknown').toString(),
+        code: (paymentRow['code'] ?? '-') as String,
+        total: (paymentRow['total'] ?? 0) as int,
+        date: DateTime.tryParse(paymentRow['date'] ?? '') ?? DateTime.now(),
+        status: PaymentStatus.paid,
+      );
+
+      final item = RiwayatModel(
+        id: 'riwayat-${DateTime.now().millisecondsSinceEpoch}',
+        reservasi: reservasi,
+        payment: payment,
+        hikingStatus: HikingHistoryStatus.waiting,
+        checkInDate: null,
+        checkOutDate: null,
+      );
+
+      _items.insert(0, item);
+      final uid = userId ?? _userId;
+      print('📝 History item created: ${item.id}');
+      print('   reservasi_id: ${reservasi.id}');
+      print('   user_id to save: $uid');
+      if (uid != null) {
+        print('   Upserting with user_id: $uid');
+        await _upsertRiwayat(item, userId: uid);
+      } else {
+        print('   ⚠️ Upserting WITHOUT user_id (might not load later!)');
+        await _upsertRiwayat(item);
+      }
+
+      print('✅ Created history from payment for reservasi: ${reservasi.id}');
+    } catch (e) {
+      print('❌ Error creating history from payment: $e');
+    }
+  }
+
   RiwayatModel? getById(String id) {
     try {
       return _items.firstWhere((e) => e.id == id);
@@ -240,6 +303,26 @@ class RiwayatService extends GetxService {
     }
   }
 
+  /// Update hiking status in riwayat after check-in/check-out
+  Future<void> updateHikingStatus(String riwayatId, HikingHistoryStatus status) async {
+    try {
+      print('📤 Updating riwayat $riwayatId with hiking_status: ${status.name}');
+      await SupabaseConfig.client
+          .from('riwayat')
+          .update({'hiking_status': status.name})
+          .eq('id', riwayatId);
+      print('✅ Riwayat status updated: $riwayatId');
+      
+      // Update local cache
+      final index = _items.indexWhere((item) => item.id == riwayatId);
+      if (index != -1) {
+        _items[index] = _items[index].copyWith(hikingStatus: status);
+      }
+    } catch (e) {
+      print('❌ Error updating riwayat status: $e');
+    }
+  }
+
   // Fetch history rows for a user (fallback to all if RLS not set)
   Future<List<Map<String, dynamic>>> fetchHistoryByUser(String userId) async {
     try {
@@ -247,13 +330,13 @@ class RiwayatService extends GetxService {
           .from('riwayat')
           .select('*')
           .eq('user_id', userId)
-          .order('check_out_date', ascending: false);
+          .order('start_date', ascending: false);
       return (rows as List).cast<Map<String, dynamic>>();
     } catch (e) {
       final rows = await SupabaseConfig.client
           .from('riwayat')
           .select('*')
-          .order('check_out_date', ascending: false);
+          .order('start_date', ascending: false);
       return (rows as List).cast<Map<String, dynamic>>();
     }
   }
