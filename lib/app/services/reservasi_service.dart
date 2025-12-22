@@ -48,7 +48,9 @@ class ReservasiService extends GetxService {
 
       // Also create a history entry immediately so History shows the card
       try {
-        print('📝 Fetching reservasi row for history creation: ${data['reservasiId']}');
+        print(
+          '📝 Fetching reservasi row for history creation: ${data['reservasiId']}',
+        );
         final reservasiRow = await _client
             .from('reservasi')
             .select('*')
@@ -60,8 +62,11 @@ class ReservasiService extends GetxService {
             ? Get.find<RiwayatService>()
             : Get.put(RiwayatService(), permanent: true);
 
-        final userId = data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
-        print('📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}');
+        final userId =
+            data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
+        print(
+          '📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}',
+        );
         await riwayatService.addFromPaymentAndUpsert(
           reservasiRow: reservasiRow as Map<String, dynamic>,
           paymentRow: payload,
@@ -120,7 +125,9 @@ class ReservasiService extends GetxService {
     return inserted as Map<String, dynamic>;
   }
 
-  Future<List<Map<String, dynamic>>> fetchReservationsByUser(String userId) async {
+  Future<List<Map<String, dynamic>>> fetchReservationsByUser(
+    String userId,
+  ) async {
     try {
       final rows = await _client
           .from('reservasi')
