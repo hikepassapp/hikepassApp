@@ -204,6 +204,7 @@ class ReservasiController extends GetxController {
       print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
     }
 
+    print('💾 STEP 0: Creating hiking record...');
     await _hikingService.createFromReservation(
       reservasiId: reservasiId,
       mountainName: mountainName,
@@ -211,6 +212,7 @@ class ReservasiController extends GetxController {
       startDate: startDate,
       userId: userId,
     );
+    print('✅ Hiking record created');
 
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
@@ -232,7 +234,7 @@ class ReservasiController extends GetxController {
       'hikers': hikers
           .map(
             (h) => {
-              'nama': h['nama'],
+              'name': h['nama'],  // Use 'name' to match ReservasiModel
               'nik': h['nik'],
               'telepon': h['telepon'],
               'alamat': h['alamat'],
