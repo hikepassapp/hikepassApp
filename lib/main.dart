@@ -20,6 +20,9 @@ void main() async {
 await initializeDateFormatting('id_ID', null);
   await SupabaseConfig.initialize();
 
+  // Initialize Error Handling Service
+  Get.put(ErrorHandlingService());
+
   Get.put(AuthService());
   Get.put(HikingService());
   Get.put(RiwayatService(), permanent: true);

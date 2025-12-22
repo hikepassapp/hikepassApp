@@ -18,11 +18,9 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
   final ReservasiController controller = Get.find<ReservasiController>();
 
   void _handleContinuePressed() {
-    // Validate reservation data
     String? validationError = controller.validateReservation();
 
     if (validationError != null) {
-      // Show snackbar with error message
       Get.snackbar(
         'Validasi Gagal',
         validationError,
@@ -35,7 +33,6 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
       return;
     }
 
-    // All validations passed, proceed to next step
     final data = Get.arguments as Map<String, dynamic>;
     Get.to(() => const ReservasiRulesView(), arguments: data);
   }
@@ -72,7 +69,6 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
         ],
       ),
 
-      // Continue button at the bottom
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -117,7 +113,6 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
     );
   }
 
-  // Widget dropdown for entry point and entry date selection
   Widget _buildInputSection() {
     final List<String> posList = ['Cinyiruan', 'Panorama'];
 
@@ -140,7 +135,6 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
           ),
           const SizedBox(height: 8),
 
-          // Dropdown for entry point with error indication
           Obx(() {
             final isError = controller.selectedPos.value.isEmpty;
             return DropdownButtonFormField<String>(
@@ -182,7 +176,6 @@ class _ReservationDetailViewState extends State<ReservationDetailView> {
 
           const SizedBox(height: 16),
 
-          // Entry Date Selection
           const Text(
             'Tanggal Masuk',
             style: TextStyle(
