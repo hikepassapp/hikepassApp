@@ -118,7 +118,7 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
               children: [
                 Text(
                   'Tidak menerima kode? ',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 Obx(
                   () => controller.canResendResetOtp.value
@@ -129,7 +129,7 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
                           child: const Text(
                             'Kirim Ulang',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Color(0xFF26A69A),
                               fontWeight: FontWeight.w600,
                             ),
@@ -138,7 +138,7 @@ class LoginOtpResetPasswordContentWidget extends GetView<LoginController> {
                       : Text(
                           'Kirim ulang dalam ${controller.resetOtpCountdown.value}s',
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             color: Colors.grey,
                           ),
                         ),

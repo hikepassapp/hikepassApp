@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/error_handling_service.dart';
 import '../../../config/supabase_config.dart';
+import '../../../utils/validators.dart';
 
 class RegisterController extends GetxController {
   late final AuthService _authService;
+  late final ErrorHandlingService _errorService;
 
   // Text Controllers
   final emailController = TextEditingController();
@@ -45,6 +48,7 @@ class RegisterController extends GetxController {
   void onInit() {
     super.onInit();
     _authService = Get.find<AuthService>();
+    _errorService = Get.find<ErrorHandlingService>();
     // Listen to password changes for validation
     passwordController.addListener(validatePassword);
   }
@@ -130,10 +134,12 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (!GetUtils.isEmail(email)) {
+    // Use advanced email validation
+    final emailError = Validators.validateEmail(email);
+    if (emailError != null) {
       Get.snackbar(
-        'Error',
-        'Format email tidak valid.',
+        'Validasi Gagal',
+        emailError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -144,12 +150,15 @@ class RegisterController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Check if email already exists in users table
-      final response = await SupabaseConfig.client
-          .from('users')
-          .select('email')
-          .eq('email', email)
-          .maybeSingle();
+      // Check if email already exists in users table with retry
+      final response = await _errorService.retryOperation(
+        operation: () => SupabaseConfig.client
+            .from('users')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle(),
+        maxRetries: 3,
+      );
 
       if (response != null) {
         isLoading.value = false;
@@ -168,6 +177,7 @@ class RegisterController extends GetxController {
       Get.toNamed('/register-password');
     } catch (e) {
       isLoading.value = false;
+      _errorService.handleError(e);
       Get.snackbar(
         'Error',
         'Gagal memeriksa email. Silakan coba lagi.',
@@ -195,10 +205,12 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (!isPasswordStrong) {
+    // Use advanced password validation
+    final passwordError = Validators.validatePassword(password);
+    if (passwordError != null) {
       Get.snackbar(
-        'Error',
-        'Password harus minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka.',
+        'Validasi Gagal',
+        passwordError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -224,17 +236,20 @@ class RegisterController extends GetxController {
       print('Email: ${emailController.text.trim()}');
       print('User Type: ${userType.value}');
 
-      // Register with Supabase
-      final response = await _authService.signUpWithEmail(
-        email: emailController.text.trim(),
-        password: password,
-        fullName: namaLengkapController.text.trim().isNotEmpty
-            ? namaLengkapController.text.trim()
-            : 'User',
-        userType: userType.value,
-        phoneNumber: teleponController.text.trim().isNotEmpty
-            ? teleponController.text.trim()
-            : null,
+      // Register with Supabase with retry mechanism
+      final response = await _errorService.retryOperation(
+        operation: () => _authService.signUpWithEmail(
+          email: emailController.text.trim(),
+          password: password,
+          fullName: namaLengkapController.text.trim().isNotEmpty
+              ? namaLengkapController.text.trim()
+              : 'User',
+          userType: userType.value,
+          phoneNumber: teleponController.text.trim().isNotEmpty
+              ? teleponController.text.trim()
+              : null,
+        ),
+        maxRetries: 3,
       );
 
       if (response.user != null) {
@@ -491,10 +506,12 @@ class RegisterController extends GetxController {
 
   // Step 4: Save Pendaki Personal Data
   Future<void> savePersonalData() async {
-    if (nikController.text.isEmpty) {
+    // Validate NIK
+    final nikError = Validators.validateNIK(nikController.text.trim());
+    if (nikError != null) {
       Get.snackbar(
-        'Error',
-        'NIK tidak boleh kosong',
+        'Validasi Gagal',
+        nikError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -502,10 +519,14 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (namaLengkapController.text.isEmpty) {
+    // Validate name
+    final nameError = Validators.validateName(
+      namaLengkapController.text.trim(),
+    );
+    if (nameError != null) {
       Get.snackbar(
-        'Error',
-        'Nama lengkap tidak boleh kosong',
+        'Validasi Gagal',
+        nameError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -513,10 +534,14 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (teleponController.text.isEmpty) {
+    // Validate phone number
+    final phoneError = Validators.validatePhoneNumber(
+      teleponController.text.trim(),
+    );
+    if (phoneError != null) {
       Get.snackbar(
-        'Error',
-        'Nomor telepon tidak boleh kosong',
+        'Validasi Gagal',
+        phoneError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -546,10 +571,14 @@ class RegisterController extends GetxController {
       return;
     }
 
-    if (alamatController.text.isEmpty) {
+    // Validate address
+    final addressError = Validators.validateAddress(
+      alamatController.text.trim(),
+    );
+    if (addressError != null) {
       Get.snackbar(
-        'Error',
-        'Alamat tidak boleh kosong',
+        'Validasi Gagal',
+        addressError,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
@@ -571,16 +600,19 @@ class RegisterController extends GetxController {
       print('Phone: ${teleponController.text.trim()}');
       print('NIK: ${nikController.text.trim()}');
 
-      // Update users table
+      // Update users table with retry
       print('Updating users table...');
-      final usersResponse = await SupabaseConfig.client
-          .from('users')
-          .update({
-            'full_name': namaLengkapController.text.trim(),
-            'phone_number': teleponController.text.trim(),
-          })
-          .eq('id', userId)
-          .select();
+      final usersResponse = await _errorService.retryOperation(
+        operation: () => SupabaseConfig.client
+            .from('users')
+            .update({
+              'full_name': namaLengkapController.text.trim(),
+              'phone_number': teleponController.text.trim(),
+            })
+            .eq('id', userId)
+            .select(),
+        maxRetries: 3,
+      );
 
       print('Users table updated: $usersResponse');
 
@@ -600,18 +632,20 @@ class RegisterController extends GetxController {
         }
       }
 
-      // UPSERT pendaki_profiles table (insert or update)
+      // UPSERT pendaki_profiles table (insert or update) with retry
       print('Upserting pendaki_profiles table...');
-      final pendakiResponse =
-          await SupabaseConfig.client.from('pendaki_profiles').upsert({
-            'id': userId,
-            'full_name': namaLengkapController.text.trim(),
-            'nik': nikController.text.trim(),
-            'phone_number': teleponController.text.trim(),
-            'birth_date': birthDate,
-            'gender': selectedGender.value,
-            'full_address': alamatController.text.trim(),
-          }).select();
+      final pendakiResponse = await _errorService.retryOperation(
+        operation: () => SupabaseConfig.client.from('pendaki_profiles').upsert({
+          'id': userId,
+          'full_name': namaLengkapController.text.trim(),
+          'nik': nikController.text.trim(),
+          'phone_number': teleponController.text.trim(),
+          'birth_date': birthDate,
+          'gender': selectedGender.value,
+          'full_address': alamatController.text.trim(),
+        }).select(),
+        maxRetries: 3,
+      );
 
       print('Pendaki profiles upserted: $pendakiResponse');
 
@@ -651,37 +685,12 @@ class RegisterController extends GetxController {
 
       // Clear all routes and go back to landing screen
       Get.offAllNamed('/landing-screen');
-    } on PostgrestException catch (e) {
-      String errorMessage = 'Gagal menyimpan data.';
-
-      if (e.message.contains('duplicate')) {
-        errorMessage = 'NIK sudah terdaftar. Gunakan NIK yang berbeda.';
-      } else if (e.message.contains('foreign key')) {
-        errorMessage = 'Data tidak valid. Silakan coba lagi.';
-      }
-
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        duration: const Duration(seconds: 4),
-      );
-    } on SocketException catch (_) {
-      Get.snackbar(
-        'Error',
-        'Tidak ada koneksi internet. Data akan disimpan setelah koneksi pulih.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[900],
-        duration: const Duration(seconds: 4),
-      );
     } catch (e) {
       print('=== Save Personal Data Error ===');
       print('Error type: ${e.runtimeType}');
       print('Error details: $e');
 
+      _errorService.handleError(e);
       Get.snackbar(
         'Error',
         'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.',
