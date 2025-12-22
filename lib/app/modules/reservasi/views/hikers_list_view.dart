@@ -26,7 +26,7 @@ class HikersListView extends GetView<ReservasiController> {
 
             return ListView.separated(
               itemCount: count,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final hiker = controller.getHiker(index) ?? {};
                 final hasData = hiker.isNotEmpty;

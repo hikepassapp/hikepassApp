@@ -38,75 +38,71 @@ class RiwayatDetailView extends StatelessWidget {
         orElse: () => null as dynamic,
       );
       
-      if (mapItem != null) {
-        final hikersList = <HikerInfo>[];
-        if (mapItem['hikers'] != null && mapItem['hikers'] is List) {
-          for (var hiker in mapItem['hikers'] as List) {
-            hikersList.add(HikerInfo(
-              name: hiker['name'] ?? '-',
-              nik: hiker['nik'] ?? '-',
-            ));
-          }
+      final hikersList = <HikerInfo>[];
+      if (mapItem['hikers'] != null && mapItem['hikers'] is List) {
+        for (var hiker in mapItem['hikers'] as List) {
+          hikersList.add(HikerInfo(
+            name: hiker['name'] ?? '-',
+            nik: hiker['nik'] ?? '-',
+          ));
         }
+      }
 
-        final ticketCount = mapItem['ticketCount'] ?? 1;
-        final ticketPrice = mapItem['ticketPrice'] ?? 15000;
-        final totalPrice = mapItem['totalPrice'] ?? (ticketCount * ticketPrice);
+      final ticketCount = mapItem['ticketCount'] ?? 1;
+      final ticketPrice = mapItem['ticketPrice'] ?? 15000;
+      final totalPrice = mapItem['totalPrice'] ?? (ticketCount * ticketPrice);
 
-        final reservasi = ReservasiModel(
-          id: mapItem['id'] ?? '',
-          code: mapItem['code'] ?? '',
-          mountainName: mapItem['mountainName'] ?? '-',
-          hikingTrail: mapItem['hikingTrail'] ?? '-',
-          startDate: mapItem['startDate'] ?? DateTime.now(),
-          hikers: hikersList,
-          ticketPrice: ticketPrice,
+      final reservasi = ReservasiModel(
+        id: mapItem['id'] ?? '',
+        code: mapItem['code'] ?? '',
+        mountainName: mapItem['mountainName'] ?? '-',
+        hikingTrail: mapItem['hikingTrail'] ?? '-',
+        startDate: mapItem['startDate'] ?? DateTime.now(),
+        hikers: hikersList,
+        ticketPrice: ticketPrice,
+      );
+      
+      final payment = PaymentModel(
+        id: mapItem['paymentCode'] ?? '',
+        code: mapItem['paymentCode'] ?? '',
+        total: totalPrice,
+        date: DateTime.now(),
+        status: PaymentStatus.paid,
+      );
+
+      HikingHistoryStatus hikingStatus = HikingHistoryStatus.waiting;
+      DateTime? checkInDate;
+      DateTime? checkOutDate;
+      try {
+        final reservasiId = mapItem['id'];
+        final hiking = hikingService.allHikings.firstWhere(
+          (h) => h.reservasiId == reservasiId,
+          orElse: () => null as dynamic,
         );
         
-        final payment = PaymentModel(
-          id: mapItem['paymentCode'] ?? '',
-          code: mapItem['paymentCode'] ?? '',
-          total: totalPrice,
-          date: DateTime.now(),
-          status: PaymentStatus.paid,
-        );
-
-        HikingHistoryStatus hikingStatus = HikingHistoryStatus.waiting;
-        DateTime? checkInDate;
-        DateTime? checkOutDate;
-        try {
-          final reservasiId = mapItem['id'];
-          final hiking = hikingService.allHikings.firstWhere(
-            (h) => h.reservasiId == reservasiId,
-            orElse: () => null as dynamic,
-          );
-          
-          if (hiking != null) {
-            if (hiking.status == HikingStatus.checkedIn) {
-              hikingStatus = HikingHistoryStatus.hiking;
-            } else if (hiking.status == HikingStatus.checkedOut) {
-              hikingStatus = HikingHistoryStatus.finished;
-            } else {
-              hikingStatus = HikingHistoryStatus.waiting;
-            }
-   
-            checkInDate = hiking.checkInDate;
-            checkOutDate = hiking.checkOutDate;
-          }
-        } catch (_) {
+        if (hiking.status == HikingStatus.checkedIn) {
+          hikingStatus = HikingHistoryStatus.hiking;
+        } else if (hiking.status == HikingStatus.checkedOut) {
+          hikingStatus = HikingHistoryStatus.finished;
+        } else {
           hikingStatus = HikingHistoryStatus.waiting;
         }
-        
-        return RiwayatModel(
-          id: mapItem['id'] ?? '',
-          reservasi: reservasi,
-          payment: payment,
-          hikingStatus: hikingStatus,
-          checkInDate: checkInDate,
-          checkOutDate: checkOutDate,
-        );
+ 
+        checkInDate = hiking.checkInDate;
+        checkOutDate = hiking.checkOutDate;
+            } catch (_) {
+        hikingStatus = HikingHistoryStatus.waiting;
       }
-    } catch (_) {
+      
+      return RiwayatModel(
+        id: mapItem['id'] ?? '',
+        reservasi: reservasi,
+        payment: payment,
+        hikingStatus: hikingStatus,
+        checkInDate: checkInDate,
+        checkOutDate: checkOutDate,
+      );
+        } catch (_) {
 
     }
     
@@ -455,25 +451,5 @@ class RiwayatDetailView extends StatelessWidget {
     );
   }
 
-  String _getStatusText(HikingHistoryStatus status) {
-    switch (status) {
-      case HikingHistoryStatus.waiting:
-        return 'Menunggu Pendakian';
-      case HikingHistoryStatus.hiking:
-        return 'Sedang Mendaki';
-      case HikingHistoryStatus.finished:
-        return 'Selesai Mendaki';
-    }
-  }
 
-  Color _getStatusColor(HikingHistoryStatus status) {
-    switch (status) {
-      case HikingHistoryStatus.waiting:
-        return Colors.orange;
-      case HikingHistoryStatus.hiking:
-        return Colors.blue;
-      case HikingHistoryStatus.finished:
-        return Colors.green;
-    }
-  }
 }

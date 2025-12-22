@@ -67,7 +67,7 @@ class ReservasiService extends GetxService {
           '📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}',
         );
         await riwayatService.addFromPaymentAndUpsert(
-          reservasiRow: reservasiRow as Map<String, dynamic>,
+          reservasiRow: reservasiRow,
           paymentRow: payload,
           userId: userId,
         );
@@ -120,7 +120,7 @@ class ReservasiService extends GetxService {
       await _client.from('payment').insert(paymentPayload).select().single();
     }
 
-    return inserted as Map<String, dynamic>;
+    return inserted;
   }
 
   Future<List<Map<String, dynamic>>> fetchReservationsByUser(

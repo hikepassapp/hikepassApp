@@ -11,7 +11,7 @@ class PaymentPriceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
 
-    int _parsePrice(String? priceStr) {
+    int parsePrice(String? priceStr) {
       if (priceStr == null) return 15000;
       final cleaned = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
       if (cleaned.isEmpty) return 15000;
@@ -34,7 +34,7 @@ class PaymentPriceSection extends StatelessWidget {
       return 'Rp $reversed';
     }
 
-    final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
+    final perTicket = parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
     final total = perTicket * controller.ticketCount.value;
     final totalStr = formatRupiah(total);
 
