@@ -10,11 +10,15 @@ class InformasiContentList extends GetView<InformasiController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final currentData = controller.currentData;
-      
+
+      if (currentData == null || currentData.contents.isEmpty) {
+        return const Center(
+          child: Text('Belum ada informasi'),
+        );
+      }
+
       return ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
         itemCount: currentData.contents.length,
         itemBuilder: (context, index) {
           return InformasiContentCard(
