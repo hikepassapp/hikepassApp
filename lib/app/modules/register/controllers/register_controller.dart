@@ -9,7 +9,7 @@ import '../../../services/auth_service.dart';
 import '../../../config/supabase_config.dart';
 
 class RegisterController extends GetxController {
-  final AuthService _authService = Get.find<AuthService>();
+  late final AuthService _authService;
 
   // Text Controllers
   final emailController = TextEditingController();
@@ -39,6 +39,7 @@ class RegisterController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _authService = Get.find<AuthService>();
     // Listen to password changes for validation
     passwordController.addListener(validatePassword);
   }
@@ -102,7 +103,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Mohon masukkan email.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -113,7 +114,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Format email tidak valid.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -136,7 +137,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Password tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -147,7 +148,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Password harus minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -158,7 +159,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Password tidak sama',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -199,7 +200,7 @@ class RegisterController extends GetxController {
           Get.snackbar(
             'Berhasil',
             'Akun berhasil dibuat! Kode OTP telah dikirim ke email Anda.',
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.green[100],
             colorText: Colors.green[900],
             duration: const Duration(seconds: 3),
@@ -215,7 +216,7 @@ class RegisterController extends GetxController {
             Get.snackbar(
               'Informasi',
               'Akun berhasil dibuat! Mohon tunggu 60 detik sebelum meminta kode OTP.',
-              snackPosition: SnackPosition.BOTTOM,
+              snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.orange[100],
               colorText: Colors.orange[900],
               duration: const Duration(seconds: 4),
@@ -224,7 +225,7 @@ class RegisterController extends GetxController {
             // Still navigate to OTP page, user can resend after 60 seconds
             Get.toNamed('/register-otp');
           } else {
-            throw otpError;
+            rethrow;
           }
         }
       }
@@ -234,7 +235,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -254,7 +255,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -263,7 +264,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Tidak ada koneksi internet. Periksa koneksi Anda dan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -272,7 +273,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Koneksi timeout. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -282,7 +283,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Terjadi kesalahan tidak terduga. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -302,7 +303,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Kode OTP tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -313,7 +314,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Kode OTP harus 6 digit',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -330,7 +331,7 @@ class RegisterController extends GetxController {
         Get.snackbar(
           'Berhasil',
           'Verifikasi OTP berhasil!',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green[100],
           colorText: Colors.green[900],
           duration: const Duration(seconds: 3),
@@ -344,7 +345,7 @@ class RegisterController extends GetxController {
         }
       }
     } on AuthException catch (e) {
-      String errorMessage = 'Kode OTP tidak valid atau sudah kadaluarsa.';
+      String errorMessage='';
 
       if (e.message.contains('expired')) {
         errorMessage = 'Kode OTP sudah kadaluarsa. Silakan minta kode baru.';
@@ -358,7 +359,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -367,7 +368,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Tidak ada koneksi internet. Periksa koneksi Anda.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -376,7 +377,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Terjadi kesalahan. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -397,7 +398,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Berhasil',
         'Kode OTP telah dikirim ulang ke email Anda.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
         duration: const Duration(seconds: 3),
@@ -418,7 +419,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -427,7 +428,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Tidak ada koneksi internet.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -436,7 +437,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Gagal mengirim ulang OTP. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -453,7 +454,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'NIK tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -464,7 +465,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Nama lengkap tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -475,7 +476,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Nomor telepon tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -486,7 +487,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Tanggal lahir tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -497,7 +498,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Jenis kelamin tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -508,7 +509,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Alamat tidak boleh kosong',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
@@ -582,7 +583,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Sukses',
         'Registrasi berhasil! Selamat datang di HikePass!',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
         duration: const Duration(seconds: 3),
@@ -625,7 +626,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -634,7 +635,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Tidak ada koneksi internet. Data akan disimpan setelah koneksi pulih.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),
@@ -647,7 +648,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Error',
         'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
         duration: const Duration(seconds: 4),

@@ -3,11 +3,40 @@ import 'package:get/get.dart';
 import '../controllers/reservasi_controller.dart';
 
 class PaymentPriceSection extends StatelessWidget {
-  const PaymentPriceSection({super.key});
+  final Map<String, dynamic>? data;
+
+  const PaymentPriceSection({super.key, this.data});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
+
+    int _parsePrice(String? priceStr) {
+      if (priceStr == null) return 15000;
+      final cleaned = priceStr.replaceAll(RegExp(r'[^0-9]'), '');
+      if (cleaned.isEmpty) return 15000;
+      return int.tryParse(cleaned) ?? 15000;
+    }
+
+    String formatRupiah(int value) {
+      final s = value.toString();
+      final buffer = StringBuffer();
+      int count = 0;
+      for (int i = s.length - 1; i >= 0; i--) {
+        buffer.write(s[i]);
+        count++;
+        if (count == 3 && i != 0) {
+          buffer.write('.');
+          count = 0;
+        }
+      }
+      final reversed = buffer.toString().split('').reversed.join();
+      return 'Rp $reversed';
+    }
+
+    final perTicket = _parsePrice(data?['harga']?.toString() ?? 'Rp 15.000');
+    final total = perTicket * controller.ticketCount.value;
+    final totalStr = formatRupiah(total);
 
     return Column(
       children: [
@@ -25,20 +54,20 @@ class PaymentPriceSection extends StatelessWidget {
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Harga Tiket',
-                style: TextStyle(
+                'Harga Tiket (${controller.ticketCount.value} Pendaki)',
+                style: const TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
               Text(
-                'Rp 15.000',
-                style: TextStyle(
+                totalStr,
+                style: const TextStyle(
                   color: Color(0xFF2D9F8C),
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -53,11 +82,11 @@ class PaymentPriceSection extends StatelessWidget {
         // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
-            // ✅ 1. Validasi tanggal
-            if (controller.selectedDate.value == null) {
+            if ((data == null || data!['tanggal'] == null) &&
+                controller.selectedDate.value == null) {
               Get.snackbar(
                 'Peringatan',
-                'Silakan pilih tanggal pendakian terlebih dahulu!',
+                'Data tanggal tidak lengkap!',
                 backgroundColor: Colors.orange,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.BOTTOM,
@@ -65,41 +94,43 @@ class PaymentPriceSection extends StatelessWidget {
               return;
             }
 
-            // ✅ 2. Ambil data & format waktu
-            final now = DateTime.now();
-            final selected = controller.selectedDate.value!;
-            final formattedDate =
-                '${selected.day.toString().padLeft(2, '0')}-${selected.month.toString().padLeft(2, '0')}-${selected.year}';
-            final formattedTime =
-                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+            if (controller.hikers.isEmpty) {
+              Get.snackbar(
+                'Peringatan',
+                'Silakan isi data pendaki terlebih dahulu!',
+                backgroundColor: Colors.orange,
+                colorText: Colors.white,
+                snackPosition: SnackPosition.BOTTOM,
+              );
+              return;
+            }
 
-            // ✅ 3. Buat data tiket baru
-            final data = {
-              'id': 'D${now.millisecondsSinceEpoch}',
-              'nama': 'Dhea',
-              'title': 'Puncak Besar Malabar',
-              'jalur': controller.selectedPos.value.isNotEmpty
-                  ? controller.selectedPos.value
-                  : 'Panorama',
+            final now = DateTime.now();
+            final mainHiker = controller.hikers.isNotEmpty
+                ? controller.hikers[0]['nama'] ?? 'Pendaki'
+                : 'Pendaki';
+
+            final reservationCode = controller.generateReservationCode();
+            
+            final ticketData = {
+              'id': reservationCode,
+              'reservationCode': reservationCode,
+              'title': data?['title'] ?? '',
+              'jalur': controller.selectedPos.value,
+              'selectedPos': controller.selectedPos.value,
+              'image': data?['imagePath'] ?? '',
+              'imagePath': data?['imagePath'] ?? '',
+              'harga': formatRupiah(total),
+              'hargaPerTiket': data?['harga'] ?? '',
+              'hikersCount': controller.ticketCount.value,
+
+              'nama': mainHiker,
               'metode': 'QRIS',
-              'tanggal': formattedDate,
-              'waktu': formattedTime,
-              'harga': 'Rp 15.000',
-              'durasi': '2 Hari',
-              'imagePath': 'assets/images/reservasi_panorama.png',
+              'tanggal': '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
+              'waktu': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
-            // ✅ 4. Tambahkan ke riwayat (pasti cuma sekali)
-            controller.completePayment(data);
-
-            // ✅ 5. Reset form (biar bisa reservasi lagi)
-            controller.selectedDate.value = null;
-            controller.selectedPos.value = '';
-            controller.ticketCount.value = 1;
-            controller.isAgreed.value = false;
-
-            // ✅ 6. Arahkan ke halaman sukses
-            Get.offNamed('/payment-success', arguments: data);
+            Get.offNamed('/payment-success', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2D9F8C),

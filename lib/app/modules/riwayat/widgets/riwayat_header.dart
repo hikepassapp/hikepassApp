@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/routes/app_pages.dart';
 
-class HikingHeader extends StatelessWidget {
-  const HikingHeader({super.key});
+class RiwayatHeader extends StatelessWidget {
+  const RiwayatHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class HikingHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: const [
                 Text(
-                  'Pendakian!',
+                  'Riwayat',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 26,
@@ -60,7 +60,7 @@ class HikingHeader extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  'Kelola pendakianmu disini!',
+                  'Lihat riwayatmu disini!',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 16,

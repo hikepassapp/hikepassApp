@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import '../models/hiking_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/supabase_config.dart';
 
 class HikingService extends GetxService {
 
@@ -19,22 +21,8 @@ class HikingService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    _loadMockData();
-  }
-
-  void _loadMockData() {
-    _hikingList.add(
-      HikingModel(
-        id: 'hiking-001',
-        reservasiId: 'reservasi-001',
-        paymentId: 'payment-001',
-        mountainName: 'Gunung Malabar',
-        hikingTrail: 'Jalur Panorama',
-        startDate: DateTime(2025, 12, 21),
-        endDate: DateTime(2025, 12, 23),
-        status: HikingStatus.pending,
-      ),
-    );
+    print('🏔️ HikingService initialized - Instance: $hashCode');
+    // No mock data - start empty until reservations are made
   }
 
   HikingModel createFromReservation({
@@ -43,8 +31,13 @@ class HikingService extends GetxService {
     required String mountainName,
     required String hikingTrail,
     required DateTime startDate,
-    required DateTime endDate,
   }) {
+    print('🎫 Creating hiking from reservation:');
+    print('   - Mountain: $mountainName');
+    print('   - Trail: $hikingTrail');
+    print('   - Date: $startDate');
+    print('   - Service Instance: $hashCode');
+    
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
       reservasiId: reservasiId,
@@ -52,11 +45,12 @@ class HikingService extends GetxService {
       mountainName: mountainName,
       hikingTrail: hikingTrail,
       startDate: startDate,
-      endDate: endDate,
       status: HikingStatus.pending,
     );
 
     _hikingList.add(hiking);
+    _upsertHiking(hiking);
+    print('✅ Hiking added. Total items: ${_hikingList.length}');
     return hiking;
   }
 
@@ -74,6 +68,7 @@ class HikingService extends GetxService {
       _hikingList[index] = _hikingList[index].copyWith(
         checkInDate: DateTime.now(),
       );
+      _upsertHiking(_hikingList[index]);
     }
   }
 
@@ -89,6 +84,7 @@ class HikingService extends GetxService {
         checkInCheckboxes: checkInCheckboxes,
         status: HikingStatus.checkedIn,
       );
+      _upsertHiking(_hikingList[index]);
     }
   }
 
@@ -98,6 +94,7 @@ class HikingService extends GetxService {
       _hikingList[index] = _hikingList[index].copyWith(
         checkOutDate: DateTime.now(),
       );
+      _upsertHiking(_hikingList[index]);
     }
   }
 
@@ -113,6 +110,7 @@ class HikingService extends GetxService {
         checkOutCheckboxes: checkOutCheckboxes,
         status: HikingStatus.checkedOut,
       );
+      _upsertHiking(_hikingList[index]);
     }
   }
 
@@ -132,13 +130,13 @@ class HikingService extends GetxService {
       'mountainName': hiking.mountainName,
       'hikingTrail': hiking.hikingTrail,
       'startDate': hiking.startDate.toIso8601String(),
-      'endDate': hiking.endDate.toIso8601String(),
       'checkInDate': hiking.checkInDate!.toIso8601String(),
       'checkOutDate': hiking.checkOutDate!.toIso8601String(),
       'checkInItems': hiking.checkInItems ?? '',
       'checkOutItems': hiking.checkOutItems ?? '',
     };
 
+    _upsertHiking(hiking);
     _hikingList.removeWhere((h) => h.id == hikingId);
 
     return historyData;
@@ -146,5 +144,27 @@ class HikingService extends GetxService {
 
   void clearAll() {
     _hikingList.clear();
+  }
+
+  void _upsertHiking(HikingModel h) {
+    final client = SupabaseConfig.client;
+    final payload = {
+      'id': h.id,
+      'reservasi_id': h.reservasiId,
+      'payment_id': h.paymentId,
+      'mountain_name': h.mountainName,
+      'hiking_trail': h.hikingTrail,
+      'start_date': h.startDate.toIso8601String(),
+      'check_in_date': h.checkInDate?.toIso8601String(),
+      'check_out_date': h.checkOutDate?.toIso8601String(),
+      'status': h.status.name,
+      'check_in_items': h.checkInItems,
+      'check_in_checkboxes': h.checkInCheckboxes,
+      'check_out_items': h.checkOutItems,
+      'check_out_checkboxes': h.checkOutCheckboxes,
+    };
+    try {
+      client.from('hiking').upsert(payload);
+    } catch (_) {}
   }
 }

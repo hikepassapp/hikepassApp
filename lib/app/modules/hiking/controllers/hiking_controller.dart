@@ -11,14 +11,30 @@ class HikingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('HikingController initialized');
+    print('HikingService instance: ${_hikingService.hashCode}');
+    print('Current hiking items: ${_hikingService.allHikings.length}');
     final args = Get.arguments;
     if (args is Map && args['tab'] is int) {
       tabIndex.value = args['tab'] as int;
     }
   }
 
-  List<HikingModel> get pendingCheckIns => _hikingService.pendingCheckIns;
-  List<HikingModel> get checkedIns => _hikingService.checkedIns;
+  List<HikingModel> get pendingCheckIns {
+    final items = _hikingService.allHikings
+        .where((h) => h.status == HikingStatus.pending)
+        .toList();
+    print('📋 Pending check-ins: ${items.length}');
+    return items;
+  }
+
+  List<HikingModel> get checkedIns {
+    final items = _hikingService.allHikings
+        .where((h) => h.status == HikingStatus.checkedIn)
+        .toList();
+    print('📋 Checked-ins: ${items.length}');
+    return items;
+  }
 
   List<HikingModel> get filteredItems {
     return tabIndex.value == 0 ? pendingCheckIns : checkedIns;

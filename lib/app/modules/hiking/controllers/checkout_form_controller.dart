@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
+import '../../../services/riwayat_service.dart';
+import '../../reservasi/controllers/reservasi_controller.dart';
 
 class CheckOutFormController extends GetxController {
   final HikingService _hikingService = Get.find<HikingService>();
@@ -63,7 +65,37 @@ class CheckOutFormController extends GetxController {
       );
 
       if (historyData != null) {
-        
+        try {
+          final reservasiC = Get.find<ReservasiController>();
+          final idx = reservasiC.riwayat.indexWhere(
+            (item) => (item['id'] ?? '') == historyData['reservasiId'],
+          );
+
+          if (idx != -1) {
+            final pending = reservasiC.riwayat[idx];
+            historyData['reservasiCode'] = pending['code'];
+            historyData['paymentCode'] = pending['paymentCode'];
+            historyData['paymentDate'] = pending['paymentDate']?.toString();
+            historyData['ticketPrice'] = pending['ticketPrice'];
+            historyData['hikers'] = pending['hikers'];
+            historyData['mountainName'] = pending['mountainName'];
+            historyData['hikingTrail'] = pending['hikingTrail'];
+
+            reservasiC.riwayat.removeAt(idx);
+          } else {
+            reservasiC.riwayat.removeWhere(
+              (item) => (item['id'] ?? '') == historyData['reservasiId'],
+            );
+          }
+        } catch (_) {
+
+        }
+
+        final riwayatService = Get.isRegistered<RiwayatService>()
+            ? Get.find<RiwayatService>()
+            : Get.put(RiwayatService(), permanent: true);
+        riwayatService.addFromHikingHistory(historyData);
+
         Get.offAllNamed(Routes.riwayat);
 
         Get.snackbar(
