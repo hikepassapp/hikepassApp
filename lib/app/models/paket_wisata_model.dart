@@ -5,9 +5,7 @@ class PaketWisataModel {
   final String tripType;
   final String date;
   final String imageUrl;
-  final String? description;
-  
-  // Detail paket wisata
+  final String description;
   final double rating;
   final String admin;
   final String tanggal;
@@ -26,34 +24,35 @@ class PaketWisataModel {
     required this.tripType,
     required this.date,
     required this.imageUrl,
-    this.description,
-    this.rating = 0.0,
-    this.admin = '',
-    this.tanggal = '',
-    this.biaya = '',
-    this.titikKumpul = '',
-    this.jamKeberangkatan = '',
-    this.narahubung = '',
-    this.fasilitas = const [],
-    this.destinasi = const [],
-    this.createdDate = '',
+    required this.description,
+    required this.rating,
+    required this.admin,
+    required this.tanggal,
+    required this.biaya,
+    required this.titikKumpul,
+    required this.jamKeberangkatan,
+    required this.narahubung,
+    required this.fasilitas,
+    required this.destinasi,
+    required this.createdDate,
   });
 
+  // Factory constructor untuk parsing JSON dari Supabase
   factory PaketWisataModel.fromJson(Map<String, dynamic> json) {
     return PaketWisataModel(
       id: json['id'] ?? '',
       title: json['title'] ?? '',
       agen: json['agen'] ?? '',
-      tripType: json['tripType'] ?? '',
+      tripType: json['trip_type'] ?? '',
       date: json['date'] ?? '',
-      imageUrl: json['imageUrl'] ?? '',
-      description: json['description'],
-      rating: json['rating']?.toDouble() ?? 0.0,
+      imageUrl: json['image_url'] ?? '',
+      description: json['description'] ?? '',
+      rating: (json['rating'] ?? 0.0).toDouble(),
       admin: json['admin'] ?? '',
-      tanggal: json['tanggal'] ?? json['date'] ?? '',
+      tanggal: json['tanggal'] ?? '',
       biaya: json['biaya'] ?? '',
-      titikKumpul: json['titikKumpul'] ?? '',
-      jamKeberangkatan: json['jamKeberangkatan'] ?? '',
+      titikKumpul: json['titik_kumpul'] ?? '',
+      jamKeberangkatan: json['jam_keberangkatan'] ?? '',
       narahubung: json['narahubung'] ?? '',
       fasilitas: json['fasilitas'] != null 
           ? List<String>.from(json['fasilitas']) 
@@ -61,70 +60,30 @@ class PaketWisataModel {
       destinasi: json['destinasi'] != null 
           ? List<String>.from(json['destinasi']) 
           : [],
-      createdDate: json['createdDate'] ?? '',
+      createdDate: json['created_date'] ?? '',
     );
   }
 
+  // Method untuk convert ke JSON (untuk insert/update)
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,
       'agen': agen,
-      'tripType': tripType,
+      'trip_type': tripType,
       'date': date,
-      'imageUrl': imageUrl,
+      'image_url': imageUrl,
       'description': description,
       'rating': rating,
       'admin': admin,
       'tanggal': tanggal,
       'biaya': biaya,
-      'titikKumpul': titikKumpul,
-      'jamKeberangkatan': jamKeberangkatan,
+      'titik_kumpul': titikKumpul,
+      'jam_keberangkatan': jamKeberangkatan,
       'narahubung': narahubung,
       'fasilitas': fasilitas,
       'destinasi': destinasi,
-      'createdDate': createdDate,
+      'created_date': createdDate,
     };
-  }
-
-  // Helper method untuk copy dengan perubahan
-  PaketWisataModel copyWith({
-    String? id,
-    String? title,
-    String? agen,
-    String? tripType,
-    String? date,
-    String? imageUrl,
-    String? description,
-    double? rating,
-    String? admin,
-    String? tanggal,
-    String? biaya,
-    String? titikKumpul,
-    String? jamKeberangkatan,
-    String? narahubung,
-    List<String>? fasilitas,
-    List<String>? destinasi,
-    String? createdDate,
-  }) {
-    return PaketWisataModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      agen: agen ?? this.agen,
-      tripType: tripType ?? this.tripType,
-      date: date ?? this.date,
-      imageUrl: imageUrl ?? this.imageUrl,
-      description: description ?? this.description,
-      rating: rating ?? this.rating,
-      admin: admin ?? this.admin,
-      tanggal: tanggal ?? this.tanggal,
-      biaya: biaya ?? this.biaya,
-      titikKumpul: titikKumpul ?? this.titikKumpul,
-      jamKeberangkatan: jamKeberangkatan ?? this.jamKeberangkatan,
-      narahubung: narahubung ?? this.narahubung,
-      fasilitas: fasilitas ?? this.fasilitas,
-      destinasi: destinasi ?? this.destinasi,
-      createdDate: createdDate ?? this.createdDate,
-    );
   }
 }

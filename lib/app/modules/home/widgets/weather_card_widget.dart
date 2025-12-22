@@ -52,8 +52,8 @@ class WeatherCardWidget extends GetView<HomeController> {
 
   Widget _buildWeatherIcon() {
     return SafeNetworkImage(
-      imageUrl: controller.weatherIcon.value.isNotEmpty 
-          ? controller.getWeatherIconUrl() 
+      imageUrl: controller.weatherIcon.value.isNotEmpty
+          ? controller.getWeatherIconUrl()
           : '',
       width: 140,
       height: 140,
@@ -125,36 +125,33 @@ class WeatherCardWidget extends GetView<HomeController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Cuaca Saat Ini',
+                  'Suhu',
                   style: AppTypography.mMedium.copyWith(color: Colors.black87),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      controller.temperature.value.toStringAsFixed(0),
-                      style: AppTypography.xlBold.copyWith(
-                        fontSize: 64,
-                        height: 1,
-                        color: Colors.black,
-                      ),
+                Obx(() {
+                  final temp = controller.temperature.value;
+                  return Text(
+                    temp != null ? '${temp.toStringAsFixed(0)}°' : '--°',
+                    style: AppTypography.xlSemiBold.copyWith(
+                      fontSize: 64,
+                      height: 1,
+                      color: Colors.black,
                     ),
-                    Text(
-                      '°',
-                      style: AppTypography.xlBold.copyWith(
-                        fontSize: 40,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+                  );
+                }),
+
+                const SizedBox(height: 4),
+                Text(
+                  'Cuaca Saat Ini',
+                  style: AppTypography.mMedium.copyWith(color: Colors.black87),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 4),
                 Text(
                   controller.weatherCondition.value,
                   style: AppTypography.lBold.copyWith(color: Colors.black87),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   controller.location.value,
                   style: AppTypography.sRegular.copyWith(color: Colors.black54),

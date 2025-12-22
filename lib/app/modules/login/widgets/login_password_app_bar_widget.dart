@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoginPasswordAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
+class LoginPasswordAppBarWidget extends StatelessWidget
+    implements PreferredSizeWidget {
   const LoginPasswordAppBarWidget({super.key});
 
   @override
@@ -11,7 +12,12 @@ class LoginPasswordAppBarWidget extends StatelessWidget implements PreferredSize
       elevation: 0,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Get.back(),
+        onPressed: () {
+          if (Get.isSnackbarOpen) {
+            Get.closeAllSnackbars();
+          }
+          Get.back();
+        },
       ),
       title: Text(
         'Masukkan Kata Sandi',

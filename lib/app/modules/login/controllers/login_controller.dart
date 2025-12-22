@@ -772,8 +772,9 @@ class LoginController extends GetxController {
           'Login berhasil! Selamat datang.',
           backgroundColor: Colors.green[100],
           colorText: Colors.green[900],
-          duration: const Duration(seconds: 2),
         );
+
+        await Future.delayed(const Duration(milliseconds: 800));
 
         Get.offAllNamed('/bottom-navigation');
       }

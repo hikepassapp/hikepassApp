@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app/routes/app_pages.dart';
@@ -12,6 +11,10 @@ import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
 
 void main() async {
+  FlutterError.onError = (details) {
+    debugPrint(details.exceptionAsString());
+  };
+
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load();
