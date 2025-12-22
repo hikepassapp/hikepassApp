@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/services/auth_service.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/berita_model.dart';
 import '../../../models/paket_wisata_model.dart';
@@ -12,7 +14,8 @@ class HomeController extends GetxController {
   final WeatherRepository _weatherRepository = Get.find<WeatherRepository>();
   final PaketWisataRepository _paketWisataRepository = PaketWisataRepository();
   final BeritaRepository _beritaRepository = BeritaRepository();
-
+  final AuthService _authService = Get.find<AuthService>();
+  
   var userName = 'Nailong'.obs;
   final paketWisataList = <PaketWisataModel>[].obs;
   final beritaList = <BeritaModel>[].obs;
@@ -35,7 +38,28 @@ class HomeController extends GetxController {
     super.onInit();
     loadBerita();
     loadPaketWisata();
+    loadUserName();
     fetchWeatherData();
+  }
+
+  Future<void> loadUserName() async {
+    try {
+      final currentUser = _authService.currentUser;
+      if (currentUser == null) {
+        userName.value = 'Pengguna';
+        return;
+      }
+
+      final userProfile = await _authService.getUserProfile();
+      if (userProfile != null) {
+        userName.value = userProfile['full_name'] ?? 'Pengguna';
+      } else {
+        userName.value = 'Pengguna';
+      }
+    } catch (e) {
+      userName.value = 'Pengguna';
+      debugPrint('Error load username: $e');
+    }
   }
 
   Future<void> fetchWeatherData() async {
@@ -60,7 +84,7 @@ class HomeController extends GetxController {
       isLoading.value = false;
       errorMessage.value = e.toString();
       _setDefaultWeatherData();
-      
+
       // Tampilkan snackbar error
       Get.snackbar(
         'Error',
@@ -155,7 +179,7 @@ class HomeController extends GetxController {
     } catch (e) {
       isLoadingPaket.value = false;
       paketErrorMessage.value = e.toString();
-      
+
       Get.snackbar(
         'Error',
         'Gagal memuat paket wisata: ${e.toString()}',
@@ -178,7 +202,7 @@ class HomeController extends GetxController {
     } catch (e) {
       isLoadingBerita.value = false;
       beritaErrorMessage.value = e.toString();
-      
+
       Get.snackbar(
         'Error',
         'Gagal memuat berita: ${e.toString()}',
@@ -190,11 +214,7 @@ class HomeController extends GetxController {
 
   // Refresh semua data
   Future<void> refreshAllData() async {
-    await Future.wait([
-      loadPaketWisata(),
-      loadBerita(),
-      fetchWeatherData(),
-    ]);
+    await Future.wait([loadPaketWisata(), loadBerita(), fetchWeatherData()]);
   }
 
   void onSeeAllBeritaAcaraTapped() {
