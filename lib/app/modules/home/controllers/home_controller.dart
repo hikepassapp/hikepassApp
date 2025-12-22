@@ -6,14 +6,17 @@ import '../../../models/weather_repository.dart';
 import '../../../models/weather_model.dart';
 import '../../../repositories/paket_wisata_repository.dart';
 import '../../../repositories/berita_repository.dart';
+import '../../../services/auth_service.dart';
 import 'package:geolocator/geolocator.dart';
 
 class HomeController extends GetxController {
   final WeatherRepository _weatherRepository = Get.find<WeatherRepository>();
   final PaketWisataRepository _paketWisataRepository = PaketWisataRepository();
   final BeritaRepository _beritaRepository = BeritaRepository();
+  final AuthService _authService = AuthService();
 
-  var userName = 'Nailong'.obs;
+  var userName = ''.obs;
+  var userEmail = ''.obs;
   final paketWisataList = <PaketWisataModel>[].obs;
   final beritaList = <BeritaModel>[].obs;
 
@@ -24,7 +27,6 @@ class HomeController extends GetxController {
   final isLoading = true.obs;
   final errorMessage = ''.obs;
 
-  // Loading states untuk data
   final isLoadingPaket = true.obs;
   final isLoadingBerita = true.obs;
   final paketErrorMessage = ''.obs;
@@ -33,9 +35,52 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    loadUserProfile();
     loadBerita();
     loadPaketWisata();
     fetchWeatherData();
+  }
+
+  Future<void> loadUserProfile() async {
+    try {
+      final userProfile = await _authService.getUserProfile();
+      
+      if (userProfile != null) {
+        print('User Profile: $userProfile');
+        
+        userName.value = userProfile['full_name'] ?? 
+                         userProfile['email']?.split('@')[0] ?? 
+                         'User';
+        
+        userEmail.value = userProfile['email'] ?? '';
+        
+        print('Username set to: ${userName.value}');
+      } else {
+        print('User profile is null');
+        userName.value = 'User';
+      }
+    } catch (e) {
+      print('Error loading user profile: $e');
+      userName.value = 'User';
+    }
+  }
+
+  String get greetingMessage {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Selamat Pagi';
+    } else if (hour < 15) {
+      return 'Selamat Siang';
+    } else if (hour < 18) {
+      return 'Selamat Sore';
+    } else {
+      return 'Selamat Malam';
+    }
+  }
+  String get displayName {
+    if (userName.value.isEmpty) return 'User';
+    final names = userName.value.split(' ');
+    return names.first;
   }
 
   Future<void> fetchWeatherData() async {
@@ -65,7 +110,7 @@ class HomeController extends GetxController {
       Get.snackbar(
         'Error',
         'Gagal mengambil data cuaca: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );
     }
@@ -188,9 +233,10 @@ class HomeController extends GetxController {
     }
   }
 
-  // Refresh semua data
+  // Refresh semua data termasuk user profile
   Future<void> refreshAllData() async {
     await Future.wait([
+      loadUserProfile(),
       loadPaketWisata(),
       loadBerita(),
       fetchWeatherData(),

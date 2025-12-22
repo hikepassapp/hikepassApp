@@ -23,6 +23,11 @@ class LaporanController extends GetxController {
   RxBool isLoading = false.obs;
   DateTime? selectedDate;
 
+  // Properties for list management
+  RxList<LaporanModel> laporanList = <LaporanModel>[].obs;
+  RxBool isLoadingList = false.obs;
+  RxString listErrorMessage = ''.obs;
+
   Future<void> pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -173,7 +178,7 @@ class LaporanController extends GetxController {
       );
       _resetForm();
       Future.delayed(const Duration(seconds: 2), () {
-        Get.offAllNamed(Routes.bottomNavigation);
+        Get.offAllNamed(Routes.laporanList);
       });
     } catch (e) {
       Get.snackbar(
@@ -185,6 +190,38 @@ class LaporanController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // List management methods
+  Future<void> loadAllLaporan() async {
+    try {
+      isLoadingList.value = true;
+      listErrorMessage.value = '';
+      
+      final laporan = await _laporanService.getAllLaporan();
+      laporanList.value = laporan;
+    } catch (e) {
+      listErrorMessage.value = e.toString();
+      Get.snackbar(
+        'Error',
+        'Gagal memuat laporan: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingList.value = false;
+    }
+  }
+
+  Future<void> refreshLaporan() async {
+    await loadAllLaporan();
+  }
+
+  void navigateToDetail(LaporanModel laporan) {
+    Get.toNamed(
+      Routes.laporanDetail, // Make sure this route exists in your app_pages.dart
+      arguments: laporan,
+    );
   }
 
   void _resetForm() {

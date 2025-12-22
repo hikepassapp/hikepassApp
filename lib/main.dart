@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app/routes/app_pages.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
@@ -9,8 +8,7 @@ import 'app/config/supabase_config.dart';
 import 'app/services/auth_service.dart';
 import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
-import 'app/services/error_handling_service.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
 void main() async {
   FlutterError.onError = (details) {
     debugPrint(details.exceptionAsString());
@@ -19,9 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load();
-
-  Intl.defaultLocale = 'id_ID';
-
+await initializeDateFormatting('id_ID', null);
   await SupabaseConfig.initialize();
 
   // Initialize Error Handling Service
@@ -40,6 +36,7 @@ void main() async {
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: const AuthCheck(),
+      locale: const Locale('id', 'ID'),
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
