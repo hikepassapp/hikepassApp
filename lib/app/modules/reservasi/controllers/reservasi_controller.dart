@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/services/auth_service.dart';
 import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
@@ -285,12 +286,6 @@ class ReservasiController extends GetxController {
       } catch (e) {
         print('⚠️ Could not refresh history after payment: $e');
       }
-      
-      print('💾 STEP 5: Refresh hiking...');
-      await _hikingService.loadFromSupabase();
-      print('   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}');
-      
-      print('💳 === CompletePayment SUCCESS ===');
     } catch (e) {
       print('❌ ERROR in completePayment: $e');
       Get.snackbar(
