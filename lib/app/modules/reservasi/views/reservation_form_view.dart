@@ -23,6 +23,15 @@ class _ReservationFormViewState extends State<ReservationFormView> {
   final gender = "".obs;
   final ReservasiController formC = Get.find<ReservasiController>();
 
+  // Validation state
+  final namaError = Rxn<String>();
+  final nikError = Rxn<String>();
+  final phoneError = Rxn<String>();
+  final alamatError = Rxn<String>();
+  final nationalityError = Rxn<String>();
+  final genderError = Rxn<String>();
+  final isFormValid = false.obs;
+
   int hikerIndex = -1;
 
   @override
@@ -46,6 +55,18 @@ class _ReservationFormViewState extends State<ReservationFormView> {
         }
       });
     }
+
+    // Attach listeners for live validation
+    namaController.addListener(_validateNama);
+    nikController.addListener(_validateNik);
+    telpController.addListener(_validatePhone);
+    alamatController.addListener(_validateAlamat);
+
+    ever(nationality, (_) => _validateNationality());
+    ever(gender, (_) => _validateGender());
+
+    // initial validation
+    _updateFormValidity();
   }
 
   @override
@@ -55,6 +76,92 @@ class _ReservationFormViewState extends State<ReservationFormView> {
     alamatController.dispose();
     telpController.dispose();
     super.dispose();
+  }
+
+  // Validation helpers
+  void _validateNama() {
+    final v = namaController.text.trim();
+    if (v.isEmpty) {
+      namaError.value = 'Nama lengkap wajib diisi';
+    } else {
+      namaError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _validateNik() {
+    final v = nikController.text.trim();
+    if (v.isEmpty) {
+      nikError.value = 'NIK wajib diisi';
+    } else if (v.length != 16 ||
+        !v.split('').every((c) => '0123456789'.contains(c))) {
+      nikError.value = 'NIK harus berupa 16 digit angka';
+    } else {
+      nikError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _validatePhone() {
+    final v = telpController.text.trim();
+    if (v.isEmpty) {
+      phoneError.value = 'Nomor telepon wajib diisi';
+    } else if (v.length < 7 ||
+        v.length > 15 ||
+        !v.split('').every((c) => '0123456789'.contains(c))) {
+      phoneError.value = 'Nomor telepon tidak valid';
+    } else {
+      phoneError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _validateAlamat() {
+    final v = alamatController.text.trim();
+    if (v.isEmpty) {
+      alamatError.value = 'Alamat wajib diisi';
+    } else {
+      alamatError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _validateNationality() {
+    if (nationality.value.trim().isEmpty) {
+      nationalityError.value = 'Pilih kewarganegaraan';
+    } else {
+      nationalityError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _validateGender() {
+    if (gender.value.trim().isEmpty) {
+      genderError.value = 'Pilih jenis kelamin';
+    } else {
+      genderError.value = null;
+    }
+    _updateFormValidity();
+  }
+
+  void _updateFormValidity() {
+    final noErrors =
+        namaError.value == null &&
+        nikError.value == null &&
+        phoneError.value == null &&
+        alamatError.value == null &&
+        nationalityError.value == null &&
+        genderError.value == null;
+
+    final allFilled =
+        namaController.text.trim().isNotEmpty &&
+        nikController.text.trim().isNotEmpty &&
+        telpController.text.trim().isNotEmpty &&
+        alamatController.text.trim().isNotEmpty &&
+        nationality.value.trim().isNotEmpty &&
+        gender.value.trim().isNotEmpty;
+
+    isFormValid.value = noErrors && allFilled;
   }
 
   @override
@@ -88,7 +195,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWarningBox(),
             const SizedBox(height: 12),
             _buildNamaSection(),
             _buildNikSection(),
@@ -118,37 +224,43 @@ class _ReservationFormViewState extends State<ReservationFormView> {
             ),
           ],
         ),
-        child: ElevatedButton(
-          onPressed: () {
-            final userData = {
-              'nama': namaController.text,
-              'nik': nikController.text,
-              'jenisKelamin': gender.value,
-              'alamat': alamatController.text,
-              'telepon': telpController.text,
-            };
+        child: Obx(
+          () => ElevatedButton(
+            onPressed: isFormValid.value
+                ? () {
+                    final userData = {
+                      'nama': namaController.text.trim(),
+                      'nik': nikController.text.trim(),
+                      'jenisKelamin': gender.value,
+                      'alamat': alamatController.text.trim(),
+                      'telepon': telpController.text.trim(),
+                    };
 
-            if (hikerIndex >= 0) {
-              formC.saveHiker(hikerIndex, userData);
-              Get.back();
-            } else {
-              formC.saveHiker(0, userData);
-              Get.back();
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 48),
-            backgroundColor: AppColors.secondary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+                    if (hikerIndex >= 0) {
+                      formC.saveHiker(hikerIndex, userData);
+                      Get.back();
+                    } else {
+                      formC.saveHiker(0, userData);
+                      Get.back();
+                    }
+                  }
+                : null,
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 48),
+              backgroundColor: isFormValid.value
+                  ? AppColors.secondary
+                  : Colors.grey[400],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-          ),
-          child: const Text(
-            'Save',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+            child: Text(
+              'Simpan',
+              style: TextStyle(
+                color: isFormValid.value ? Colors.white : Colors.grey[600],
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
           ),
         ),
@@ -156,34 +268,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
     );
   }
 
-  Widget _buildWarningBox() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFDF4D8),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE6C45E)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.warning_amber_rounded,
-            color: Colors.orange,
-            size: 24,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              "Masukan email yang didaftarkan pada saat verifikasi akun, Form akan terisi otomatis.\n"
-              "Apabila belum verifikasi akun silahkan isi secara manual semua Form yang tersedia.",
-              style: const TextStyle(fontSize: 13, color: Colors.black87),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Warning about email autofill removed: email is not a required field for hiker data
 
   Widget _buildNikSection() {
     return Column(
@@ -191,7 +276,14 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       children: [
         _buildLabel("Nomor Induk Kependudukan"),
         TextField(controller: nikController, decoration: _inputDecoration()),
-        _buildHintText("*NIK harus sesuai dengan kartu identitas"),
+        Obx(() {
+          return nikError.value != null
+              ? Text(
+                  nikError.value!,
+                  style: TextStyle(color: Colors.red.shade700),
+                )
+              : _buildHintText("*NIK harus sesuai dengan kartu identitas");
+        }),
       ],
     );
   }
@@ -202,7 +294,14 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       children: [
         _buildLabel("Nama Lengkap"),
         TextField(controller: namaController, decoration: _inputDecoration()),
-        _buildHintText("*Nama harus sesuai dengan kartu identitas"),
+        Obx(() {
+          return namaError.value != null
+              ? Text(
+                  namaError.value!,
+                  style: TextStyle(color: Colors.red.shade700),
+                )
+              : _buildHintText("*Nama harus sesuai dengan kartu identitas");
+        }),
       ],
     );
   }
@@ -213,7 +312,14 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       children: [
         _buildLabel("No Telepon"),
         _buildPhoneInput(),
-        _buildHintText("*Nomor harus terhubung dengan WA"),
+        Obx(() {
+          return phoneError.value != null
+              ? Text(
+                  phoneError.value!,
+                  style: TextStyle(color: Colors.red.shade700),
+                )
+              : _buildHintText("*Nomor harus terhubung dengan WA");
+        }),
         const SizedBox(height: 12),
       ],
     );
@@ -231,7 +337,17 @@ class _ReservationFormViewState extends State<ReservationFormView> {
             hintText: 'Masukan alamat lengkap',
           ),
         ),
-        const SizedBox(height: 12),
+        Obx(() {
+          return alamatError.value != null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    alamatError.value!,
+                    style: TextStyle(color: Colors.red.shade700),
+                  ),
+                )
+              : const SizedBox(height: 12);
+        }),
       ],
     );
   }
@@ -242,6 +358,14 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       children: [
         _buildLabel("Kewarganegaraan"),
         _buildRadioGroup(nationality, ["WNI", "WNA"]),
+        Obx(() {
+          return nationalityError.value != null
+              ? Text(
+                  nationalityError.value!,
+                  style: TextStyle(color: Colors.red.shade700),
+                )
+              : const SizedBox.shrink();
+        }),
       ],
     );
   }
@@ -252,7 +376,17 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       children: [
         _buildLabel("Jenis Kelamin"),
         _buildRadioGroup(gender, ["Laki - Laki", "Perempuan"]),
-        const SizedBox(height: 12),
+        Obx(() {
+          return genderError.value != null
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    genderError.value!,
+                    style: TextStyle(color: Colors.red.shade700),
+                  ),
+                )
+              : const SizedBox(height: 12);
+        }),
       ],
     );
   }
