@@ -23,6 +23,8 @@ abstract class Routes {
   static const login = _Paths.login;
   static const laporanDetail = _Paths.laporanDetail;
   static const laporanList = _Paths.laporanList;
+  static const beritaList = _Paths.beritaList;
+  static const paketList = _Paths.paketList;
 }
 
 abstract class _Paths {
@@ -47,4 +49,6 @@ abstract class _Paths {
   static const login = '/login';
   static const laporanDetail = '/laporan-detail';
   static const laporanList = '/laporan-list';
+  static const beritaList = '/berita-list';
+  static const paketList = '/paket-list';
 }

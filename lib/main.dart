@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hikepass_app/app/services/error_handling_service.dart';
 import 'app/routes/app_pages.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
 import 'app/config/supabase_config.dart';
@@ -19,10 +20,7 @@ void main() async {
   await dotenv.load();
 await initializeDateFormatting('id_ID', null);
   await SupabaseConfig.initialize();
-
-  // Initialize Error Handling Service
   Get.put(ErrorHandlingService());
-
   Get.put(AuthService());
   Get.put(HikingService());
   Get.put(RiwayatService(), permanent: true);
