@@ -8,7 +8,6 @@ import 'riwayat_service.dart';
 
 class ReservasiService extends GetxService {
   SupabaseClient get _client => SupabaseConfig.client;
-  final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> upsertReservation(Map<String, dynamic> data) async {
     final payload = {

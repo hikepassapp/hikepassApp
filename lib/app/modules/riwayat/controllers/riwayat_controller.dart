@@ -20,10 +20,17 @@ class RiwayatController extends GetxController {
     _hikingService = Get.find<HikingService>();
     // Load related hiking records so history can link to pending check-ins
     _hikingService.loadFromSupabase();
-    
+
     // Load history from Supabase
     _loadHistory();
   }
+
+  @override
+  void onReady() {
+    super.onReady();
+    refreshHistory();
+  }
+
 
   Future<void> _loadHistory() async {
     await _service.loadFromSupabase();
@@ -43,7 +50,7 @@ class RiwayatController extends GetxController {
 
     try {
       final reservasiC = Get.find<ReservasiController>();
-      
+
       for (var mapItem in reservasiC.riwayat) {
         final reservasiId = mapItem['id'] ?? '';
 
@@ -54,10 +61,9 @@ class RiwayatController extends GetxController {
         final hikersList = <HikerInfo>[];
         if (mapItem['hikers'] != null && mapItem['hikers'] is List) {
           for (var hiker in mapItem['hikers'] as List) {
-            hikersList.add(HikerInfo(
-              name: hiker['name'] ?? '-',
-              nik: hiker['nik'] ?? '-',
-            ));
+            hikersList.add(
+              HikerInfo(name: hiker['name'] ?? '-', nik: hiker['nik'] ?? '-'),
+            );
           }
         }
 
@@ -74,7 +80,7 @@ class RiwayatController extends GetxController {
           hikers: hikersList,
           ticketPrice: ticketPrice,
         );
-        
+
         final payment = PaymentModel(
           id: mapItem['paymentCode'] ?? '',
           code: mapItem['paymentCode'] ?? '',
@@ -91,7 +97,7 @@ class RiwayatController extends GetxController {
             (h) => h.reservasiId == reservasiId,
             orElse: () => null as dynamic,
           );
-          
+
           if (hiking.status == HikingStatus.checkedIn) {
             hikingStatus = HikingHistoryStatus.hiking;
           } else if (hiking.status == HikingStatus.checkedOut) {
@@ -102,10 +108,10 @@ class RiwayatController extends GetxController {
 
           checkInDate = hiking.checkInDate;
           checkOutDate = hiking.checkOutDate;
-                } catch (_) {
+        } catch (_) {
           hikingStatus = HikingHistoryStatus.waiting;
         }
-        
+
         final riwayatItem = RiwayatModel(
           id: mapItem['id'] ?? '',
           reservasi: reservasi,
@@ -114,16 +120,16 @@ class RiwayatController extends GetxController {
           checkInDate: checkInDate,
           checkOutDate: checkOutDate,
         );
-        
+
         serviceItems.insert(0, riwayatItem);
       }
-    } catch (_) {
+    } catch (_) {}
 
-    }
-    
     // Sort by start_date descending so newest is at the top
-    serviceItems.sort((a, b) => b.reservasi.startDate.compareTo(a.reservasi.startDate));
-    
+    serviceItems.sort(
+      (a, b) => b.reservasi.startDate.compareTo(a.reservasi.startDate),
+    );
+
     return serviceItems;
   }
 

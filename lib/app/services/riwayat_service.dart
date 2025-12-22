@@ -30,23 +30,26 @@ class RiwayatService extends GetxService {
     try {
       print('📥 Loading history from Supabase for user: $userId');
       final rows = await fetchHistoryByUser(userId);
-      
+
       _items.clear();
-      
+
       for (var row in rows) {
-        final hikers = (row['hikers'] as List?)
-            ?.map((h) => HikerInfo(
-                  name: h['name'] ?? '-',
-                  nik: h['nik'] ?? '-',
-                ))
-            .toList() ?? [];
+        final hikers =
+            (row['hikers'] as List?)
+                ?.map(
+                  (h) =>
+                      HikerInfo(name: h['name'] ?? '-', nik: h['nik'] ?? '-'),
+                )
+                .toList() ??
+            [];
 
         final reservasi = ReservasiModel(
           id: row['reservasi_id'] ?? 'unknown',
           code: row['reservasi_code'] ?? '-',
           mountainName: row['mountain_name'] ?? '-',
           hikingTrail: row['hiking_trail'] ?? '-',
-          startDate: DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
+          startDate:
+              DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
           hikers: hikers,
           ticketPrice: row['ticket_price'] ?? 15000,
         );
@@ -57,9 +60,10 @@ class RiwayatService extends GetxService {
             id: row['reservasi_id'] ?? 'payment-unknown',
             code: row['payment_code'],
             total: row['payment_total'] ?? 0,
-            date: DateTime.tryParse(row['payment_date'] ?? '') ?? DateTime.now(),
-            status: row['payment_status'] == 'paid' 
-                ? PaymentStatus.paid 
+            date:
+                DateTime.tryParse(row['payment_date'] ?? '') ?? DateTime.now(),
+            status: row['payment_status'] == 'paid'
+                ? PaymentStatus.paid
                 : PaymentStatus.waiting,
           );
         }
@@ -92,11 +96,11 @@ class RiwayatService extends GetxService {
     String? userId,
   }) async {
     try {
-      final hikers = (reservasiRow['hikers'] as List?)
-              ?.map((h) => HikerInfo(
-                    name: h['name'] ?? '-',
-                    nik: h['nik'] ?? '-',
-                  ))
+      final hikers =
+          (reservasiRow['hikers'] as List?)
+              ?.map(
+                (h) => HikerInfo(name: h['name'] ?? '-', nik: h['nik'] ?? '-'),
+              )
               .toList() ??
           [];
 
@@ -106,7 +110,8 @@ class RiwayatService extends GetxService {
         mountainName: reservasiRow['mountain_name'] ?? '-',
         hikingTrail: reservasiRow['hiking_trail'] ?? '-',
         startDate:
-            DateTime.tryParse(reservasiRow['start_date'] ?? '') ?? DateTime.now(),
+            DateTime.tryParse(reservasiRow['start_date'] ?? '') ??
+            DateTime.now(),
         hikers: hikers,
         ticketPrice: (reservasiRow['ticket_price'] ?? 15000) as int,
       );
@@ -155,21 +160,73 @@ class RiwayatService extends GetxService {
     }
   }
 
-  Future<void> addFromHikingHistory(Map<String, dynamic> history, {String? userId}) async {
+  /// Update check_in_date di tabel riwayat
+  Future<void> updateCheckInDate(
+    String reservasiId,
+    DateTime checkInDate,
+  ) async {
+    try {
+      print('📝 Updating riwayat check_in_date for reservasiId: $reservasiId');
+
+      await SupabaseConfig.client
+          .from('riwayat')
+          .update({'check_in_date': checkInDate.toIso8601String()})
+          .eq('id', reservasiId); // Assuming riwayat.id = reservasi.id
+
+      print('✅ Riwayat check_in_date updated successfully');
+    } catch (e) {
+      print('❌ Error updating riwayat check_in_date: $e');
+      rethrow;
+    }
+  }
+
+  /// Update check_out_date di tabel riwayat
+  Future<void> updateCheckOutDate(
+    String reservasiId,
+    DateTime checkOutDate,
+  ) async {
+    try {
+      print('📝 Updating riwayat check_out_date for reservasiId: $reservasiId');
+
+      await SupabaseConfig.client
+          .from('riwayat')
+          .update({'check_out_date': checkOutDate.toIso8601String()})
+          .eq('id', reservasiId);
+
+      print('✅ Riwayat check_out_date updated successfully');
+    } catch (e) {
+      print('❌ Error updating riwayat check_out_date: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> addFromHikingHistory(
+    Map<String, dynamic> history, {
+    String? userId,
+  }) async {
     final reservasiId = history['reservasiId'] ?? '';
-    final existingIndex = _items.indexWhere((item) => item.reservasi.id == reservasiId);
-    
+    final existingIndex = _items.indexWhere(
+      (item) => item.reservasi.id == reservasiId,
+    );
+
     if (existingIndex != -1) {
       final existing = _items[existingIndex];
-      final checkInDate = DateTime.tryParse(history['checkInDate'] ?? '') ?? existing.checkInDate;
-      final checkOutDate = DateTime.tryParse(history['checkOutDate'] ?? '') ?? existing.checkOutDate;
+      final checkInDate =
+          DateTime.tryParse(history['checkInDate'] ?? '') ??
+          existing.checkInDate;
+      final checkOutDate =
+          DateTime.tryParse(history['checkOutDate'] ?? '') ??
+          existing.checkOutDate;
 
       final updatedReservasi = ReservasiModel(
         id: reservasiId.toString(),
         code: (history['reservasiCode'] ?? existing.reservasi.code),
-        mountainName: history['mountainName'] ?? existing.reservasi.mountainName,
+        mountainName:
+            history['mountainName'] ?? existing.reservasi.mountainName,
         hikingTrail: history['hikingTrail'] ?? existing.reservasi.hikingTrail,
-        startDate: DateTime.tryParse(history['startDate'] ?? '') ?? existing.reservasi.startDate,
+        startDate:
+            DateTime.tryParse(history['startDate'] ?? '') ??
+            existing.reservasi.startDate,
         hikers: existing.reservasi.hikers,
         ticketPrice: history['ticketPrice'] ?? existing.reservasi.ticketPrice,
       );
@@ -184,7 +241,11 @@ class RiwayatService extends GetxService {
       );
       final uid = userId ?? _userId;
       if (uid != null) {
-        await _upsertRiwayat(_items[existingIndex], userId: uid, history: history);
+        await _upsertRiwayat(
+          _items[existingIndex],
+          userId: uid,
+          history: history,
+        );
       } else {
         await _upsertRiwayat(_items[existingIndex], history: history);
       }
@@ -202,20 +263,13 @@ class RiwayatService extends GetxService {
         if (match.isNotEmpty && match['hikers'] != null) {
           hikersList = match['hikers'] as List<dynamic>;
         }
-      } catch (_) {
-      }
+      } catch (_) {}
     }
     final hikers = hikersList.isEmpty
-        ? [HikerInfo(
-            name: history['hikerName'],
-            nik: history['hikerNik'],
-          )]
+        ? [HikerInfo(name: history['hikerName'], nik: history['hikerNik'])]
         : hikersList.map((h) {
             if (h is HikerInfo) return h;
-            return HikerInfo(
-              name: h['name'],
-              nik: h['nik'],
-            );
+            return HikerInfo(name: h['name'], nik: h['nik']);
           }).toList();
 
     final reservasi = ReservasiModel(
@@ -223,7 +277,8 @@ class RiwayatService extends GetxService {
       code: (history['reservasiCode'] ?? '-') as String,
       mountainName: history['mountainName'] ?? '-',
       hikingTrail: history['hikingTrail'] ?? '-',
-      startDate: DateTime.tryParse(history['startDate'] ?? '') ?? DateTime.now(),
+      startDate:
+          DateTime.tryParse(history['startDate'] ?? '') ?? DateTime.now(),
       hikers: hikers,
       ticketPrice: (history['ticketPrice'] ?? 15000) as int,
     );
@@ -264,10 +319,15 @@ class RiwayatService extends GetxService {
     }
   }
 
-  Future<void> _upsertRiwayat(RiwayatModel r, {String? userId, Map<String, dynamic>? history}) async {
+  Future<void> _upsertRiwayat(
+    RiwayatModel r, {
+    String? userId,
+    Map<String, dynamic>? history,
+  }) async {
     final client = SupabaseConfig.client;
-    final ticketCount = (history?['ticketCount'] as int?) ?? r.reservasi.hikers.length;
-    
+    final ticketCount =
+        (history?['ticketCount'] as int?) ?? r.reservasi.hikers.length;
+
     final payload = {
       'id': r.id,
       'reservasi_id': r.reservasi.id,
@@ -291,7 +351,9 @@ class RiwayatService extends GetxService {
       if (userId != null) 'user_id': userId,
     };
     try {
-      print('📤 Upserting riwayat to DB with payload keys: ${payload.keys.toList()}');
+      print(
+        '📤 Upserting riwayat to DB with payload keys: ${payload.keys.toList()}',
+      );
       print('   user_id in payload: ${payload['user_id']}');
       print('   ticket_count: ${payload['ticket_count']}');
       final response = await client.from('riwayat').upsert(payload).select();
@@ -304,15 +366,20 @@ class RiwayatService extends GetxService {
   }
 
   /// Update hiking status in riwayat after check-in/check-out
-  Future<void> updateHikingStatus(String riwayatId, HikingHistoryStatus status) async {
+  Future<void> updateHikingStatus(
+    String riwayatId,
+    HikingHistoryStatus status,
+  ) async {
     try {
-      print('📤 Updating riwayat $riwayatId with hiking_status: ${status.name}');
+      print(
+        '📤 Updating riwayat $riwayatId with hiking_status: ${status.name}',
+      );
       await SupabaseConfig.client
           .from('riwayat')
           .update({'hiking_status': status.name})
           .eq('id', riwayatId);
       print('✅ Riwayat status updated: $riwayatId');
-      
+
       // Update local cache
       final index = _items.indexWhere((item) => item.id == riwayatId);
       if (index != -1) {
@@ -342,7 +409,10 @@ class RiwayatService extends GetxService {
   }
 
   // Subscribe to changes for a user's history to refresh UI
-  RealtimeChannel subscribeUserHistory(String userId, void Function() onChange) {
+  RealtimeChannel subscribeUserHistory(
+    String userId,
+    void Function() onChange,
+  ) {
     final channel = SupabaseConfig.client
         .channel('riwayat-user-$userId')
         .onPostgresChanges(
@@ -355,4 +425,3 @@ class RiwayatService extends GetxService {
     return channel;
   }
 }
-

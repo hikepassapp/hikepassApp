@@ -245,7 +245,7 @@ class ReservasiController extends GetxController {
         'telepon': h['telepon'],
         'jenisKelamin': h['jenisKelamin'],
         'kewarganegaraan': h['kewarganegaraan'],
-        'ktpImageUrl': ktpImageUrl, // ✅ TIDAK NULL
+        'ktpImageUrl': ktpImageUrl,
       });
 
       print('✅ Hiker[$i] uploaded KTP URL: $ktpImageUrl');
@@ -300,8 +300,20 @@ class ReservasiController extends GetxController {
         'paymentDate': now,
         'userId': userId,
       });
-      print('✅ Payment saved, history should be created automatically');
 
+      print('✅ Payment saved, history should be created automatically');
+      // ✨ TAMBAHKAN INI: Buat hiking record otomatis
+      print('🏔️ Creating hiking record from payment...');
+      await _hikingService.createFromReservation(
+        reservasiId: reservasiId,
+        paymentId: paymentCode,
+        mountainName: mountainName,
+        hikingTrail: jalur,
+        startDate: startDate,
+        userId: userId,
+      );
+      print('✅ Hiking record created - akan muncul di tab Pending Check-In');
+      
       try {
         if (Get.isRegistered<RiwayatService>()) {
           final riwayatService = Get.find<RiwayatService>();

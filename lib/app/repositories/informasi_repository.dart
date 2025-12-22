@@ -261,7 +261,7 @@ class InformasiRepository {
     try {
       debugPrint('🧪 Testing informasi connection...');
       
-      final response = await _supabase
+      await _supabase
           .from('informasi')
           .select('id')
           .limit(1);
