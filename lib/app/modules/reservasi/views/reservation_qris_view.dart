@@ -16,10 +16,8 @@ class _ReservationQrisViewState extends State<ReservationQrisView> {
   @override
   void initState() {
     super.initState();
-    // After a short delay, navigate to payment success screen
     final args = Get.arguments as Map<String, dynamic>?;
     _timer = Timer(const Duration(seconds: 3), () {
-      // Use offNamed so the QRIS screen isn't in the back stack
       Get.offNamed('/payment-success', arguments: args);
     });
   }
@@ -44,7 +42,6 @@ class _ReservationQrisViewState extends State<ReservationQrisView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // QRIS image from local assets
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(

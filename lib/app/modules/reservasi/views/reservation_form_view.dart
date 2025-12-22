@@ -23,7 +23,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
   final gender = "".obs;
   final ReservasiController formC = Get.find<ReservasiController>();
 
-  // Validation state
   final namaError = Rxn<String>();
   final nikError = Rxn<String>();
   final phoneError = Rxn<String>();
@@ -56,7 +55,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       });
     }
 
-    // Attach listeners for live validation
     namaController.addListener(_validateNama);
     nikController.addListener(_validateNik);
     telpController.addListener(_validatePhone);
@@ -65,7 +63,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
     ever(nationality, (_) => _validateNationality());
     ever(gender, (_) => _validateGender());
 
-    // initial validation
     _updateFormValidity();
   }
 
@@ -78,7 +75,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
     super.dispose();
   }
 
-  // Validation helpers
   void _validateNama() {
     final v = namaController.text.trim();
     if (v.isEmpty) {
@@ -234,6 +230,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
                       'jenisKelamin': gender.value,
                       'alamat': alamatController.text.trim(),
                       'telepon': telpController.text.trim(),
+                      'kewarganegaraan': nationality.value,
                     };
 
                     if (hikerIndex >= 0) {
@@ -267,8 +264,6 @@ class _ReservationFormViewState extends State<ReservationFormView> {
       ),
     );
   }
-
-  // Warning about email autofill removed: email is not a required field for hiker data
 
   Widget _buildNikSection() {
     return Column(
