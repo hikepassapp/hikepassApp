@@ -11,6 +11,7 @@ import '../modules/reservasi/views/reservation_qris_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
+import '../modules/berita/views/berita_detail_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
 import '../modules/bottom_navigation/views/bottom_navigation_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -32,10 +33,10 @@ import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_email_view.dart';
-import '../modules/login/views/login_otp_view.dart';
 import '../modules/login/views/login_password_view.dart';
 import '../modules/login/views/login_reset_password_view.dart';
 import '../modules/login/views/login_otp_reset_password_view.dart';
+import '../modules/login/views/login_reset_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/profile_change_profile_view.dart';
@@ -162,11 +163,6 @@ class AppPages {
     GetPage(
       name: '/login-email',
       page: () => const LoginEmailView(),
-      binding: LoginBinding(),
-    ),
-    GetPage(
-      name: '/login-otp',
-      page: () => const LoginOtpView(),
       binding: LoginBinding(),
     ),
     GetPage(

@@ -14,7 +14,7 @@ class LoginResetPasswordFormWidget extends GetView<LoginController> {
         children: [
           // Description
           Text(
-            'Masukkan password baru untuk akun Anda. Kami akan mengirim kode OTP untuk verifikasi.',
+            'Masukkan password baru untuk akun Anda.',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -40,9 +40,21 @@ class LoginResetPasswordFormWidget extends GetView<LoginController> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.grey[300]!),
             ),
-            child: Text(
-              controller.emailController.text.trim(),
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+            child: Row(
+              children: [
+                Icon(Icons.email_outlined, color: Color(0xFF26A69A), size: 20),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    controller.emailController.text.trim(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1a1a1a),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 24),
@@ -201,7 +213,7 @@ class LoginResetPasswordFormWidget extends GetView<LoginController> {
               () => ElevatedButton(
                 onPressed: controller.isResetLoading.value
                     ? null
-                    : controller.sendResetOtp,
+                    : controller.resetPasswordDirect,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF26A69A),
                   shape: RoundedRectangleBorder(

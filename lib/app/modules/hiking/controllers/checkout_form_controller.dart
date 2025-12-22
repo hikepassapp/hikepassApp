@@ -7,7 +7,7 @@ import '../../../services/riwayat_service.dart';
 import '../../reservasi/controllers/reservasi_controller.dart';
 
 class CheckOutFormController extends GetxController {
-  final HikingService _hikingService = Get.find<HikingService>();
+  late final HikingService _hikingService;
 
   final Rxn<HikingModel> currentHiking = Rxn<HikingModel>();
   final RxList<bool> checkboxes = List.generate(3, (_) => false).obs;
@@ -17,6 +17,9 @@ class CheckOutFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _hikingService = Get.isRegistered<HikingService>()
+        ? Get.find<HikingService>()
+        : Get.put(HikingService(), permanent: true);
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
       final hiking = _hikingService.getHikingById(hikingId);
@@ -42,7 +45,7 @@ class CheckOutFormController extends GetxController {
     }
   }
 
-  void submitCheckOut() {
+  Future<void> submitCheckOut() async {
     if (!isFormValid) {
       Get.snackbar(
         'Perhatian',
@@ -60,7 +63,7 @@ class CheckOutFormController extends GetxController {
         checkOutCheckboxes: checkboxes.toList(),
       );
 
-      final historyData = _hikingService.completeCheckOut(
+      final historyData = await _hikingService.completeCheckOut(
         currentHiking.value!.id,
       );
 
@@ -94,7 +97,8 @@ class CheckOutFormController extends GetxController {
         final riwayatService = Get.isRegistered<RiwayatService>()
             ? Get.find<RiwayatService>()
             : Get.put(RiwayatService(), permanent: true);
-        riwayatService.addFromHikingHistory(historyData);
+        final userId = historyData['userId'] as String?;
+        await riwayatService.addFromHikingHistory(historyData, userId: userId);
 
         Get.offAllNamed(Routes.riwayat);
 
