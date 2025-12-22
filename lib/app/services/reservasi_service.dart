@@ -16,13 +16,17 @@ class ReservasiService extends GetxService {
           : data['startDate'],
       'ticket_price': data['ticketPrice'],
       'hikers': data['hikers'],
-      // optional user_id if your schema supports it
       if (data['userId'] != null) 'user_id': data['userId'],
       if (data['status'] != null) 'status': data['status'],
     };
     try {
+      print('📤 Upserting reservation: ${data['code']}');
       await _client.from('reservasi').upsert(payload).select();
-    } catch (_) {}
+      print('✅ Reservation upserted successfully: ${data["id"]}');
+    } catch (e) {
+      print('❌ Error upserting reservation: $e');
+      rethrow;
+    }
   }
 
   Future<void> upsertPayment(Map<String, dynamic> data) async {
@@ -37,8 +41,13 @@ class ReservasiService extends GetxService {
       'status': 'paid',
     };
     try {
+      print('📤 Upserting payment: ${data["paymentCode"]}');
       await _client.from('payment').upsert(payload).select();
-    } catch (_) {}
+      print('✅ Payment upserted successfully: ${payload["id"]}');
+    } catch (e) {
+      print('❌ Error upserting payment: $e');
+      rethrow;
+    }
   }
 
   // Clean API - create reservation and (optionally) payment in a transaction-like sequence

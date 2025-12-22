@@ -16,6 +16,72 @@ class RiwayatService extends GetxService {
   @override
   void onInit() {
     super.onInit();
+    print('📜 RiwayatService initialized');
+  }
+
+  /// Load history from Supabase for the current user
+  Future<void> loadFromSupabase() async {
+    final userId = _userId;
+    if (userId == null) {
+      print('⚠️ Cannot load history: user not logged in');
+      return;
+    }
+
+    try {
+      print('📥 Loading history from Supabase for user: $userId');
+      final rows = await fetchHistoryByUser(userId);
+      
+      _items.clear();
+      
+      for (var row in rows) {
+        final hikers = (row['hikers'] as List?)
+            ?.map((h) => HikerInfo(
+                  name: h['name'] ?? '-',
+                  nik: h['nik'] ?? '-',
+                ))
+            .toList() ?? [];
+
+        final reservasi = ReservasiModel(
+          id: row['reservasi_id'] ?? 'unknown',
+          code: row['reservasi_code'] ?? '-',
+          mountainName: row['mountain_name'] ?? '-',
+          hikingTrail: row['hiking_trail'] ?? '-',
+          startDate: DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
+          hikers: hikers,
+          ticketPrice: row['ticket_price'] ?? 15000,
+        );
+
+        PaymentModel? payment;
+        if (row['payment_code'] != null) {
+          payment = PaymentModel(
+            id: row['reservasi_id'] ?? 'payment-unknown',
+            code: row['payment_code'],
+            total: row['payment_total'] ?? 0,
+            date: DateTime.tryParse(row['payment_date'] ?? ''),
+            status: row['payment_status'] == 'paid' 
+                ? PaymentStatus.paid 
+                : PaymentStatus.pending,
+          );
+        }
+
+        final item = RiwayatModel(
+          id: row['id'],
+          reservasi: reservasi,
+          payment: payment,
+          hikingStatus: row['hiking_status'] == 'finished'
+              ? HikingHistoryStatus.finished
+              : HikingHistoryStatus.ongoing,
+          checkInDate: DateTime.tryParse(row['check_in_date'] ?? ''),
+          checkOutDate: DateTime.tryParse(row['check_out_date'] ?? ''),
+        );
+
+        _items.add(item);
+      }
+
+      print('✅ Loaded ${_items.length} history items from Supabase');
+    } catch (e) {
+      print('❌ Error loading history from Supabase: $e');
+    }
   }
 
   RiwayatModel? getById(String id) {
@@ -110,7 +176,7 @@ class RiwayatService extends GetxService {
         id: history['paymentId'] ?? 'payment-unknown',
         code: (history['paymentCode'] ?? '-') as String,
         total: totalPayment,
-        date: DateTime.tryParse(history['paymentDate'] ?? '') ?? DateTime(2025, 12, 20, 17, 0),
+        date: DateTime.tryParse(history['paymentDate'] ?? '') ?? DateTime.now(),
         status: PaymentStatus.paid,
       );
     } else {
@@ -138,7 +204,6 @@ class RiwayatService extends GetxService {
   Future<void> _upsertRiwayat(RiwayatModel r, {String? userId, Map<String, dynamic>? history}) async {
     final client = SupabaseConfig.client;
     final ticketCount = (history?['ticketCount'] as int?) ?? r.reservasi.hikers.length;
-    final totalPrice = (history?['totalPrice'] as int?) ?? (r.reservasi.ticketPrice * r.reservasi.hikers.length);
     
     final payload = {
       'id': r.id,
@@ -155,7 +220,7 @@ class RiwayatService extends GetxService {
           .toList(),
       'ticket_price': r.reservasi.ticketPrice,
       'ticket_count': ticketCount,
-      'total_price': totalPrice,
+      // Don't send total_price - it's a generated column
       'payment_code': r.payment?.code,
       'payment_total': r.payment?.total,
       'payment_date': r.payment?.date?.toIso8601String(),
@@ -165,7 +230,7 @@ class RiwayatService extends GetxService {
     try {
       print('📤 Upserting riwayat to DB with payload keys: ${payload.keys.toList()}');
       print('   user_id in payload: ${payload['user_id']}');
-      print('   ticket_count: ${payload['ticket_count']}, total_price: ${payload['total_price']}');
+      print('   ticket_count: ${payload['ticket_count']}');
       final response = await client.from('riwayat').upsert(payload).select();
       print('✅ Riwayat upserted successfully: ${r.id}');
       print('   Response: $response');
