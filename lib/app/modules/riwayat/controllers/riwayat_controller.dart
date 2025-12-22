@@ -18,6 +18,8 @@ class RiwayatController extends GetxController {
     // Initialize services here instead of in class definition
     _service = Get.find<RiwayatService>();
     _hikingService = Get.find<HikingService>();
+    // Load related hiking records so history can link to pending check-ins
+    _hikingService.loadFromSupabase();
     
     // Load history from Supabase
     _loadHistory();
