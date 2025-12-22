@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/modules/berita/views/berita_list.dart';
+import 'package:hikepass_app/app/modules/paket/views/paket_list_view.dart';
 import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
 import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
@@ -11,7 +13,6 @@ import '../modules/reservasi/views/reservation_qris_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
-import '../modules/berita/views/berita_detail_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
 import '../modules/bottom_navigation/views/bottom_navigation_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
@@ -203,5 +204,15 @@ class AppPages {
     GetPage(name: _Paths.terms, page: () => const TermsView()),
     GetPage(name: _Paths.about, page: () => const AboutView()),
     GetPage(name: _Paths.privacyPolicy, page: () => const PrivacyPolicyView()),
+    GetPage(
+      name: _Paths.beritaList,
+      page: () => const BeritaList(),
+      binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: _Paths.paketList,
+      page: () => const PaketListView(),
+      binding: PaketBinding(),
+    ),
   ];
 }
