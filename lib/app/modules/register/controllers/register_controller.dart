@@ -9,7 +9,7 @@ import '../../../services/auth_service.dart';
 import '../../../config/supabase_config.dart';
 
 class RegisterController extends GetxController {
-  final AuthService _authService = Get.find<AuthService>();
+  late final AuthService _authService;
 
   // Text Controllers
   final emailController = TextEditingController();
@@ -39,6 +39,7 @@ class RegisterController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _authService = Get.find<AuthService>();
     // Listen to password changes for validation
     passwordController.addListener(validatePassword);
   }

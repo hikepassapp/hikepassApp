@@ -9,8 +9,16 @@ import '../../reservasi/controllers/reservasi_controller.dart';
 import '../../../routes/app_pages.dart';
 
 class RiwayatController extends GetxController {
-  final RiwayatService _service = Get.find<RiwayatService>();
-  final HikingService _hikingService = Get.find<HikingService>();
+  late final RiwayatService _service;
+  late final HikingService _hikingService;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize services here instead of in class definition
+    _service = Get.find<RiwayatService>();
+    _hikingService = Get.find<HikingService>();
+  }
 
   List<RiwayatModel> get items {
     final serviceItems = _service.all.toList();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import '../controllers/checkin_form_controller.dart';
 
 class CheckInFormView extends GetView<CheckInFormController> {
@@ -16,7 +15,8 @@ class CheckInFormView extends GetView<CheckInFormController> {
   ];
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd/MM/yyyy, HH:mm', 'id_ID').format(date);
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    return '${twoDigits(date.day)}/${twoDigits(date.month)}/${date.year}, ${twoDigits(date.hour)}:${twoDigits(date.minute)}';
   }
 
   @override
