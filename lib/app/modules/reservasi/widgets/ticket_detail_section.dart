@@ -11,7 +11,6 @@ class TicketDetailSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<ReservasiController>();
 
-    // Get entry date from arguments or controller
     String displayDate = 'Tidak ditentukan';
     if (data != null && data!['tanggal'] != null) {
       displayDate = data!['tanggal'].toString();
@@ -45,7 +44,6 @@ class TicketDetailSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Display date as read-only
               Text(
                 displayDate,
                 style: const TextStyle(
