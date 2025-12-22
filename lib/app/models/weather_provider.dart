@@ -1,3 +1,5 @@
+// app/data/providers/weather_provider.dart
+
 import 'package:get/get.dart';
 
 class WeatherProvider extends GetConnect {
@@ -8,6 +10,8 @@ class WeatherProvider extends GetConnect {
   void onInit() {
     httpClient.baseUrl = _baseUrl;
     httpClient.timeout = const Duration(seconds: 30);
+    
+    // Interceptor untuk logging (optional)
     httpClient.addRequestModifier<dynamic>((request) {
       print('Request: ${request.url}');
       return request;

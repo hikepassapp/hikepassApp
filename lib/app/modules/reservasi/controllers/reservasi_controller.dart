@@ -285,6 +285,12 @@ class ReservasiController extends GetxController {
       } catch (e) {
         print('⚠️ Could not refresh history after payment: $e');
       }
+      
+      print('💾 STEP 5: Refresh hiking...');
+      await _hikingService.loadFromSupabase();
+      print('   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}');
+      
+      print('💳 === CompletePayment SUCCESS ===');
     } catch (e) {
       print('❌ ERROR in completePayment: $e');
       Get.snackbar(

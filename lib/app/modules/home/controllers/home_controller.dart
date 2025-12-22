@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/services/auth_service.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/berita_model.dart';
 import '../../../models/paket_wisata_model.dart';
@@ -44,16 +46,17 @@ class HomeController extends GetxController {
   Future<void> loadUserProfile() async {
     try {
       final userProfile = await _authService.getUserProfile();
-      
+
       if (userProfile != null) {
         print('User Profile: $userProfile');
-        
-        userName.value = userProfile['full_name'] ?? 
-                         userProfile['email']?.split('@')[0] ?? 
-                         'User';
-        
+
+        userName.value =
+            userProfile['full_name'] ??
+            userProfile['email']?.split('@')[0] ??
+            'User';
+
         userEmail.value = userProfile['email'] ?? '';
-        
+
         print('Username set to: ${userName.value}');
       } else {
         print('User profile is null');
@@ -77,6 +80,7 @@ class HomeController extends GetxController {
       return 'Selamat Malam';
     }
   }
+
   String get displayName {
     if (userName.value.isEmpty) return 'User';
     final names = userName.value.split(' ');
@@ -105,7 +109,7 @@ class HomeController extends GetxController {
       isLoading.value = false;
       errorMessage.value = e.toString();
       _setDefaultWeatherData();
-      
+
       // Tampilkan snackbar error
       Get.snackbar(
         'Error',
@@ -200,7 +204,7 @@ class HomeController extends GetxController {
     } catch (e) {
       isLoadingPaket.value = false;
       paketErrorMessage.value = e.toString();
-      
+
       Get.snackbar(
         'Error',
         'Gagal memuat paket wisata: ${e.toString()}',
@@ -223,7 +227,7 @@ class HomeController extends GetxController {
     } catch (e) {
       isLoadingBerita.value = false;
       beritaErrorMessage.value = e.toString();
-      
+
       Get.snackbar(
         'Error',
         'Gagal memuat berita: ${e.toString()}',
