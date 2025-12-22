@@ -12,6 +12,25 @@ import 'package:hikepass_app/app/shared/theme/app_typography.dart';
 class ReservasiRulesView extends GetView<ReservasiController> {
   const ReservasiRulesView({super.key});
 
+  void _handleContinuePressed(Map<String, dynamic> data) {
+    // Validate that user has agreed to the rules
+    if (!controller.isAgreed.value) {
+      Get.snackbar(
+        'Persetujuan Diperlukan',
+        'Harap setuju dengan semua peraturan SOP sebelum melanjutkan',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        icon: const Icon(Icons.error, color: Colors.white),
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+
+    // Proceed to next step
+    Get.to(() => const HikersListView(), arguments: data);
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = Get.arguments as Map<String, dynamic>;
@@ -82,23 +101,31 @@ class ReservasiRulesView extends GetView<ReservasiController> {
               ),
             ],
           ),
-          child: ElevatedButton(
-            onPressed: () {
-              Get.to(() => const HikersListView(), arguments: data);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.secondary,
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: Obx(
+            () => ElevatedButton(
+              onPressed: controller.isAgreed.value
+                  ? () => _handleContinuePressed(
+                      Get.arguments as Map<String, dynamic>,
+                    )
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: controller.isAgreed.value
+                    ? AppColors.secondary
+                    : Colors.grey[400],
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            child: const Text(
-              'Lanjutkan',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
+              child: Text(
+                'Lanjutkan',
+                style: TextStyle(
+                  color: controller.isAgreed.value
+                      ? Colors.white
+                      : Colors.grey[600],
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
               ),
             ),
           ),
