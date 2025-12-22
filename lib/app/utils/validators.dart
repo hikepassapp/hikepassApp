@@ -111,7 +111,7 @@ class Validators {
       '0817', '0818', '0819', '0859', '0878', // XL
     ];
 
-    final prefix = normalizedPhone.substring(0, 4);
+    normalizedPhone.substring(0, 4);
     bool isValidPrefix = validPrefixes.any(
       (p) => normalizedPhone.startsWith(p.substring(0, 4)),
     );
@@ -243,7 +243,6 @@ class Validators {
 
     // Check file extension
     final validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.heic'];
-    final extension = filePath.toLowerCase().split('.').last;
 
     bool isValidExtension = validExtensions.any(
       (ext) => filePath.toLowerCase().endsWith(ext),
