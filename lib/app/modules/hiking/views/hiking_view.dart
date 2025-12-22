@@ -5,11 +5,15 @@ import '../widgets/hiking_header.dart';
 import '../widgets/hiking_tab_bar.dart';
 import '../widgets/hiking_card_item.dart';
 
-class HikingView extends GetView<HikingController> {
+class HikingView extends StatelessWidget {
   const HikingView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final HikingController controller = Get.isRegistered<HikingController>()
+        ? Get.find<HikingController>()
+        : Get.put(HikingController());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

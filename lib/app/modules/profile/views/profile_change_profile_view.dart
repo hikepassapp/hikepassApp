@@ -37,7 +37,11 @@ class ProfileChangeProfileView extends GetView<ProfileController> {
 
   void _showConfirmationDialog(BuildContext context) {
     Get.dialog(
-      ProfileChangeConfirmationDialogWidget(onConfirm: _updateProfile),
+      ProfileChangeConfirmationDialogWidget(
+        onConfirm: _updateProfile,
+        title: "Konfirmasi Perubahan Profil",
+        message: "Apakah Anda yakin ingin mengubah profil?",
+      ),
     );
   }
 

@@ -8,7 +8,6 @@ import '../../../services/hiking_service.dart';
 import '../../../services/reservasi_service.dart';
 import '../../../services/riwayat_service.dart';
 
-
 class ReservasiController extends GetxController {
   late final HikingService _hikingService;
   final reservations = <Map<String, dynamic>>[].obs;
@@ -204,15 +203,9 @@ class ReservasiController extends GetxController {
       print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
     }
 
-    print('💾 STEP 0: Creating hiking record...');
-    await _hikingService.createFromReservation(
-      reservasiId: reservasiId,
-      mountainName: mountainName,
-      hikingTrail: jalur,
-      startDate: startDate,
-      userId: userId,
-    );
-    print('✅ Hiking record created');
+    // NOTE: create hiking record AFTER reservation & payment are saved
+    // to ensure `user_id` is available and the UI query (by user_id)
+    // will include the newly created hiking row.
 
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
@@ -234,7 +227,7 @@ class ReservasiController extends GetxController {
       'hikers': hikers
           .map(
             (h) => {
-              'name': h['nama'],  // Use 'name' to match ReservasiModel
+              'name': h['nama'], // Use 'name' to match ReservasiModel
               'nik': h['nik'],
               'telepon': h['telepon'],
               'alamat': h['alamat'],
@@ -291,11 +284,29 @@ class ReservasiController extends GetxController {
       } catch (e) {
         print('⚠️ Could not refresh history after payment: $e');
       }
-      
+
+      // Create hiking record now that reservation & payment have been persisted
+      try {
+        print('💾 STEP 3: Creating hiking record after payment...');
+        await _hikingService.createFromReservation(
+          reservasiId: reservasiId,
+          mountainName: mountainName,
+          hikingTrail: jalur,
+          startDate: startDate,
+          userId: userId,
+          paymentId: paymentCode,
+        );
+        print('✅ Hiking record created after payment');
+      } catch (e) {
+        print('⚠️ Could not create hiking after payment: $e');
+      }
+
       print('💾 STEP 5: Refresh hiking...');
       await _hikingService.loadFromSupabase();
-      print('   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}');
-      
+      print(
+        '   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}',
+      );
+
       print('💳 === CompletePayment SUCCESS ===');
     } catch (e) {
       print('❌ ERROR in completePayment: $e');

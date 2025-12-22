@@ -52,3 +52,4 @@ abstract class _Paths {
   static const beritaList = '/berita-list';
   static const paketList = '/paket-list';
 }
+

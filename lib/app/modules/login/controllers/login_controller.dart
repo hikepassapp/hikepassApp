@@ -346,7 +346,7 @@ class LoginController extends GetxController {
 
       await _authService.resetPassword(email: email);
 
-      Get.back(); // Close dialog
+      Get.back(); 
       Get.snackbar(
         'Berhasil',
         'Email reset password telah dikirim! Cek inbox atau spam email Anda.',

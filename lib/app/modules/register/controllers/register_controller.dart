@@ -672,19 +672,19 @@ class RegisterController extends GetxController {
       // Show success message
       Get.snackbar(
         'Registrasi Berhasil! 🎉',
-        'Akun Anda telah dibuat. Silakan login untuk melanjutkan.',
+        'Selamat datang di HikePass!',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
-        duration: const Duration(seconds: 4),
+        duration: const Duration(seconds: 3),
         margin: const EdgeInsets.all(16),
       );
 
       // Wait for snackbar to show
       await Future.delayed(const Duration(milliseconds: 1000));
 
-      // Clear all routes and go back to landing screen
-      Get.offAllNamed('/landing-screen');
+      // Navigate to bottom navigation (user is already logged in)
+      Get.offAllNamed('/bottom-navigation');
     } catch (e) {
       print('=== Save Personal Data Error ===');
       print('Error type: ${e.runtimeType}');

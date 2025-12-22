@@ -16,7 +16,9 @@ class HikingCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<HikingController>();
+    final HikingController? controller = Get.isRegistered<HikingController>()
+        ? Get.find<HikingController>()
+        : null;
     final isCheckIn = hiking.status == HikingStatus.pending;
 
     return Material(
@@ -31,9 +33,7 @@ class HikingCardItem extends StatelessWidget {
             Container(
               width: 96,
               height: 96,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
               clipBehavior: Clip.antiAlias,
               child: Image.asset(
                 'assets/images/hiking/hiking.jpg',
@@ -79,9 +79,10 @@ class HikingCardItem extends StatelessWidget {
                   Text(
                     _formatDate(hiking.startDate),
                     style: const TextStyle(
-                      fontSize: 13, 
-                      fontWeight: FontWeight.w500, 
-                      color: Colors.black54),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Align(
@@ -89,9 +90,23 @@ class HikingCardItem extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (isCheckIn) {
-                          controller.navigateToCheckIn(hiking);
+                          if (controller != null) {
+                            controller.navigateToCheckIn(hiking);
+                          } else {
+                            Get.toNamed(
+                              '/hiking/checkin-form',
+                              arguments: hiking.id,
+                            );
+                          }
                         } else {
-                          controller.navigateToCheckOut(hiking);
+                          if (controller != null) {
+                            controller.navigateToCheckOut(hiking);
+                          } else {
+                            Get.toNamed(
+                              '/hiking/checkout-form',
+                              arguments: hiking.id,
+                            );
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(

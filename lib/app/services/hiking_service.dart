@@ -6,7 +6,6 @@ import '../models/riwayat_model.dart';
 import 'riwayat_service.dart';
 
 class HikingService extends GetxService {
-
   final RxList<HikingModel> _hikingList = <HikingModel>[].obs;
 
   String? get _userId => SupabaseConfig.client.auth.currentUser?.id;
@@ -41,9 +40,9 @@ class HikingService extends GetxService {
     try {
       print('📥 Loading hiking records from Supabase for user: $userId');
       final rows = await fetchHikingByUser(userId, status: status);
-      
+
       _hikingList.clear();
-      
+
       for (var row in rows) {
         final hiking = HikingModel(
           id: row['id'],
@@ -51,20 +50,90 @@ class HikingService extends GetxService {
           paymentId: row['payment_id'],
           mountainName: row['mountain_name'] ?? '-',
           hikingTrail: row['hiking_trail'] ?? '-',
-          startDate: DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
+          startDate:
+              DateTime.tryParse(row['start_date'] ?? '') ?? DateTime.now(),
           checkInDate: DateTime.tryParse(row['check_in_date'] ?? ''),
           checkOutDate: DateTime.tryParse(row['check_out_date'] ?? ''),
           status: _parseStatus(row['status']),
           checkInItems: row['check_in_items'],
-          checkInCheckboxes: (row['check_in_checkboxes'] as List?)?.cast<bool>(),
+          checkInCheckboxes: (row['check_in_checkboxes'] as List?)
+              ?.cast<bool>(),
           checkOutItems: row['check_out_items'],
-          checkOutCheckboxes: (row['check_out_checkboxes'] as List?)?.cast<bool>(),
+          checkOutCheckboxes: (row['check_out_checkboxes'] as List?)
+              ?.cast<bool>(),
         );
-        
+
         _hikingList.add(hiking);
       }
 
       print('✅ Loaded ${_hikingList.length} hiking records from Supabase');
+      // If there are reservations that should show as pending but no hiking
+      // row exists yet, create a local pending HikingModel so the UI can
+      // display the check-in card. This covers cases where reservation was
+      // created/paid but the hiking entry hasn't been inserted or synced.
+      try {
+        print('🔎 Checking reservations for pending hiking entries...');
+        final reservRows = await SupabaseConfig.client
+            .from('reservasi')
+            .select()
+            .eq('user_id', userId);
+
+        final reservRowsList = (reservRows as List)
+            .cast<Map<String, dynamic>>();
+        for (var r in reservRowsList) {
+          // robust field access (snake_case or camelCase)
+          final reservasiId =
+              (r['id'] ?? r['reservasiId'] ?? r['reservation_id'])?.toString();
+          final hikingStatusField =
+              (r['hiking_status'] ??
+                      r['hikingStatus'] ??
+                      r['hikingStatusText'] ??
+                      '')
+                  .toString();
+          final paymentStatusField =
+              (r['payment_status'] ?? r['paymentStatus'] ?? '').toString();
+
+          final isPendingReservasi =
+              hikingStatusField.toLowerCase().contains('menunggu') ||
+              hikingStatusField.toLowerCase().contains('waiting') ||
+              paymentStatusField.toLowerCase().contains('lunas');
+
+          if (isPendingReservasi) {
+            if (reservasiId != null &&
+                !_hikingList.any((h) => h.reservasiId == reservasiId)) {
+              // create a lightweight HikingModel from reservation data
+              final mountainName =
+                  (r['mountain_name'] ?? r['mountainName'] ?? r['title'] ?? '-')
+                      .toString();
+              final hikingTrail =
+                  (r['hiking_trail'] ?? r['hikingTrail'] ?? r['jalur'] ?? '-')
+                      .toString();
+              final startDate =
+                  DateTime.tryParse(
+                    (r['start_date'] ?? r['startDate'] ?? '').toString(),
+                  ) ??
+                  DateTime.now();
+
+              final synthetic = HikingModel(
+                id: 'hiking-resv-$reservasiId',
+                reservasiId: reservasiId,
+                paymentId: (r['payment_code'] ?? r['paymentCode'])?.toString(),
+                mountainName: mountainName,
+                hikingTrail: hikingTrail,
+                startDate: startDate,
+                status: HikingStatus.pending,
+              );
+
+              print(
+                '➕ Adding synthetic hiking for reservasi $reservasiId (pending)',
+              );
+              _hikingList.add(synthetic);
+            }
+          }
+        }
+      } catch (e) {
+        print('⚠️ Error while checking reservations for pending hikes: $e');
+      }
     } catch (e) {
       print('❌ Error loading hiking from Supabase: $e');
     }
@@ -95,7 +164,7 @@ class HikingService extends GetxService {
     print('   Date: $startDate');
     print('   Passed userId: $userId');
     print('   _userId from auth: $_userId');
-    
+
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
       reservasiId: reservasiId,
@@ -109,7 +178,7 @@ class HikingService extends GetxService {
     _hikingList.add(hiking);
     final uid = userId ?? _userId;
     print('   Final uid to use: $uid');
-    
+
     // ALWAYS upsert to database - even if uid is null, let the database handle it
     // This ensures the hiking record is persisted
     print('   ✅ Upserting hiking with userId: $uid');
@@ -118,7 +187,10 @@ class HikingService extends GetxService {
     return hiking;
   }
 
-  Future<List<Map<String, dynamic>>> fetchHikingByUser(String userId, {String? status}) async {
+  Future<List<Map<String, dynamic>>> fetchHikingByUser(
+    String userId, {
+    String? status,
+  }) async {
     final base = SupabaseConfig.client
         .from('hiking')
         .select('*')
@@ -170,7 +242,7 @@ class HikingService extends GetxService {
       status: HikingStatus.checkedIn,
     );
     await _upsertHiking(_hikingList[index]);
-    
+
     // Also update riwayat table with the new hiking status
     try {
       final riwayatService = Get.isRegistered<RiwayatService>()
@@ -217,7 +289,7 @@ class HikingService extends GetxService {
       status: HikingStatus.checkedOut,
     );
     await _upsertHiking(_hikingList[index]);
-    
+
     // Also update riwayat table with the new hiking status
     try {
       final riwayatService = Get.isRegistered<RiwayatService>()
@@ -273,7 +345,7 @@ class HikingService extends GetxService {
 
   Future<void> _upsertHiking(HikingModel h, {String? userId}) async {
     final client = SupabaseConfig.client;
-    final uid = userId ?? _userId;  // Get user_id from parameter or auth
+    final uid = userId ?? _userId; // Get user_id from parameter or auth
     final payload = {
       'id': h.id,
       'reservasi_id': h.reservasiId,
@@ -288,10 +360,12 @@ class HikingService extends GetxService {
       'check_in_checkboxes': h.checkInCheckboxes,
       'check_out_items': h.checkOutItems,
       'check_out_checkboxes': h.checkOutCheckboxes,
-      if (uid != null) 'user_id': uid,  // Always include user_id if available
+      if (uid != null) 'user_id': uid, // Always include user_id if available
     };
     try {
-      print('📤 Upserting hiking to DB with payload keys: ${payload.keys.toList()}');
+      print(
+        '📤 Upserting hiking to DB with payload keys: ${payload.keys.toList()}',
+      );
       print('   user_id in payload: ${payload['user_id']}');
       final response = await client.from('hiking').upsert(payload).select();
       print('✅ Hiking upserted successfully: ${h.id}');
