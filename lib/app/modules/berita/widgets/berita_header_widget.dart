@@ -14,7 +14,7 @@ class BeritaHeaderWidget extends GetView<BeritaController> {
       backgroundColor: AppColors.secondary,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back, color: Colors.white),
-        onPressed: () => Get.back(),
+        onPressed: () => Navigator.of(context).pop(),
       ),
       title: const Text(
         'Berita & Event',

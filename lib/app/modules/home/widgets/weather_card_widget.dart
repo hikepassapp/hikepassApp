@@ -51,18 +51,16 @@ class WeatherCardWidget extends GetView<HomeController> {
   }
 
   Widget _buildWeatherIcon() {
-    return SafeNetworkImage(
-      imageUrl: controller.weatherIcon.value.isNotEmpty
-          ? controller.getWeatherIconUrl()
-          : '',
-      width: 140,
-      height: 140,
-      fit: BoxFit.contain,
-      fallbackAsset: 'assets/images/weather.png',
-      fallbackWidget: const SizedBox(
-        width: 140,
-        height: 140,
-        child: Icon(Icons.cloud, size: 80, color: Colors.grey),
+    return SizedBox(
+      width: 180,
+      height: 180,
+      child: SafeNetworkImage(
+        imageUrl: controller.weatherIcon.value.isNotEmpty
+            ? controller.getWeatherIconUrl()
+            : '',
+        fit: BoxFit.contain,
+        fallbackAsset: 'assets/images/weather.png',
+        fallbackWidget: const Icon(Icons.cloud, size: 120, color: Colors.grey),
       ),
     );
   }
