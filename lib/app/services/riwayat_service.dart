@@ -57,10 +57,10 @@ class RiwayatService extends GetxService {
             id: row['reservasi_id'] ?? 'payment-unknown',
             code: row['payment_code'],
             total: row['payment_total'] ?? 0,
-            date: DateTime.tryParse(row['payment_date'] ?? ''),
+            date: DateTime.tryParse(row['payment_date'] ?? '') ?? DateTime.now(),
             status: row['payment_status'] == 'paid' 
                 ? PaymentStatus.paid 
-                : PaymentStatus.pending,
+                : PaymentStatus.waiting,
           );
         }
 
@@ -70,7 +70,7 @@ class RiwayatService extends GetxService {
           payment: payment,
           hikingStatus: row['hiking_status'] == 'finished'
               ? HikingHistoryStatus.finished
-              : HikingHistoryStatus.ongoing,
+              : HikingHistoryStatus.waiting,
           checkInDate: DateTime.tryParse(row['check_in_date'] ?? ''),
           checkOutDate: DateTime.tryParse(row['check_out_date'] ?? ''),
         );
