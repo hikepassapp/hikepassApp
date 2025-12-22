@@ -1,13 +1,18 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../services/auth_service.dart';
 import '../../../config/supabase_config.dart';
 
 class ProfileController extends GetxController {
   late final AuthService _authService;
+  final _supabase = SupabaseConfig.client;
+  final ImagePicker _picker = ImagePicker();
 
   var isLoading = true.obs;
   var isEditing = false.obs;
+  var isUploadingAvatar = false.obs;
 
   // Text Controllers for Edit Profile
   final nikController = TextEditingController();
@@ -221,6 +226,243 @@ class ProfileController extends GetxController {
       debugPrint('=== Update Profile Error ===');
       debugPrint('Error: $e');
       return false;
+    }
+  }
+
+  // Pick image from gallery
+  Future<void> pickImageFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        await uploadAvatar(File(image.path));
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal memilih gambar',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    }
+  }
+
+  // Take photo with camera
+  Future<void> takePhotoWithCamera() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        await uploadAvatar(File(image.path));
+      }
+    } catch (e) {
+      debugPrint('Error taking photo: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal mengambil foto',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    }
+  }
+
+  // Upload avatar to Supabase Storage
+  Future<void> uploadAvatar(File imageFile) async {
+    try {
+      isUploadingAvatar.value = true;
+
+      final userId = _authService.currentUser?.id;
+      if (userId == null) throw Exception('User not logged in');
+
+      debugPrint('=== Uploading Avatar ===');
+
+      // Generate unique filename
+      final fileExt = imageFile.path.split('.').last;
+      final fileName =
+          '$userId-${DateTime.now().millisecondsSinceEpoch}.$fileExt';
+      final filePath = '$fileName';
+
+      debugPrint('File path: $filePath');
+
+      // Delete old avatar if exists
+      if (avatarUrl.value.isNotEmpty) {
+        try {
+          // Extract filename from URL
+          final oldFileName = avatarUrl.value.split('/').last.split('?').first;
+          debugPrint('Deleting old avatar: $oldFileName');
+          await _supabase.storage.from('avatars').remove([oldFileName]);
+        } catch (e) {
+          debugPrint('Error deleting old avatar: $e');
+        }
+      }
+
+      // Upload new avatar
+      debugPrint('Uploading new avatar...');
+      await _supabase.storage.from('avatars').upload(filePath, imageFile);
+
+      // Get public URL
+      final publicUrl = _supabase.storage
+          .from('avatars')
+          .getPublicUrl(filePath);
+      debugPrint('Avatar URL: $publicUrl');
+
+      // Update user profile in database
+      await _supabase
+          .from('users')
+          .update({
+            'avatar_url': publicUrl,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', userId);
+
+      // Update local state
+      avatarUrl.value = publicUrl;
+
+      debugPrint('=== Avatar Uploaded Successfully ===');
+
+      Get.snackbar(
+        'Sukses',
+        'Foto profil berhasil diperbarui',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+      );
+    } catch (e) {
+      debugPrint('=== Upload Avatar Error ===');
+      debugPrint('Error: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal mengupload foto profil',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    } finally {
+      isUploadingAvatar.value = false;
+    }
+  }
+
+  // Show image picker options
+  void showImagePickerOptions() {
+    debugPrint('=== Show Image Picker Options Called ===');
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Pilih Foto Profil',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library,
+                color: Color(0xFF26A69A),
+              ),
+              title: const Text('Pilih dari Galeri'),
+              onTap: () async {
+                Get.back();
+                await Future.delayed(const Duration(milliseconds: 300));
+                pickImageFromGallery();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFF26A69A)),
+              title: const Text('Ambil Foto'),
+              onTap: () async {
+                Get.back();
+                await Future.delayed(const Duration(milliseconds: 300));
+                takePhotoWithCamera();
+              },
+            ),
+            if (avatarUrl.value.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text(
+                  'Hapus Foto',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  Get.back();
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  removeAvatar();
+                },
+              ),
+          ],
+        ),
+      ),
+      isDismissible: true,
+      enableDrag: true,
+      isScrollControlled: false,
+    );
+  }
+
+  // Remove avatar
+  Future<void> removeAvatar() async {
+    try {
+      isUploadingAvatar.value = true;
+
+      final userId = _authService.currentUser?.id;
+      if (userId == null) throw Exception('User not logged in');
+
+      debugPrint('=== Removing Avatar ===');
+
+      // Delete from storage
+      if (avatarUrl.value.isNotEmpty) {
+        final oldFileName = avatarUrl.value.split('/').last.split('?').first;
+        debugPrint('Deleting avatar: $oldFileName');
+        await _supabase.storage.from('avatars').remove([oldFileName]);
+      }
+
+      // Update database
+      await _supabase
+          .from('users')
+          .update({
+            'avatar_url': null,
+            'updated_at': DateTime.now().toIso8601String(),
+          })
+          .eq('id', userId);
+
+      // Update local state
+      avatarUrl.value = '';
+
+      debugPrint('=== Avatar Removed Successfully ===');
+
+      Get.snackbar(
+        'Sukses',
+        'Foto profil berhasil dihapus',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+      );
+    } catch (e) {
+      debugPrint('=== Remove Avatar Error ===');
+      debugPrint('Error: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal menghapus foto profil',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+    } finally {
+      isUploadingAvatar.value = false;
     }
   }
 
