@@ -51,9 +51,9 @@ class AuthCheck extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authService.isLoggedIn) {
-        Get.offAllNamed('/bottom-navigation');
+        Get.offNamed('/bottom-navigation');
       } else {
-        Get.offAllNamed('/landing-screen');
+        Get.offNamed('/landing-screen');
       }
     });
 
