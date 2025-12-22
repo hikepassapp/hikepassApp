@@ -12,6 +12,7 @@ class HikingModel {
   final String? checkOutItems;
   final List<bool>? checkOutCheckboxes;
   final HikingStatus status;
+  final String? userId;
 
   HikingModel({
     required this.id,
@@ -27,53 +28,67 @@ class HikingModel {
     this.checkOutItems,
     this.checkOutCheckboxes,
     this.status = HikingStatus.pending,
+    this.userId,
   });
 
+  /// Create HikingModel from Supabase JSON
   factory HikingModel.fromJson(Map<String, dynamic> json) {
     return HikingModel(
-      id: json['id'] as String,
-      reservasiId: json['reservasiId'] as String,
-      paymentId: json['paymentId'] as String?,
-      mountainName: json['mountainName'] as String,
-      hikingTrail: json['hikingTrail'] as String,
-      startDate: DateTime.parse(json['startDate'] as String),
-      checkInDate: json['checkInDate'] != null
-          ? DateTime.parse(json['checkInDate'] as String)
+      id: json['id'] as String? ?? '',
+      reservasiId: json['reservasi_id'] as String? ?? '',
+      paymentId: json['payment_id'] as String?,
+      mountainName: json['mountain_name'] as String? ?? '-',
+      hikingTrail: json['hiking_trail'] as String? ?? '-',
+      startDate: DateTime.tryParse(json['start_date'] as String? ?? '') ?? DateTime.now(),
+      checkInDate: json['check_in_date'] != null
+          ? DateTime.tryParse(json['check_in_date'] as String)
           : null,
-      checkOutDate: json['checkOutDate'] != null
-          ? DateTime.parse(json['checkOutDate'] as String)
+      checkOutDate: json['check_out_date'] != null
+          ? DateTime.tryParse(json['check_out_date'] as String)
           : null,
-      checkInItems: json['checkInItems'] as String?,
-      checkInCheckboxes: json['checkInCheckboxes'] != null
-          ? List<bool>.from(json['checkInCheckboxes'] as List)
+      checkInItems: json['check_in_items'] as String?,
+      checkInCheckboxes: json['check_in_checkboxes'] != null
+          ? List<bool>.from(json['check_in_checkboxes'] as List)
           : null,
-      checkOutItems: json['checkOutItems'] as String?,
-      checkOutCheckboxes: json['checkOutCheckboxes'] != null
-          ? List<bool>.from(json['checkOutCheckboxes'] as List)
+      checkOutItems: json['check_out_items'] as String?,
+      checkOutCheckboxes: json['check_out_checkboxes'] != null
+          ? List<bool>.from(json['check_out_checkboxes'] as List)
           : null,
-      status: HikingStatus.values.firstWhere(
-        (e) => e.toString() == 'HikingStatus.${json['status']}',
-        orElse: () => HikingStatus.pending,
-      ),
+      status: _parseHikingStatus(json['status'] as String?),
+      userId: json['user_id'] as String?,
     );
   }
 
+  /// Convert HikingModel to Supabase JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'reservasiId': reservasiId,
-      'paymentId': paymentId,
-      'mountainName': mountainName,
-      'hikingTrail': hikingTrail,
-      'startDate': startDate.toIso8601String(),
-      'checkInDate': checkInDate?.toIso8601String(),
-      'checkOutDate': checkOutDate?.toIso8601String(),
-      'checkInItems': checkInItems,
-      'checkInCheckboxes': checkInCheckboxes,
-      'checkOutItems': checkOutItems,
-      'checkOutCheckboxes': checkOutCheckboxes,
-      'status': status.toString().split('.').last,
+      'reservasi_id': reservasiId,
+      'payment_id': paymentId,
+      'mountain_name': mountainName,
+      'hiking_trail': hikingTrail,
+      'start_date': startDate.toIso8601String(),
+      'check_in_date': checkInDate?.toIso8601String(),
+      'check_out_date': checkOutDate?.toIso8601String(),
+      'check_in_items': checkInItems,
+      'check_in_checkboxes': checkInCheckboxes,
+      'check_out_items': checkOutItems,
+      'check_out_checkboxes': checkOutCheckboxes,
+      'status': status.name,
+      if (userId != null) 'user_id': userId,
     };
+  }
+
+  /// Parse HikingStatus from string
+  static HikingStatus _parseHikingStatus(String? status) {
+    switch (status) {
+      case 'checkedIn':
+        return HikingStatus.checkedIn;
+      case 'checkedOut':
+        return HikingStatus.checkedOut;
+      default:
+        return HikingStatus.pending;
+    }
   }
 
   HikingModel copyWith({

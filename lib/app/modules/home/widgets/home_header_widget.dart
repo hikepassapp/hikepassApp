@@ -18,7 +18,7 @@ class HomeHeaderWidget extends GetView<HomeController> {
         children: [
           Obx(
             () => Text(
-              'Selamat datang, ${controller.userName.value}!',
+              '${controller.greetingMessage}, ${controller.displayName}!',
               style: AppTypography.lBold.copyWith(color: Colors.white),
             ),
           ),

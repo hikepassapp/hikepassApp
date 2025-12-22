@@ -132,7 +132,7 @@ class WeatherCardWidget extends GetView<HomeController> {
                 Obx(() {
                   final temp = controller.temperature.value;
                   return Text(
-                    temp != null ? '${temp.toStringAsFixed(0)}°' : '--°',
+                    '${temp.toStringAsFixed(0)}°',
                     style: AppTypography.xlSemiBold.copyWith(
                       fontSize: 64,
                       height: 1,

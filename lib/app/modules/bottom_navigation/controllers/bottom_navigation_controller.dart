@@ -3,6 +3,7 @@ import 'package:hikepass_app/app/modules/chat/controllers/chat_controller.dart';
 import 'package:hikepass_app/app/modules/hiking/controllers/hiking_controller.dart';
 import 'package:hikepass_app/app/modules/home/controllers/home_controller.dart';
 import 'package:hikepass_app/app/modules/profile/controllers/profile_controller.dart';
+import 'package:hikepass_app/app/modules/riwayat/controllers/riwayat_controller.dart';
 import 'package:hikepass_app/app/routes/app_pages.dart';
 
 class BottomNavigationController extends GetxController {
@@ -18,6 +19,31 @@ class BottomNavigationController extends GetxController {
     Get.lazyPut(() => ChatController(), fenix: true);
     Get.lazyPut(() => HikingController(), fenix: true);
     Get.lazyPut(() => ProfileController(), fenix: true);
+    
+    // Handle initialIndex argument (e.g., from payment success page)
+    final args = Get.arguments;
+    if (args is Map && args['initialIndex'] != null) {
+      final initialIndex = args['initialIndex'] as int;
+      currentIndex.value = initialIndex;
+      
+      // Refresh data when returning from payment
+      _refreshDataAfterPayment();
+    }
+  }
+
+  /// Refresh hiking and history data after payment completion
+  Future<void> _refreshDataAfterPayment() async {
+    // Refresh hiking data
+    if (Get.isRegistered<HikingController>()) {
+      final hikingController = Get.find<HikingController>();
+      await hikingController.refreshHikingData();
+    }
+    
+    // Refresh riwayat data  
+    if (Get.isRegistered<RiwayatController>()) {
+      final riwayatController = Get.find<RiwayatController>();
+      await riwayatController.refreshHistory();
+    }
   }
 
   void setIndex(int index) {
@@ -26,6 +52,12 @@ class BottomNavigationController extends GetxController {
       return;
     }
     currentIndex.value = index;
+    
+    // Refresh hiking data when switching to hiking tab (index 2)
+    if (index == 2 && Get.isRegistered<HikingController>()) {
+      final hikingController = Get.find<HikingController>();
+      hikingController.refreshHikingData();
+    }
   }
 
   @override

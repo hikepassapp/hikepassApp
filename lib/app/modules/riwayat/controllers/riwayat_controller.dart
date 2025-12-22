@@ -18,6 +18,8 @@ class RiwayatController extends GetxController {
     // Initialize services here instead of in class definition
     _service = Get.find<RiwayatService>();
     _hikingService = Get.find<HikingService>();
+    // Load related hiking records so history can link to pending check-ins
+    _hikingService.loadFromSupabase();
     
     // Load history from Supabase
     _loadHistory();
@@ -90,19 +92,17 @@ class RiwayatController extends GetxController {
             orElse: () => null as dynamic,
           );
           
-          if (hiking != null) {
-            if (hiking.status == HikingStatus.checkedIn) {
-              hikingStatus = HikingHistoryStatus.hiking;
-            } else if (hiking.status == HikingStatus.checkedOut) {
-              hikingStatus = HikingHistoryStatus.finished;
-            } else {
-              hikingStatus = HikingHistoryStatus.waiting;
-            }
-
-            checkInDate = hiking.checkInDate;
-            checkOutDate = hiking.checkOutDate;
+          if (hiking.status == HikingStatus.checkedIn) {
+            hikingStatus = HikingHistoryStatus.hiking;
+          } else if (hiking.status == HikingStatus.checkedOut) {
+            hikingStatus = HikingHistoryStatus.finished;
+          } else {
+            hikingStatus = HikingHistoryStatus.waiting;
           }
-        } catch (_) {
+
+          checkInDate = hiking.checkInDate;
+          checkOutDate = hiking.checkOutDate;
+                } catch (_) {
           hikingStatus = HikingHistoryStatus.waiting;
         }
         

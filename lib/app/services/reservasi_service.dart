@@ -15,11 +15,15 @@ class ReservasiService extends GetxService {
       'start_date': (data['startDate'] is DateTime)
           ? (data['startDate'] as DateTime).toIso8601String()
           : data['startDate'],
+
       'ticket_price': data['ticketPrice'],
+      'ticket_count': data['ticketCount'],
+
       'hikers': data['hikers'],
       if (data['userId'] != null) 'user_id': data['userId'],
       if (data['status'] != null) 'status': data['status'],
     };
+
     try {
       print('📤 Upserting reservation: ${data['code']}');
       await _client.from('reservasi').upsert(payload).select();
@@ -41,35 +45,36 @@ class ReservasiService extends GetxService {
           : data['paymentDate'],
       'status': 'paid',
     };
+
     try {
       print('📤 Upserting payment: ${data["paymentCode"]}');
       await _client.from('payment').upsert(payload).select();
       print('✅ Payment upserted successfully: ${payload["id"]}');
 
-      // Also create a history entry immediately so History shows the card
       try {
-        print('📝 Fetching reservasi row for history creation: ${data['reservasiId']}');
+        print(
+          '📝 Fetching reservasi row for history creation: ${data['reservasiId']}',
+        );
         final reservasiRow = await _client
             .from('reservasi')
             .select('*')
             .eq('id', data['reservasiId'])
             .single();
-        print('✅ Fetched reservasi row: ${reservasiRow['id']}');
 
         final riwayatService = Get.isRegistered<RiwayatService>()
             ? Get.find<RiwayatService>()
             : Get.put(RiwayatService(), permanent: true);
 
-        final userId = data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
-        print('📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}');
+        final userId =
+            data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
+
         await riwayatService.addFromPaymentAndUpsert(
-          reservasiRow: reservasiRow as Map<String, dynamic>,
+          reservasiRow: reservasiRow,
           paymentRow: payload,
           userId: userId,
         );
-        print('✅ History entry created successfully');
       } catch (e) {
-        print('❌ ERROR creating immediate history after payment: $e');
+        print('❌ ERROR creating history after payment: $e');
         rethrow;
       }
     } catch (e) {
@@ -78,7 +83,6 @@ class ReservasiService extends GetxService {
     }
   }
 
-  // Clean API - create reservation and (optionally) payment in a transaction-like sequence
   Future<Map<String, dynamic>> createReservation({
     required String code,
     required String mountainName,
@@ -94,8 +98,11 @@ class ReservasiService extends GetxService {
       'mountain_name': mountainName,
       'hiking_trail': hikingTrail,
       'start_date': startDate.toIso8601String(),
-      'hikers': hikers,
+
       'ticket_price': ticketPrice,
+      'ticket_count': hikers.length,
+
+      'hikers': hikers,
       if (userId != null) 'user_id': userId,
       'status': 'active',
     };
@@ -114,13 +121,16 @@ class ReservasiService extends GetxService {
         'date': (payment['date'] as DateTime).toIso8601String(),
         'status': payment['status'] ?? 'paid',
       };
+
       await _client.from('payment').insert(paymentPayload).select().single();
     }
 
-    return inserted as Map<String, dynamic>;
+    return inserted;
   }
 
-  Future<List<Map<String, dynamic>>> fetchReservationsByUser(String userId) async {
+  Future<List<Map<String, dynamic>>> fetchReservationsByUser(
+    String userId,
+  ) async {
     try {
       final rows = await _client
           .from('reservasi')
@@ -129,7 +139,6 @@ class ReservasiService extends GetxService {
           .order('start_date', ascending: false);
       return (rows as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      // fallback for schemas without user_id
       final rows = await _client
           .from('reservasi')
           .select('*')
@@ -140,15 +149,91 @@ class ReservasiService extends GetxService {
 
   Future<void> cancelReservation(String reservasiId) async {
     try {
-      // Prefer soft-cancel via status if column exists
       await _client
           .from('reservasi')
           .update({'status': 'canceled'})
           .eq('id', reservasiId)
           .select();
     } catch (_) {
-      // If status column doesn't exist, fallback to delete
       await _client.from('reservasi').delete().eq('id', reservasiId);
+    }
+  }
+
+  /// Fetch a single reservation by ID
+  Future<Map<String, dynamic>?> fetchReservationById(String reservasiId) async {
+    try {
+      final response = await _client
+          .from('reservasi')
+          .select('*')
+          .eq('id', reservasiId)
+          .single();
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      print('❌ Error fetching reservation: $e');
+      return null;
+    }
+  }
+
+  /// Fetch payment for a reservation
+  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(String reservasiId) async {
+    try {
+      final response = await _client
+          .from('payment')
+          .select('*')
+          .eq('reservasi_id', reservasiId)
+          .single();
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      print('⚠️ No payment found for reservation: $e');
+      return null;
+    }
+  }
+
+  /// Update reservation status
+  Future<void> updateReservationStatus(String reservasiId, String status) async {
+    try {
+      await _client
+          .from('reservasi')
+          .update({'status': status})
+          .eq('id', reservasiId);
+      print('✅ Reservation status updated to: $status');
+    } catch (e) {
+      print('❌ Error updating reservation status: $e');
+      rethrow;
+    }
+  }
+
+  /// Subscribe to changes for a specific reservation
+  RealtimeChannel subscribeReservation(String reservasiId, void Function() onChange) {
+    final channel = _client
+        .channel('reservasi-$reservasiId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'reservasi',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: reservasiId,
+          ),
+          callback: (_) => onChange(),
+        )
+        .subscribe();
+    return channel;
+  }
+
+  /// Get reservations count for a user
+  Future<int> getReservationCountByUser(String userId) async {
+    try {
+      final response = await _client
+          .from('reservasi')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('status', 'active');
+      return (response as List).length;
+    } catch (e) {
+      print('❌ Error getting reservation count: $e');
+      return 0;
     }
   }
 }

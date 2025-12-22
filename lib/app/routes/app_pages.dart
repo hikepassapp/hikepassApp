@@ -1,4 +1,9 @@
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/modules/berita/views/berita_list.dart';
+import 'package:hikepass_app/app/modules/laporan/bindings/laporan_list_binding.dart';
+import 'package:hikepass_app/app/modules/laporan/widgets/laporan_detail_view.dart';
+import 'package:hikepass_app/app/modules/laporan/widgets/laporan_list_view.dart';
+import 'package:hikepass_app/app/modules/paket/views/paket_list_view.dart';
 import 'package:hikepass_app/app/modules/register/views/fill_data_register_view.dart';
 import 'package:hikepass_app/app/modules/register/views/otp_verification_view.dart';
 import 'package:hikepass_app/app/modules/register/views/register_password_view.dart';
@@ -11,12 +16,10 @@ import '../modules/reservasi/views/reservation_qris_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
-import '../modules/berita/views/berita_detail_view.dart';
 import '../modules/bottom_navigation/bindings/bottom_navigation_binding.dart';
 import '../modules/bottom_navigation/views/bottom_navigation_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
-// Hiking module imports - check-in/check-out feature
 import '../modules/hiking/bindings/hiking_binding.dart';
 import '../modules/hiking/bindings/checkin_form_binding.dart';
 import '../modules/hiking/bindings/checkout_form_binding.dart';
@@ -36,7 +39,6 @@ import '../modules/login/views/login_email_view.dart';
 import '../modules/login/views/login_password_view.dart';
 import '../modules/login/views/login_reset_password_view.dart';
 import '../modules/login/views/login_otp_reset_password_view.dart';
-import '../modules/login/views/login_reset_password_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/profile/views/profile_change_profile_view.dart';
@@ -203,5 +205,21 @@ class AppPages {
     GetPage(name: _Paths.terms, page: () => const TermsView()),
     GetPage(name: _Paths.about, page: () => const AboutView()),
     GetPage(name: _Paths.privacyPolicy, page: () => const PrivacyPolicyView()),
+    GetPage(name: Routes.laporanDetail, page: () => const LaporanDetailView()),
+    GetPage(
+      name: Routes.laporanList,
+      page: () => const LaporanListView(),
+      binding: LaporanListBinding(),
+    ),
+    GetPage(
+      name: _Paths.beritaList,
+      page: () => const BeritaList(),
+      binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: _Paths.paketList,
+      page: () => const PaketListView(),
+      binding: PaketBinding(),
+    ),
   ];
 }

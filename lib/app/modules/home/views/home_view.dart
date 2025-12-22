@@ -49,7 +49,6 @@ class HomeView extends GetView<HomeController> {
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          // Weather Card - Sudah ada Obx di dalam widget
                           const WeatherCardWidget(),
                           const SizedBox(height: 24),
                           const MenuGridWidget(),

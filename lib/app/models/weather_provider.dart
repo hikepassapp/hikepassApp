@@ -1,6 +1,5 @@
 // app/data/providers/weather_provider.dart
 
-import 'dart:convert';
 import 'package:get/get.dart';
 
 class WeatherProvider extends GetConnect {

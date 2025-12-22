@@ -66,8 +66,6 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                     ),
                   ),
-
-                  // card profile
                   Expanded(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.fromLTRB(16, 80, 16, 16),
@@ -75,8 +73,6 @@ class ProfileView extends GetView<ProfileController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 24),
-
-                          // Pengaturan Akun Section
                           ProfileMenuSectionWidget(
                             title: 'Pengaturan Akun',
                             items: [

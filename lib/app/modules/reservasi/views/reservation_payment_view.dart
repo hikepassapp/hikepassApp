@@ -12,7 +12,6 @@ class ReservationPaymentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve reservation data from navigation arguments
     final ticketData = Get.arguments as Map<String, dynamic>?;
     final controller = Get.find<ReservasiController>();
 
@@ -27,11 +26,9 @@ class ReservationPaymentView extends StatelessWidget {
             TicketSummaryCard(data: ticketData),
             const SizedBox(height: 24),
 
-            // Entry Date (Read-only)
             TicketDetailSection(data: ticketData),
             const SizedBox(height: 24),
 
-            // Display all hikers in reservation
             _buildHikersSection(controller),
             const SizedBox(height: 24),
 
@@ -44,7 +41,6 @@ class ReservationPaymentView extends StatelessWidget {
     );
   }
 
-  /// Build section displaying all hikers in the reservation
   Widget _buildHikersSection(ReservasiController controller) {
     return Obx(() {
       final hikers = controller.hikers;
@@ -68,7 +64,7 @@ class ReservationPaymentView extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: hikers.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final hiker = hikers[index];
               return Container(
@@ -81,7 +77,6 @@ class ReservationPaymentView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Hiker number and name
                     Row(
                       children: [
                         CircleAvatar(
@@ -122,7 +117,6 @@ class ReservationPaymentView extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    // Additional hiker details
                     _buildHikerDetailRow(
                       'Jenis Kelamin',
                       hiker['jenisKelamin'] ?? '-',
@@ -144,7 +138,6 @@ class ReservationPaymentView extends StatelessWidget {
     });
   }
 
-  /// Helper widget to display hiker detail rows
   Widget _buildHikerDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),

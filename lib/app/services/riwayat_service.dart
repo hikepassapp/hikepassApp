@@ -286,7 +286,7 @@ class RiwayatService extends GetxService {
       // Don't send total_price - it's a generated column
       'payment_code': r.payment?.code,
       'payment_total': r.payment?.total,
-      'payment_date': r.payment?.date?.toIso8601String(),
+      'payment_date': r.payment?.date.toIso8601String(),
       'payment_status': r.payment?.status.name,
       if (userId != null) 'user_id': userId,
     };

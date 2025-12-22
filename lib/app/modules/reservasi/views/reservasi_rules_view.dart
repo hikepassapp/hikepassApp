@@ -13,7 +13,6 @@ class ReservasiRulesView extends GetView<ReservasiController> {
   const ReservasiRulesView({super.key});
 
   void _handleContinuePressed(Map<String, dynamic> data) {
-    // Validate that user has agreed to the rules
     if (!controller.isAgreed.value) {
       Get.snackbar(
         'Persetujuan Diperlukan',
@@ -27,14 +26,11 @@ class ReservasiRulesView extends GetView<ReservasiController> {
       return;
     }
 
-    // Proceed to next step
     Get.to(() => const HikersListView(), arguments: data);
   }
 
   @override
   Widget build(BuildContext context) {
-    final data = Get.arguments as Map<String, dynamic>;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
