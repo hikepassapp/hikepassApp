@@ -114,7 +114,6 @@ class HikersListView extends GetView<ReservasiController> {
                 ),
                 onPressed: controller.areAllHikersComplete.value
                     ? () {
-                        // All hikers complete — navigate to payment page with reservation data
                         Get.toNamed('/reservation-payment', arguments: data);
                       }
                     : null,

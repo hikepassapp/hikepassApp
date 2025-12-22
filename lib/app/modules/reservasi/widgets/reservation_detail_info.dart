@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ReservationDetailInfo extends StatelessWidget {
-  // Ubah dari Map<String, String> ke Map<String, dynamic>
   final Map<String, dynamic> data;
 
   const ReservationDetailInfo({super.key, required this.data});
@@ -17,7 +16,6 @@ class ReservationDetailInfo extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Judul
           Text(
             data['title'] ?? '',
             style: const TextStyle(
@@ -28,14 +26,12 @@ class ReservationDetailInfo extends StatelessWidget {
           ),
           const SizedBox(height: 4),
 
-          // Subtitle
           Text(
             data['subtitle'] ?? '',
             style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
           const SizedBox(height: 16),
 
-          // Baris 1
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -43,8 +39,7 @@ class ReservationDetailInfo extends StatelessWidget {
                 flex: 5,
                 child: _infoColumn(
                   'Lokasi',
-                  data['location'] ??
-                      'Kopi Malabar, Pangalengan\nKab. Bandung', // fallback lokasi default
+                  data['location'] ?? 'Kopi Malabar, Pangalengan\nKab. Bandung',
                 ),
               ),
               const SizedBox(width: 40),
@@ -57,7 +52,6 @@ class ReservationDetailInfo extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Baris 2
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

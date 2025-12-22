@@ -40,7 +40,6 @@ class PaymentPriceSection extends StatelessWidget {
 
     return Column(
       children: [
-        // ====== Kotak Harga ======
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           decoration: BoxDecoration(
@@ -79,7 +78,6 @@ class PaymentPriceSection extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        // ====== Tombol Bayar Sekarang ======
         ElevatedButton(
           onPressed: () {
             if ((data == null || data!['tanggal'] == null) &&
@@ -132,7 +130,6 @@ class PaymentPriceSection extends StatelessWidget {
                   '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
-            // Navigate to QRIS payment view (auto-transitions to success after 3 seconds)
             Get.toNamed('/reservation-qris', arguments: ticketData);
           },
           style: ElevatedButton.styleFrom(
