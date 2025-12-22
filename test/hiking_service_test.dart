@@ -89,7 +89,7 @@ void main() {
       expect(updated?.checkOutItems, 'Test return items');
     });
 
-    test('Complete check-out prepares history data and removes hiking', () {
+    test('Complete check-out prepares history data and removes hiking', () async {
       final hiking = service.pendingCheckIns.first;
       final id = hiking.id;
 
@@ -107,7 +107,7 @@ void main() {
       );
 
       final initialCount = service.allHikings.length;
-      final historyData = service.completeCheckOut(id);
+      final historyData = await service.completeCheckOut(id);
 
       expect(historyData, isNotNull);
       expect(historyData!['mountainName'], 'Puncak Besar Malabar');

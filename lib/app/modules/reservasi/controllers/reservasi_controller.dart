@@ -5,6 +5,7 @@ import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
 import '../../../services/reservasi_service.dart';
+import '../../../services/auth_service.dart';
 
 class ReservasiController extends GetxController {
   late final HikingService _hikingService;
@@ -199,11 +200,22 @@ class ReservasiController extends GetxController {
 
     print('Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
 
-    _hikingService.createFromReservation(
+    // Get the current user ID from Supabase auth
+    final authService = Get.find<AuthService>();
+    final currentUser = authService.currentUser;
+    final userId = currentUser?.id;
+    
+    print('🔐 Auth Debug: currentUser=$currentUser, userId=$userId');
+    if (userId == null) {
+      print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
+    }
+
+    await _hikingService.createFromReservation(
       reservasiId: reservasiId,
       mountainName: mountainName,
       hikingTrail: jalur,
       startDate: startDate,
+      userId: userId,
     );
 
     final payRand = Random().nextInt(900000) + 100000;

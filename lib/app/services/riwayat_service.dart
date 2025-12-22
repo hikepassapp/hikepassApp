@@ -9,6 +9,8 @@ import '../modules/reservasi/controllers/reservasi_controller.dart';
 class RiwayatService extends GetxService {
   final RxList<RiwayatModel> _items = <RiwayatModel>[].obs;
 
+  String? get _userId => SupabaseConfig.client.auth.currentUser?.id;
+
   List<RiwayatModel> get all => _items;
 
   @override
@@ -24,7 +26,7 @@ class RiwayatService extends GetxService {
     }
   }
 
-  void addFromHikingHistory(Map<String, dynamic> history) {
+  Future<void> addFromHikingHistory(Map<String, dynamic> history, {String? userId}) async {
     final reservasiId = history['reservasiId'] ?? '';
     final existingIndex = _items.indexWhere((item) => item.reservasi.id == reservasiId);
     
@@ -51,7 +53,12 @@ class RiwayatService extends GetxService {
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
       );
-      _upsertRiwayat(_items[existingIndex]);
+      final uid = userId ?? _userId;
+      if (uid != null) {
+        await _upsertRiwayat(_items[existingIndex], userId: uid, history: history);
+      } else {
+        await _upsertRiwayat(_items[existingIndex], history: history);
+      }
       return;
     }
 
@@ -71,14 +78,14 @@ class RiwayatService extends GetxService {
     }
     final hikers = hikersList.isEmpty
         ? [HikerInfo(
-            name: history['hikerName'] ?? 'John Doe',
-            nik: history['hikerNik'] ?? '1111111111111111',
+            name: history['hikerName'],
+            nik: history['hikerNik'],
           )]
         : hikersList.map((h) {
             if (h is HikerInfo) return h;
             return HikerInfo(
-              name: h['name'] ?? '-',
-              nik: h['nik'] ?? '-',
+              name: h['name'],
+              nik: h['nik'],
             );
           }).toList();
 
@@ -120,11 +127,19 @@ class RiwayatService extends GetxService {
     );
 
     _items.insert(0, item);
-    _upsertRiwayat(item);
+    final uid = userId ?? _userId;
+    if (uid != null) {
+      await _upsertRiwayat(item, userId: uid, history: history);
+    } else {
+      await _upsertRiwayat(item, history: history);
+    }
   }
 
-  void _upsertRiwayat(RiwayatModel r) {
+  Future<void> _upsertRiwayat(RiwayatModel r, {String? userId, Map<String, dynamic>? history}) async {
     final client = SupabaseConfig.client;
+    final ticketCount = (history?['ticketCount'] as int?) ?? r.reservasi.hikers.length;
+    final totalPrice = (history?['totalPrice'] as int?) ?? (r.reservasi.ticketPrice * r.reservasi.hikers.length);
+    
     final payload = {
       'id': r.id,
       'reservasi_id': r.reservasi.id,
@@ -139,13 +154,57 @@ class RiwayatService extends GetxService {
           .map((h) => {'name': h.name, 'nik': h.nik})
           .toList(),
       'ticket_price': r.reservasi.ticketPrice,
+      'ticket_count': ticketCount,
+      'total_price': totalPrice,
       'payment_code': r.payment?.code,
       'payment_total': r.payment?.total,
       'payment_date': r.payment?.date?.toIso8601String(),
       'payment_status': r.payment?.status.name,
+      if (userId != null) 'user_id': userId,
     };
     try {
-      client.from('riwayat').upsert(payload);
-    } catch (_) {}
+      print('📤 Upserting riwayat to DB with payload keys: ${payload.keys.toList()}');
+      print('   user_id in payload: ${payload['user_id']}');
+      print('   ticket_count: ${payload['ticket_count']}, total_price: ${payload['total_price']}');
+      final response = await client.from('riwayat').upsert(payload).select();
+      print('✅ Riwayat upserted successfully: ${r.id}');
+      print('   Response: $response');
+    } catch (e) {
+      print('❌ Error upserting riwayat: $e');
+      print('   Payload was: $payload');
+    }
+  }
+
+  // Fetch history rows for a user (fallback to all if RLS not set)
+  Future<List<Map<String, dynamic>>> fetchHistoryByUser(String userId) async {
+    try {
+      final rows = await SupabaseConfig.client
+          .from('riwayat')
+          .select('*')
+          .eq('user_id', userId)
+          .order('check_out_date', ascending: false);
+      return (rows as List).cast<Map<String, dynamic>>();
+    } catch (e) {
+      final rows = await SupabaseConfig.client
+          .from('riwayat')
+          .select('*')
+          .order('check_out_date', ascending: false);
+      return (rows as List).cast<Map<String, dynamic>>();
+    }
+  }
+
+  // Subscribe to changes for a user's history to refresh UI
+  RealtimeChannel subscribeUserHistory(String userId, void Function() onChange) {
+    final channel = SupabaseConfig.client
+        .channel('riwayat-user-$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'riwayat',
+          callback: (_) => onChange(),
+        )
+        .subscribe();
+    return channel;
   }
 }
+
