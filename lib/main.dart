@@ -12,13 +12,13 @@ import 'app/services/riwayat_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await dotenv.load();
 
   Intl.defaultLocale = 'id_ID';
-  
+
   await SupabaseConfig.initialize();
-  
+
   Get.put(AuthService());
   Get.put(HikingService());
   Get.put(RiwayatService(), permanent: true);

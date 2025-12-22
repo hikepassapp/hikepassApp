@@ -30,6 +30,11 @@ class RegisterController extends GetxController {
   final userType = 'pendaki'.obs; // Default to pendaki
   final agreeToTerms = false.obs;
 
+  // OTP resend timer
+  final otpCountdown = 0.obs;
+  final canResendOtp = false.obs;
+  Timer? _otpTimer;
+
   // Password validation
   final hasMinLength = false.obs;
   final hasUpperCase = false.obs;
@@ -46,6 +51,7 @@ class RegisterController extends GetxController {
 
   @override
   void onClose() {
+    _otpTimer?.cancel();
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
@@ -76,6 +82,20 @@ class RegisterController extends GetxController {
 
   void setUserType(String type) {
     userType.value = type;
+  }
+
+  void startOtpTimer() {
+    otpCountdown.value = 45;
+    canResendOtp.value = false;
+    _otpTimer?.cancel();
+    _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (otpCountdown.value > 0) {
+        otpCountdown.value--;
+      } else {
+        canResendOtp.value = true;
+        timer.cancel();
+      }
+    });
   }
 
   // Validate password strength
@@ -121,11 +141,42 @@ class RegisterController extends GetxController {
       return;
     }
 
-    isLoading.value = true;
-    await Future.delayed(const Duration(seconds: 1));
-    isLoading.value = false;
+    try {
+      isLoading.value = true;
 
-    Get.toNamed('/register-password');
+      // Check if email already exists in users table
+      final response = await SupabaseConfig.client
+          .from('users')
+          .select('email')
+          .eq('email', email)
+          .maybeSingle();
+
+      if (response != null) {
+        isLoading.value = false;
+        Get.snackbar(
+          'Error',
+          'Email sudah terdaftar. Silakan gunakan email lain atau login.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      isLoading.value = false;
+      Get.toNamed('/register-password');
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        'Error',
+        'Gagal memeriksa email. Silakan coba lagi.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+      debugPrint('Email check error: ${e.toString()}');
+    }
   }
 
   // Step 2: Save Password and Create Account
@@ -190,44 +241,24 @@ class RegisterController extends GetxController {
         print('=== Registration Successful ===');
         print('User ID: ${response.user!.id}');
 
-        // Wait a bit before sending OTP to avoid rate limit
-        await Future.delayed(const Duration(seconds: 2));
+        // Send OTP to email for verification
+        print('Sending OTP to email...');
+        await _authService.sendOtpToEmail(email: emailController.text.trim());
 
-        // Try to send OTP
-        try {
-          await _authService.sendOtpToEmail(email: emailController.text.trim());
+        Get.snackbar(
+          'Berhasil',
+          'Akun berhasil dibuat! Kode OTP telah dikirim ke email Anda.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green[100],
+          colorText: Colors.green[900],
+          duration: const Duration(seconds: 3),
+        );
 
-          Get.snackbar(
-            'Berhasil',
-            'Akun berhasil dibuat! Kode OTP telah dikirim ke email Anda.',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.green[100],
-            colorText: Colors.green[900],
-            duration: const Duration(seconds: 3),
-          );
+        // Start OTP countdown timer
+        startOtpTimer();
 
-          Get.toNamed('/register-otp');
-        } catch (otpError) {
-          print('OTP Error: $otpError');
-          // If OTP sending fails due to rate limit, show message but still proceed
-          if (otpError.toString().contains('60 seconds') ||
-              otpError.toString().contains('rate limit') ||
-              otpError.toString().contains('security purposes')) {
-            Get.snackbar(
-              'Informasi',
-              'Akun berhasil dibuat! Mohon tunggu 60 detik sebelum meminta kode OTP.',
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.orange[100],
-              colorText: Colors.orange[900],
-              duration: const Duration(seconds: 4),
-            );
-
-            // Still navigate to OTP page, user can resend after 60 seconds
-            Get.toNamed('/register-otp');
-          } else {
-            rethrow;
-          }
-        }
+        // Navigate to OTP verification page
+        Get.toNamed('/register-otp');
       }
     } on AuthException catch (e) {
       String errorMessage = _handleAuthError(e);
@@ -294,7 +325,6 @@ class RegisterController extends GetxController {
     }
   }
 
-  // Step 3: Verify OTP
   Future<void> verifyOTP() async {
     final email = emailController.text.trim();
     final otp = otpController.text.trim();
@@ -324,7 +354,6 @@ class RegisterController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Verify OTP with Supabase
       final response = await _authService.verifyOtp(email: email, token: otp);
 
       if (response.user != null) {
@@ -337,7 +366,6 @@ class RegisterController extends GetxController {
           duration: const Duration(seconds: 3),
         );
 
-        // If pendaki, go to fill data page, else go to login
         if (userType.value == 'pendaki') {
           Get.toNamed('/register-fill-data');
         } else {
@@ -345,7 +373,7 @@ class RegisterController extends GetxController {
         }
       }
     } on AuthException catch (e) {
-      String errorMessage='';
+      String errorMessage = '';
 
       if (e.message.contains('expired')) {
         errorMessage = 'Kode OTP sudah kadaluarsa. Silakan minta kode baru.';
@@ -388,8 +416,19 @@ class RegisterController extends GetxController {
     }
   }
 
-  // Resend OTP
   Future<void> resendOTP() async {
+    if (!canResendOtp.value && otpCountdown.value > 0) {
+      Get.snackbar(
+        'Tunggu',
+        'Mohon tunggu ${otpCountdown.value} detik sebelum mengirim ulang OTP.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange[100],
+        colorText: Colors.orange[900],
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
     try {
       isLoading.value = true;
 
@@ -403,6 +442,8 @@ class RegisterController extends GetxController {
         colorText: Colors.green[900],
         duration: const Duration(seconds: 3),
       );
+
+      startOtpTimer();
     } on AuthException catch (e) {
       String errorMessage = 'Gagal mengirim ulang OTP.';
 
@@ -580,40 +621,36 @@ class RegisterController extends GetxController {
 
       print('=== Data Saved Successfully ===');
 
+      // Clear all registration data
+      emailController.clear();
+      passwordController.clear();
+      confirmPasswordController.clear();
+      nikController.clear();
+      namaLengkapController.clear();
+      teleponController.clear();
+      alamatController.clear();
+      tanggalLahirController.clear();
+      selectedGender.value = '';
+
+      // Stop loading
+      isLoading.value = false;
+
+      // Show success message
       Get.snackbar(
-        'Sukses',
-        'Registrasi berhasil! Selamat datang di HikePass!',
-        snackPosition: SnackPosition.TOP,
+        'Registrasi Berhasil! 🎉',
+        'Akun Anda telah dibuat. Silakan login untuk melanjutkan.',
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
         colorText: Colors.green[900],
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(16),
       );
 
-      // Navigate to home page based on user type
-      await Future.delayed(const Duration(seconds: 2));
+      // Wait for snackbar to show
+      await Future.delayed(const Duration(milliseconds: 1000));
 
-      try {
-        // Check if routes exist and navigate
-        if (userType.value == 'pendaki') {
-          Get.offAllNamed('/home');
-          // } else if (userType.value == 'pengelola') {
-          //   Get.offAllNamed('/pengelola/home');
-          //
-        } else {
-          // Fallback to any existing home route
-          Get.offAllNamed('/home');
-        }
-      } catch (navigationError) {
-        print('Navigation error: $navigationError');
-        // If navigation fails, try alternative route
-        try {
-          Get.offAllNamed('/home');
-        } catch (e) {
-          print('Fallback navigation also failed: $e');
-          // Just clear the loading state, user is already registered
-          Get.back();
-        }
-      }
+      // Clear all routes and go back to landing screen
+      Get.offAllNamed('/landing-screen');
     } on PostgrestException catch (e) {
       String errorMessage = 'Gagal menyimpan data.';
 
@@ -654,7 +691,6 @@ class RegisterController extends GetxController {
         duration: const Duration(seconds: 4),
       );
       debugPrint('Save personal data error: ${e.toString()}');
-    } finally {
       isLoading.value = false;
     }
   }

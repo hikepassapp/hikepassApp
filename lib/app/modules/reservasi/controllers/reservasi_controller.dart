@@ -17,6 +17,8 @@ class ReservasiController extends GetxController {
   final isAgreed = false.obs;
   var ktpImage = Rxn<XFile>();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
+  final isReservationValid = false.obs;
+  final areAllHikersComplete = false.obs;
 
   final hikers = <Map<String, dynamic>>[].obs;
 
@@ -34,6 +36,7 @@ class ReservasiController extends GetxController {
     if (index < 0) return;
     ensureHikersCount(index + 1);
     hikers[index] = data;
+    _updateHikersValidationState();
     update();
   }
 
@@ -49,6 +52,22 @@ class ReservasiController extends GetxController {
     print('ReservasiController initialized');
     print('HikingService instance: ${_hikingService.hashCode}');
     loadReservations();
+
+    // Listen to changes in reservation fields and update validation state
+    ever(selectedPos, (_) => _updateValidationState());
+    ever(selectedDate, (_) => _updateValidationState());
+    ever(ticketCount, (_) => _updateValidationState());
+
+    // Listen to changes in hikers list and update completion state
+    ever(hikers, (_) => _updateHikersValidationState());
+  }
+
+  /// Updates the validation state based on current field values
+  void _updateValidationState() {
+    isReservationValid.value =
+        selectedPos.value.isNotEmpty &&
+        selectedDate.value != null &&
+        ticketCount.value >= 1;
   }
 
   void loadReservations() {
@@ -92,6 +111,53 @@ class ReservasiController extends GetxController {
 
   void setSelectedDate(DateTime date) => selectedDate.value = date;
 
+  /// Validates if all required fields are filled for reservation
+  /// Returns null if valid, or error message if invalid
+  String? validateReservation() {
+    if (selectedPos.value.isEmpty) {
+      return 'Harap pilih Pos Perizinan Masuk';
+    }
+    if (selectedDate.value == null) {
+      return 'Harap pilih Tanggal Masuk';
+    }
+    if (ticketCount.value < 1) {
+      return 'Jumlah pendaki harus minimal 1';
+    }
+    return null; // No errors
+  }
+
+  /// Checks if a single hiker's data is complete
+  bool _isHikerComplete(Map<String, dynamic> hiker) {
+    if (hiker.isEmpty) return false;
+
+    return (hiker['nama'] != null &&
+            (hiker['nama'] as String).trim().isNotEmpty) &&
+        (hiker['nik'] != null && (hiker['nik'] as String).trim().isNotEmpty) &&
+        (hiker['jenisKelamin'] != null &&
+            (hiker['jenisKelamin'] as String).trim().isNotEmpty) &&
+        (hiker['alamat'] != null &&
+            (hiker['alamat'] as String).trim().isNotEmpty) &&
+        (hiker['telepon'] != null &&
+            (hiker['telepon'] as String).trim().isNotEmpty);
+  }
+
+  /// Updates the validation state for all hikers
+  void _updateHikersValidationState() {
+    final count = ticketCount.value;
+    ensureHikersCount(count);
+
+    bool allComplete = true;
+    for (int i = 0; i < count; i++) {
+      final hiker = getHiker(i) ?? {};
+      if (!_isHikerComplete(hiker)) {
+        allComplete = false;
+        break;
+      }
+    }
+
+    areAllHikersComplete.value = allComplete;
+  }
+
   void goToDetail(Map<String, dynamic> reservation) {
     Get.to(
       () => const ReservationDetailView(),
@@ -111,17 +177,27 @@ class ReservasiController extends GetxController {
 
   Future<void> completePayment(Map<String, dynamic> data) async {
     final now = DateTime.now();
-    
+
     print('CompletePayment called with data: $data');
     print('selectedDate: ${selectedDate.value}');
     print('selectedPos: ${selectedPos.value}');
 
-    final reservasiCode = data['reservationCode']?.toString() ?? data['id']?.toString() ?? generateReservationCode();
+    final reservasiCode =
+        data['reservationCode']?.toString() ??
+        data['id']?.toString() ??
+        generateReservationCode();
     final reservasiId = 'R${now.millisecondsSinceEpoch}';
-    final mountainName = (data['title'] ?? data['mountainName'] ?? 'Puncak Besar Malabar').toString();
-    final jalur = (data['selectedPos'] ?? data['jalur'] ?? data['hikingTrail'] ?? 'Jalur Panorama').toString();
+    final mountainName =
+        (data['title'] ?? data['mountainName'] ?? 'Puncak Besar Malabar')
+            .toString();
+    final jalur =
+        (data['selectedPos'] ??
+                data['jalur'] ??
+                data['hikingTrail'] ??
+                'Jalur Panorama')
+            .toString();
     final startDate = selectedDate.value ?? now;
-    
+
     print('Extracted: Mountain=$mountainName, Trail=$jalur, Date=$startDate');
 
     // Get the current user ID from Supabase auth
@@ -141,11 +217,11 @@ class ReservasiController extends GetxController {
       startDate: startDate,
       userId: userId,
     );
-  
+
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
     final totalPrice = ticketCount.value * 15000;
-    
+
     final historyMap = {
       'id': reservasiId,
       'code': reservasiCode,
@@ -156,14 +232,13 @@ class ReservasiController extends GetxController {
       'hikingStatus': 'Menunggu',
       'paymentCode': paymentCode,
       'paymentDate': now,
-    
+
       'ticketCount': ticketCount.value,
       'ticketPrice': 15000,
       'totalPrice': totalPrice,
-      'hikers': hikers.map((h) => {
-        'name': h['nama'] ?? '-',
-        'nik': h['nik'] ?? '-',
-      }).toList(),
+      'hikers': hikers
+          .map((h) => {'name': h['nama'] ?? '-', 'nik': h['nik'] ?? '-'})
+          .toList(),
     };
 
     riwayat.add(historyMap);
