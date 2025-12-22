@@ -111,7 +111,7 @@ class PaymentPriceSection extends StatelessWidget {
                 : 'Pendaki';
 
             final reservationCode = controller.generateReservationCode();
-            
+
             final ticketData = {
               'id': reservationCode,
               'reservationCode': reservationCode,
@@ -126,8 +126,10 @@ class PaymentPriceSection extends StatelessWidget {
 
               'nama': mainHiker,
               'metode': 'QRIS',
-              'tanggal': '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
-              'waktu': '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+              'tanggal':
+                  '${now.day.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.year}',
+              'waktu':
+                  '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
             };
 
             Get.offNamed('/payment-success', arguments: ticketData);
