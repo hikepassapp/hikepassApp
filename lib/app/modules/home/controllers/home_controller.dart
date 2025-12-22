@@ -40,23 +40,23 @@ class HomeController extends GetxController {
     loadUserProfile();
     loadBerita();
     loadPaketWisata();
-    loadUserName();
     fetchWeatherData();
   }
 
   Future<void> loadUserProfile() async {
     try {
       final userProfile = await _authService.getUserProfile();
-      
+
       if (userProfile != null) {
         print('User Profile: $userProfile');
-        
-        userName.value = userProfile['full_name'] ?? 
-                         userProfile['email']?.split('@')[0] ?? 
-                         'User';
-        
+
+        userName.value =
+            userProfile['full_name'] ??
+            userProfile['email']?.split('@')[0] ??
+            'User';
+
         userEmail.value = userProfile['email'] ?? '';
-        
+
         print('Username set to: ${userName.value}');
       } else {
         print('User profile is null');
@@ -80,6 +80,7 @@ class HomeController extends GetxController {
       return 'Selamat Malam';
     }
   }
+
   String get displayName {
     if (userName.value.isEmpty) return 'User';
     final names = userName.value.split(' ');
