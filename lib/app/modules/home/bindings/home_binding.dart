@@ -12,7 +12,6 @@ class HomeBinding extends Bindings {
       fenix: true,
     );
 
-    // Repository
     Get.lazyPut<WeatherRepository>(
       () => WeatherRepository(),
       fenix: true,

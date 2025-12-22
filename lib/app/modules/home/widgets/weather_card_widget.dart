@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/modules/home/widgets/cached_network_image_helper.dart';
 import '../../../shared/theme/app_typography.dart';
 import '../controllers/home_controller.dart';
 
@@ -45,6 +46,23 @@ class WeatherCardWidget extends GetView<HomeController> {
           padding: EdgeInsets.all(40),
           child: CircularProgressIndicator(),
         ),
+      ),
+    );
+  }
+
+  Widget _buildWeatherIcon() {
+    return SafeNetworkImage(
+      imageUrl: controller.weatherIcon.value.isNotEmpty 
+          ? controller.getWeatherIconUrl() 
+          : '',
+      width: 140,
+      height: 140,
+      fit: BoxFit.contain,
+      fallbackAsset: 'assets/images/weather.png',
+      fallbackWidget: const SizedBox(
+        width: 140,
+        height: 140,
+        child: Icon(Icons.cloud, size: 80, color: Colors.grey),
       ),
     );
   }
@@ -144,45 +162,8 @@ class WeatherCardWidget extends GetView<HomeController> {
               ],
             ),
           ),
-          // Weather Icon dari API
-          if (controller.weatherIcon.value.isNotEmpty)
-            Image.network(
-              controller.getWeatherIconUrl(),
-              width: 140,
-              height: 140,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                // Fallback ke asset lokal jika gagal load
-                return Image.asset(
-                  'assets/images/weather.png',
-                  width: 140,
-                  height: 140,
-                  fit: BoxFit.contain,
-                );
-              },
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return SizedBox(
-                  width: 140,
-                  height: 140,
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  ),
-                );
-              },
-            )
-          else
-            Image.asset(
-              'assets/images/weather.png',
-              width: 140,
-              height: 140,
-              fit: BoxFit.contain,
-            ),
+          // Weather Icon dari API dengan caching
+          _buildWeatherIcon(),
         ],
       ),
     );

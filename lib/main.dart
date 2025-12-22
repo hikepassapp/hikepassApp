@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_file.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'app/routes/app_pages.dart';
@@ -37,7 +38,7 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondary),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      initialRoute: initialRoute,
+      initialRoute: AppPages.initial,
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
