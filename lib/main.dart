@@ -15,12 +15,6 @@ void main() async {
   
   await dotenv.load();
 
-  try {
-    await initializeDateFormatting('id_ID', '');
-  } catch (e) {
-    print('Note: Could not initialize id_ID locale: $e');
-  }
-
   Intl.defaultLocale = 'id_ID';
   
   await SupabaseConfig.initialize();
@@ -37,9 +31,43 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.secondary),
         fontFamily: GoogleFonts.poppins().fontFamily,
       ),
-      initialRoute: initialRoute,
+      home: const AuthCheck(),
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
     ),
   );
+}
+
+class AuthCheck extends StatelessWidget {
+  const AuthCheck({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Get.find<AuthService>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authService.isLoggedIn) {
+        Get.offAllNamed('/bottom-navigation');
+      } else {
+        Get.offAllNamed('/landing-screen');
+      }
+    });
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(color: AppColors.secondary),
+            SizedBox(height: 16),
+            Text(
+              'Loading...',
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
