@@ -1,46 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pinput/pinput.dart';
 import '../controllers/register_controller.dart';
-import 'custom_text_field_widget.dart';
-import 'custom_button_widget.dart';
-import 'info_box_widget.dart';
 
 class RegisterOtpContentWidget extends GetView<RegisterController> {
   const RegisterOtpContentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF1a1a1a),
+      ),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyWith(
+      decoration: BoxDecoration(
+        border: Border.all(color: const Color(0xFF059669), width: 2),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
+    );
+
+    final errorPinTheme = defaultPinTheme.copyWith(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.red, width: 2),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.red[50],
+      ),
+    );
+
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          // Description
+          Text(
             'Kami telah mengirimkan kode OTP ke email kamu',
-            style: TextStyle(fontSize: 14, color: Colors.black54),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+              height: 1.5,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             controller.emailController.text.isNotEmpty
                 ? controller.emailController.text
                 : 'youremail@gmail.com',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF059669),
+            ),
           ),
-          const SizedBox(height: 24),
-          CustomTextField(
-            label: '',
-            hint: 'Masukkan Kode OTP',
-            controller: controller.otpController,
-            keyboardType: TextInputType.number,
+          const SizedBox(height: 32),
+
+          // OTP Input
+          Center(
+            child: Pinput(
+              controller: controller.otpController,
+              length: 6,
+              defaultPinTheme: defaultPinTheme,
+              focusedPinTheme: focusedPinTheme,
+              errorPinTheme: errorPinTheme,
+              onChanged: (value) {
+                // Auto-submit when complete
+                if (value.length == 6) {
+                  FocusScope.of(context).unfocus();
+                }
+              },
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+              showCursor: true,
+              cursor: Container(
+                width: 2,
+                height: 24,
+                color: const Color(0xFF059669),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
-          const InfoBox(message: 'Jangan bagikan kode ini kepada siapapun'),
-          const Spacer(),
-          Obx(
-            () => CustomButton(
-              text: 'Daftar',
-              onPressed: controller.verifyOTP,
-              isLoading: controller.isLoading.value,
+
+          // Info Box
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue[200]!),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Jangan bagikan kode ini kepada siapapun',
+                    style: TextStyle(fontSize: 12, color: Colors.blue[900]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Resend OTP
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Tidak menerima kode? ',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                Obx(
+                  () => controller.canResendOtp.value
+                      ? GestureDetector(
+                          onTap: controller.resendOTP,
+                          child: const Text(
+                            'Kirim Ulang',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF059669),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          'Kirim ulang dalam ${controller.otpCountdown.value}s',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // Verify Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: Obx(
+              () => ElevatedButton(
+                onPressed: controller.isLoading.value
+                    ? null
+                    : controller.verifyOTP,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF059669),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                  disabledBackgroundColor: Colors.grey[300],
+                ),
+                child: controller.isLoading.value
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : const Text(
+                        'Daftar',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+              ),
             ),
           ),
         ],

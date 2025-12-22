@@ -7,7 +7,7 @@ import '../widgets/login_otp_reset_password_content_widget.dart';
 class LoginOtpResetPasswordView extends GetView<LoginController> {
   const LoginOtpResetPasswordView({super.key});
 
-  @override
+  // @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
