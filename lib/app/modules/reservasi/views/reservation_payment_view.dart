@@ -13,7 +13,7 @@ class ReservationPaymentView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Retrieve reservation data from navigation arguments
-    final data = Get.arguments as Map<String, dynamic>?;
+    final ticketData = Get.arguments as Map<String, dynamic>?;
     final controller = Get.find<ReservasiController>();
 
     return Scaffold(
@@ -24,11 +24,11 @@ class ReservationPaymentView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TicketSummaryCard(data: data, controller: controller),
+            TicketSummaryCard(data: ticketData),
             const SizedBox(height: 24),
 
             // Entry Date (Read-only)
-            TicketDetailSection(data: data),
+            TicketDetailSection(data: ticketData),
             const SizedBox(height: 24),
 
             // Display all hikers in reservation
@@ -37,7 +37,7 @@ class ReservationPaymentView extends StatelessWidget {
 
             const PaymentMethodSection(),
             const SizedBox(height: 24),
-            PaymentPriceSection(data: data),
+            PaymentPriceSection(data: ticketData),
           ],
         ),
       ),
@@ -68,7 +68,7 @@ class ReservationPaymentView extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: hikers.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final hiker = hikers[index];
               return Container(

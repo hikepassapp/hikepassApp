@@ -7,6 +7,7 @@ import '../modules/profile/views/about_view.dart';
 import '../modules/profile/views/privacy_policy_view.dart';
 import '../modules/profile/views/terms_view.dart';
 import '../modules/reservasi/views/reservation_payment_view.dart';
+import '../modules/reservasi/views/reservation_qris_view.dart';
 import '../modules/reservasi/views/payment_success_view.dart';
 import '../modules/berita/bindings/berita_binding.dart';
 import '../modules/berita/views/berita_view.dart';
@@ -106,6 +107,7 @@ class AppPages {
       name: _Paths.reservationPayment,
       page: () => const ReservationPaymentView(),
     ),
+    GetPage(name: '/reservation-qris', page: () => const ReservationQrisView()),
     GetPage(name: '/payment-success', page: () => const PaymentSuccessView()),
     GetPage(
       name: _Paths.riwayat,
