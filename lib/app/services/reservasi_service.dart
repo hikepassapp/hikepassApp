@@ -158,4 +158,82 @@ class ReservasiService extends GetxService {
       await _client.from('reservasi').delete().eq('id', reservasiId);
     }
   }
+
+  /// Fetch a single reservation by ID
+  Future<Map<String, dynamic>?> fetchReservationById(String reservasiId) async {
+    try {
+      final response = await _client
+          .from('reservasi')
+          .select('*')
+          .eq('id', reservasiId)
+          .single();
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      print('❌ Error fetching reservation: $e');
+      return null;
+    }
+  }
+
+  /// Fetch payment for a reservation
+  Future<Map<String, dynamic>?> fetchPaymentByReservasiId(String reservasiId) async {
+    try {
+      final response = await _client
+          .from('payment')
+          .select('*')
+          .eq('reservasi_id', reservasiId)
+          .single();
+      return response as Map<String, dynamic>;
+    } catch (e) {
+      print('⚠️ No payment found for reservation: $e');
+      return null;
+    }
+  }
+
+  /// Update reservation status
+  Future<void> updateReservationStatus(String reservasiId, String status) async {
+    try {
+      await _client
+          .from('reservasi')
+          .update({'status': status})
+          .eq('id', reservasiId);
+      print('✅ Reservation status updated to: $status');
+    } catch (e) {
+      print('❌ Error updating reservation status: $e');
+      rethrow;
+    }
+  }
+
+  /// Subscribe to changes for a specific reservation
+  RealtimeChannel subscribeReservation(String reservasiId, void Function() onChange) {
+    final channel = _client
+        .channel('reservasi-$reservasiId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'reservasi',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: reservasiId,
+          ),
+          callback: (_) => onChange(),
+        )
+        .subscribe();
+    return channel;
+  }
+
+  /// Get reservations count for a user
+  Future<int> getReservationCountByUser(String userId) async {
+    try {
+      final response = await _client
+          .from('reservasi')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('status', 'active');
+      return (response as List).length;
+    } catch (e) {
+      print('❌ Error getting reservation count: $e');
+      return 0;
+    }
+  }
 }

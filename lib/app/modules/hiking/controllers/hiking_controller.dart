@@ -41,6 +41,9 @@ class HikingController extends GetxController {
         .where((h) => h.status == HikingStatus.pending)
         .toList();
     print('📋 Pending check-ins: ${items.length}');
+    if (items.isNotEmpty) {
+      print('   First item: ${items.first.mountainName} - ${items.first.hikingTrail}');
+    }
     return items;
   }
 
