@@ -7,7 +7,7 @@ import '../../../services/auth_service.dart';
 
 class LoginController extends GetxController {
   // Text Controllers
-  final AuthService _authService = Get.find<AuthService>();
+  late final AuthService _authService;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final otpController = TextEditingController();
@@ -41,6 +41,7 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _authService = Get.find<AuthService>();
     if (Get.arguments != null && Get.arguments['userType'] != null) {
       userType.value = Get.arguments['userType'];
     }

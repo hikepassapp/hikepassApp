@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
+import '../../../services/reservasi_service.dart';
 
 class ReservasiController extends GetxController {
   late final HikingService _hikingService;
@@ -107,7 +108,7 @@ class ReservasiController extends GetxController {
     }
   }
 
-  void completePayment(Map<String, dynamic> data) {
+  Future<void> completePayment(Map<String, dynamic> data) async {
     final now = DateTime.now();
     
     print('CompletePayment called with data: $data');
@@ -133,7 +134,7 @@ class ReservasiController extends GetxController {
     final paymentCode = 'PAY-$payRand';
     final totalPrice = ticketCount.value * 15000;
     
-    riwayat.add({
+    final historyMap = {
       'id': reservasiId,
       'code': reservasiCode,
       'mountainName': mountainName,
@@ -151,7 +152,30 @@ class ReservasiController extends GetxController {
         'name': h['nama'] ?? '-',
         'nik': h['nik'] ?? '-',
       }).toList(),
-    });
+    };
+
+    riwayat.add(historyMap);
+
+    try {
+      final reservasiService = Get.isRegistered<ReservasiService>()
+          ? Get.find<ReservasiService>()
+          : Get.put(ReservasiService(), permanent: true);
+      await reservasiService.upsertReservation({
+        'id': reservasiId,
+        'code': reservasiCode,
+        'mountainName': mountainName,
+        'hikingTrail': jalur,
+        'startDate': startDate,
+        'ticketPrice': 15000,
+        'hikers': historyMap['hikers'],
+      });
+      await reservasiService.upsertPayment({
+        'reservasiId': reservasiId,
+        'paymentCode': paymentCode,
+        'totalPrice': totalPrice,
+        'paymentDate': now,
+      });
+    } catch (_) {}
 
     resetTicketCount();
     selectedDate.value = null;

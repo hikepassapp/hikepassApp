@@ -4,7 +4,7 @@ import '../../../services/auth_service.dart';
 import '../../../config/supabase_config.dart';
 
 class ProfileController extends GetxController {
-  final AuthService _authService = Get.find<AuthService>();
+  late final AuthService _authService;
 
   var isLoading = true.obs;
   var isEditing = false.obs;
@@ -56,6 +56,7 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _authService = Get.find<AuthService>();
     loadUserProfile();
   }
 

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import '../models/riwayat_model.dart';
 import '../models/reservasi_model.dart';
 import '../models/payment_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/supabase_config.dart';
 import '../modules/reservasi/controllers/reservasi_controller.dart';
 
 class RiwayatService extends GetxService {
@@ -49,6 +51,7 @@ class RiwayatService extends GetxService {
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
       );
+      _upsertRiwayat(_items[existingIndex]);
       return;
     }
 
@@ -117,5 +120,32 @@ class RiwayatService extends GetxService {
     );
 
     _items.insert(0, item);
+    _upsertRiwayat(item);
+  }
+
+  void _upsertRiwayat(RiwayatModel r) {
+    final client = SupabaseConfig.client;
+    final payload = {
+      'id': r.id,
+      'reservasi_id': r.reservasi.id,
+      'reservasi_code': r.reservasi.code,
+      'mountain_name': r.reservasi.mountainName,
+      'hiking_trail': r.reservasi.hikingTrail,
+      'start_date': r.reservasi.startDate.toIso8601String(),
+      'check_in_date': r.checkInDate?.toIso8601String(),
+      'check_out_date': r.checkOutDate?.toIso8601String(),
+      'hiking_status': r.hikingStatus.name,
+      'hikers': r.reservasi.hikers
+          .map((h) => {'name': h.name, 'nik': h.nik})
+          .toList(),
+      'ticket_price': r.reservasi.ticketPrice,
+      'payment_code': r.payment?.code,
+      'payment_total': r.payment?.total,
+      'payment_date': r.payment?.date?.toIso8601String(),
+      'payment_status': r.payment?.status.name,
+    };
+    try {
+      client.from('riwayat').upsert(payload);
+    } catch (_) {}
   }
 }

@@ -6,7 +6,7 @@ enum HikingHistoryStatus { waiting, hiking, finished }
 class RiwayatModel {
   final String id;
   final ReservasiModel reservasi;
-  final PaymentModel? payment; // optional until payment feature is ready
+  final PaymentModel? payment;
   final HikingHistoryStatus hikingStatus;
   final DateTime? checkInDate;
   final DateTime? checkOutDate;
@@ -33,14 +33,5 @@ class RiwayatModel {
         hikingStatus: hikingStatus ?? this.hikingStatus,
         checkInDate: checkInDate ?? this.checkInDate,
         checkOutDate: checkOutDate ?? this.checkOutDate,
-      );
-
-  factory RiwayatModel.placeholder() => RiwayatModel(
-        id: 'riw-001',
-        reservasi: ReservasiModel.placeholder(),
-        payment: null, // no payment yet
-        hikingStatus: HikingHistoryStatus.waiting,
-        checkInDate: null,
-        checkOutDate: null,
       );
 }
