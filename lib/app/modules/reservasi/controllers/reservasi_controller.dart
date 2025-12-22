@@ -17,6 +17,7 @@ class ReservasiController extends GetxController {
   var ktpImage = Rxn<XFile>();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   final isReservationValid = false.obs;
+  final areAllHikersComplete = false.obs;
 
   final hikers = <Map<String, dynamic>>[].obs;
 
@@ -34,6 +35,7 @@ class ReservasiController extends GetxController {
     if (index < 0) return;
     ensureHikersCount(index + 1);
     hikers[index] = data;
+    _updateHikersValidationState();
     update();
   }
 
@@ -54,6 +56,9 @@ class ReservasiController extends GetxController {
     ever(selectedPos, (_) => _updateValidationState());
     ever(selectedDate, (_) => _updateValidationState());
     ever(ticketCount, (_) => _updateValidationState());
+
+    // Listen to changes in hikers list and update completion state
+    ever(hikers, (_) => _updateHikersValidationState());
   }
 
   /// Updates the validation state based on current field values
@@ -118,6 +123,38 @@ class ReservasiController extends GetxController {
       return 'Jumlah pendaki harus minimal 1';
     }
     return null; // No errors
+  }
+
+  /// Checks if a single hiker's data is complete
+  bool _isHikerComplete(Map<String, dynamic> hiker) {
+    if (hiker.isEmpty) return false;
+
+    return (hiker['nama'] != null &&
+            (hiker['nama'] as String).trim().isNotEmpty) &&
+        (hiker['nik'] != null && (hiker['nik'] as String).trim().isNotEmpty) &&
+        (hiker['jenisKelamin'] != null &&
+            (hiker['jenisKelamin'] as String).trim().isNotEmpty) &&
+        (hiker['alamat'] != null &&
+            (hiker['alamat'] as String).trim().isNotEmpty) &&
+        (hiker['telepon'] != null &&
+            (hiker['telepon'] as String).trim().isNotEmpty);
+  }
+
+  /// Updates the validation state for all hikers
+  void _updateHikersValidationState() {
+    final count = ticketCount.value;
+    ensureHikersCount(count);
+
+    bool allComplete = true;
+    for (int i = 0; i < count; i++) {
+      final hiker = getHiker(i) ?? {};
+      if (!_isHikerComplete(hiker)) {
+        allComplete = false;
+        break;
+      }
+    }
+
+    areAllHikersComplete.value = allComplete;
   }
 
   void goToDetail(Map<String, dynamic> reservation) {
