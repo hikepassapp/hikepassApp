@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import '../controllers/reservasi_controller.dart';
 import 'package:hikepass_app/app/shared/theme/app_colors.dart';
@@ -22,6 +23,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
   final nationality = "WNI".obs;
   final gender = "".obs;
   final ReservasiController formC = Get.find<ReservasiController>();
+  
 
   final namaError = Rxn<String>();
   final nikError = Rxn<String>();
@@ -51,6 +53,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
           gender.value = existing['jenisKelamin']?.toString() ?? '';
           alamatController.text = existing['alamat']?.toString() ?? '';
           telpController.text = existing['telepon']?.toString() ?? '';
+
         }
       });
     }
@@ -207,6 +210,7 @@ class _ReservationFormViewState extends State<ReservationFormView> {
   }
 
   Widget _buildBottomNavBar() {
+    final existing = formC.getHiker(hikerIndex) ?? {};
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -231,14 +235,15 @@ class _ReservationFormViewState extends State<ReservationFormView> {
                       'alamat': alamatController.text.trim(),
                       'telepon': telpController.text.trim(),
                       'kewarganegaraan': nationality.value,
+                      'ktpImage': existing['ktpImage'], // ✅ JANGAN HILANGKAN
                     };
 
                     if (hikerIndex >= 0) {
                       formC.saveHiker(hikerIndex, userData);
-                      Get.back();
+                      Navigator.of(context).pop();
                     } else {
                       formC.saveHiker(0, userData);
-                      Get.back();
+                      Navigator.of(context).pop();
                     }
                   }
                 : null,
@@ -478,8 +483,11 @@ class _ReservationFormViewState extends State<ReservationFormView> {
 
   Widget _buildKtpUploadField() {
     return Obx(() {
+      final hiker = formC.getHiker(hikerIndex);
+      final XFile? ktpFile = hiker?['ktpImage'];
+
       return GestureDetector(
-        onTap: () => formC.pickKtpImage(),
+        onTap: () => formC.pickKtpImage(hikerIndex), // ✅ kirim index
         child: Container(
           width: double.infinity,
           height: 150,
@@ -487,15 +495,13 @@ class _ReservationFormViewState extends State<ReservationFormView> {
             color: const Color(0xFFF2F3F4),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: formC.ktpImage.value == null
-                  ? Colors.grey.shade300
-                  : AppColors.primary,
+              color: ktpFile == null ? Colors.grey.shade300 : AppColors.primary,
               width: 2,
             ),
           ),
-          child: formC.ktpImage.value == null
+          child: ktpFile == null
               ? _buildUploadPlaceholder()
-              : _buildImagePreview(),
+              : _buildImagePreview(ktpFile),
         ),
       );
     });
@@ -515,32 +521,16 @@ class _ReservationFormViewState extends State<ReservationFormView> {
     );
   }
 
-  Widget _buildImagePreview() {
+  Widget _buildImagePreview(XFile file) {
     return FutureBuilder<Uint8List>(
-      future: formC.ktpImage.value!.readAsBytes(),
+      future: file.readAsBytes(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 40),
-                const SizedBox(height: 8),
-                Text(
-                  'Gagal memuat gambar',
-                  style: TextStyle(color: Colors.red.shade700, fontSize: 14),
-                ),
-              ],
-            ),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return const Center(child: Text('Tidak ada data'));
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const Center(child: Text('Gagal memuat gambar'));
         }
 
         return Stack(

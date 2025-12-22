@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,10 +17,10 @@ class ReservasiController extends GetxController {
   final selectedPos = ''.obs;
   final ticketCount = 1.obs;
   final isAgreed = false.obs;
-  var ktpImage = Rxn<XFile>();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   final isReservationValid = false.obs;
   final areAllHikersComplete = false.obs;
+  final ReservasiService _reservasiService = ReservasiService();
 
   final hikers = <Map<String, dynamic>>[].obs;
 
@@ -57,7 +58,6 @@ class ReservasiController extends GetxController {
     ever(selectedPos, (_) => _updateValidationState());
     ever(selectedDate, (_) => _updateValidationState());
     ever(ticketCount, (_) => _updateValidationState());
-
     ever(hikers, (_) => _updateHikersValidationState());
   }
 
@@ -133,7 +133,8 @@ class ReservasiController extends GetxController {
         (hiker['alamat'] != null &&
             (hiker['alamat'] as String).trim().isNotEmpty) &&
         (hiker['telepon'] != null &&
-            (hiker['telepon'] as String).trim().isNotEmpty);
+            (hiker['telepon'] as String).trim().isNotEmpty) &&
+        (hiker['ktpImage'] != null); // ✅ WAJIB ADA FOTO
   }
 
   void _updateHikersValidationState() {
@@ -161,11 +162,24 @@ class ReservasiController extends GetxController {
     );
   }
 
-  Future<void> pickKtpImage() async {
+  Future<void> pickKtpImage(int index) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+
     if (image != null) {
-      ktpImage.value = image;
+      ensureHikersCount(index + 1);
+
+      final current = hikers[index];
+      current['ktpImage'] = image; // ✅ SIMPAN FILE
+      hikers[index] = current;
+
+      _updateHikersValidationState();
+      update();
+
+      print('📸 KTP selected for hiker[$index]: ${image.path}');
     }
   }
 
@@ -210,6 +224,32 @@ class ReservasiController extends GetxController {
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
     final totalPrice = ticketCount.value * 15000;
+    final List<Map<String, dynamic>> hikersData = [];
+
+    for (int i = 0; i < hikers.length; i++) {
+      final h = hikers[i];
+      String? ktpImageUrl;
+
+      print('🧪 Hiker[$i] KTP file: ${h['ktpImage']}');
+
+      if (h['ktpImage'] != null && h['ktpImage'] is XFile) {
+        ktpImageUrl = await _reservasiService.uploadFoto(
+          File((h['ktpImage'] as XFile).path),
+        );
+      }
+
+      hikersData.add({
+        'name': h['nama'],
+        'nik': h['nik'],
+        'alamat': h['alamat'],
+        'telepon': h['telepon'],
+        'jenisKelamin': h['jenisKelamin'],
+        'kewarganegaraan': h['kewarganegaraan'],
+        'ktpImageUrl': ktpImageUrl, // ✅ TIDAK NULL
+      });
+
+      print('✅ Hiker[$i] uploaded KTP URL: $ktpImageUrl');
+    }
 
     final historyMap = {
       'id': reservasiId,
@@ -224,19 +264,7 @@ class ReservasiController extends GetxController {
       'ticketCount': ticketCount.value,
       'ticketPrice': 15000,
       'totalPrice': totalPrice,
-      'hikers': hikers
-          .map(
-            (h) => {
-              'name': h['nama'], // Use 'name' to match ReservasiModel
-              'nik': h['nik'],
-              'telepon': h['telepon'],
-              'alamat': h['alamat'],
-              'kewarganegaraan': h['kewarganegaraan'],
-              'jenisKelamin': h['jenisKelamin'],
-              'ktpImageUrl': h['ktpImageUrl'],
-            },
-          )
-          .toList(),
+      'hikers': hikersData,
     };
 
     riwayat.add(historyMap);
@@ -285,24 +313,12 @@ class ReservasiController extends GetxController {
         print('⚠️ Could not refresh history after payment: $e');
       }
 
-      // Create hiking record now that reservation & payment have been persisted
-      try {
-        print('💾 STEP 3: Creating hiking record after payment...');
-        await _hikingService.createFromReservation(
-          reservasiId: reservasiId,
-          mountainName: mountainName,
-          hikingTrail: jalur,
-          startDate: startDate,
-          userId: userId,
-          paymentId: paymentCode,
-        );
-        print('✅ Hiking record created after payment');
-      } catch (e) {
-        print('⚠️ Could not create hiking after payment: $e');
-      }
-
       print('💾 STEP 5: Refresh hiking...');
       await _hikingService.loadFromSupabase();
+      print(
+        '   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}',
+      );
+
       print(
         '   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}',
       );
@@ -322,12 +338,10 @@ class ReservasiController extends GetxController {
     }
 
     resetTicketCount();
+    hikers.clear();
     selectedDate.value = null;
     selectedPos.value = '';
     isAgreed.value = false;
-    hikers.clear();
-    ktpImage.value = null;
-
     update();
 
     Get.snackbar(
