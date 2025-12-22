@@ -4,9 +4,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/auth_service.dart';
 import '../../../config/supabase_config.dart';
+import '../../../services/error_handling_service.dart';
+import '../../../services/image_optimization_service.dart';
+import '../../../utils/validators.dart';
 
 class ProfileController extends GetxController {
   late final AuthService _authService;
+  late final ErrorHandlingService _errorService;
   final _supabase = SupabaseConfig.client;
   final ImagePicker _picker = ImagePicker();
 
@@ -62,6 +66,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     _authService = Get.find<AuthService>();
+    _errorService = Get.find<ErrorHandlingService>();
     loadUserProfile();
   }
 
@@ -175,10 +180,65 @@ class ProfileController extends GetxController {
   Future<bool> updateProfile() async {
     try {
       // Get values from controllers
-      nik.value = nikController.text;
-      namaLengkap.value = namaLengkapController.text;
-      kontak.value = kontakController.text;
-      alamat.value = alamatController.text;
+      nik.value = nikController.text.trim();
+      namaLengkap.value = namaLengkapController.text.trim();
+      kontak.value = kontakController.text.trim();
+      alamat.value = alamatController.text.trim();
+
+      // Validate inputs
+      final nikError = Validators.validateNIK(nik.value);
+      if (nikError != null) {
+        Get.snackbar(
+          'Validasi Gagal',
+          nikError,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return false;
+      }
+
+      final nameError = Validators.validateName(namaLengkap.value);
+      if (nameError != null) {
+        Get.snackbar(
+          'Validasi Gagal',
+          nameError,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return false;
+      }
+
+      final phoneError = Validators.validatePhoneNumber(kontak.value);
+      if (phoneError != null) {
+        Get.snackbar(
+          'Validasi Gagal',
+          phoneError,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return false;
+      }
+
+      final addressError = Validators.validateAddress(alamat.value);
+      if (addressError != null) {
+        Get.snackbar(
+          'Validasi Gagal',
+          addressError,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return false;
+      }
+
+      if (jenisKelamin.value.isEmpty) {
+        Get.snackbar(
+          'Validasi Gagal',
+          'Pilih jenis kelamin',
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return false;
+      }
 
       debugPrint('=== Updating Profile ===');
       debugPrint('NIK: ${nik.value}');
@@ -193,30 +253,36 @@ class ProfileController extends GetxController {
         throw Exception('User not logged in');
       }
 
-      // Update users table
-      await SupabaseConfig.client
-          .from('users')
-          .update({
-            'full_name': namaLengkap.value,
-            'phone_number': kontak.value,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', userId);
+      // Update users table with retry
+      await _errorService.retryOperation(
+        operation: () => SupabaseConfig.client
+            .from('users')
+            .update({
+              'full_name': namaLengkap.value,
+              'phone_number': kontak.value,
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', userId),
+        maxRetries: 3,
+      );
 
       debugPrint('Users table updated');
 
-      // Update pendaki_profiles table
-      await SupabaseConfig.client
-          .from('pendaki_profiles')
-          .update({
-            'nik': nik.value,
-            'full_name': namaLengkap.value,
-            'phone_number': kontak.value,
-            'gender': jenisKelamin.value,
-            'full_address': alamat.value,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', userId);
+      // Update pendaki_profiles table with retry
+      await _errorService.retryOperation(
+        operation: () => SupabaseConfig.client
+            .from('pendaki_profiles')
+            .update({
+              'nik': nik.value,
+              'full_name': namaLengkap.value,
+              'phone_number': kontak.value,
+              'gender': jenisKelamin.value,
+              'full_address': alamat.value,
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', userId),
+        maxRetries: 3,
+      );
 
       debugPrint('Pendaki profiles table updated');
       debugPrint('=== Profile Updated Successfully ===');
@@ -225,6 +291,15 @@ class ProfileController extends GetxController {
     } catch (e) {
       debugPrint('=== Update Profile Error ===');
       debugPrint('Error: $e');
+
+      _errorService.handleError(e);
+      Get.snackbar(
+        'Error',
+        'Gagal memperbarui profil. Silakan coba lagi.',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+      );
+
       return false;
     }
   }
@@ -287,29 +362,71 @@ class ProfileController extends GetxController {
 
       debugPrint('=== Uploading Avatar ===');
 
+      // Validate image file
+      final fileSize = await imageFile.length();
+      final validationError = Validators.validateImageFile(
+        imageFile.path,
+        fileSize,
+      );
+      if (validationError != null) {
+        Get.snackbar(
+          'Error',
+          validationError,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return;
+      }
+
+      // Optimize image before upload
+      debugPrint('Optimizing image...');
+      final optimizedImage = await ImageOptimizationService.optimizeImage(
+        imageFile: imageFile,
+      );
+      if (optimizedImage == null) {
+        Get.snackbar(
+          'Error',
+          'Gagal mengoptimalkan gambar',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red[100],
+          colorText: Colors.red[900],
+        );
+        return;
+      }
+      final optimizedFileSize = await optimizedImage.length();
+      debugPrint('Image optimized: ${optimizedFileSize / 1024 / 1024} MB');
+
       // Generate unique filename
-      final fileExt = imageFile.path.split('.').last;
+      final fileExt = optimizedImage.path.split('.').last;
       final fileName =
           '$userId-${DateTime.now().millisecondsSinceEpoch}.$fileExt';
-      final filePath = '$fileName';
+      final filePath = fileName;
 
       debugPrint('File path: $filePath');
 
       // Delete old avatar if exists
       if (avatarUrl.value.isNotEmpty) {
         try {
-          // Extract filename from URL
           final oldFileName = avatarUrl.value.split('/').last.split('?').first;
           debugPrint('Deleting old avatar: $oldFileName');
-          await _supabase.storage.from('avatars').remove([oldFileName]);
+          await _errorService.retryOperation(
+            operation: () =>
+                _supabase.storage.from('avatars').remove([oldFileName]),
+            maxRetries: 2,
+          );
         } catch (e) {
           debugPrint('Error deleting old avatar: $e');
         }
       }
 
-      // Upload new avatar
+      // Upload new avatar with retry
       debugPrint('Uploading new avatar...');
-      await _supabase.storage.from('avatars').upload(filePath, imageFile);
+      await _errorService.retryOperation(
+        operation: () =>
+            _supabase.storage.from('avatars').upload(filePath, optimizedImage),
+        maxRetries: 3,
+      );
 
       // Get public URL
       final publicUrl = _supabase.storage
@@ -317,14 +434,17 @@ class ProfileController extends GetxController {
           .getPublicUrl(filePath);
       debugPrint('Avatar URL: $publicUrl');
 
-      // Update user profile in database
-      await _supabase
-          .from('users')
-          .update({
-            'avatar_url': publicUrl,
-            'updated_at': DateTime.now().toIso8601String(),
-          })
-          .eq('id', userId);
+      // Update user profile in database with retry
+      await _errorService.retryOperation(
+        operation: () => _supabase
+            .from('users')
+            .update({
+              'avatar_url': publicUrl,
+              'updated_at': DateTime.now().toIso8601String(),
+            })
+            .eq('id', userId),
+        maxRetries: 3,
+      );
 
       // Update local state
       avatarUrl.value = publicUrl;
@@ -341,9 +461,11 @@ class ProfileController extends GetxController {
     } catch (e) {
       debugPrint('=== Upload Avatar Error ===');
       debugPrint('Error: $e');
+
+      _errorService.handleError(e);
       Get.snackbar(
         'Error',
-        'Gagal mengupload foto profil',
+        'Gagal mengupload foto profil. Silakan coba lagi.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
