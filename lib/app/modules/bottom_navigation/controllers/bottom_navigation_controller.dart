@@ -9,13 +9,15 @@ class BottomNavigationController extends GetxController {
   RxInt currentIndex = 0.obs;
 
   final screens = [Routes.home, Routes.chat, Routes.hiking, Routes.profile];
+
   @override
   void onInit() {
     super.onInit();
-    Get.put(HomeController());
-    Get.put(ChatController());
-    Get.put(HikingController());
-    Get.put(ProfileController());
+    // Use lazyPut with fenix to keep controllers alive
+    Get.lazyPut(() => HomeController(), fenix: true);
+    Get.lazyPut(() => ChatController(), fenix: true);
+    Get.lazyPut(() => HikingController(), fenix: true);
+    Get.lazyPut(() => ProfileController(), fenix: true);
   }
 
   void setIndex(int index) {
@@ -24,5 +26,15 @@ class BottomNavigationController extends GetxController {
       return;
     }
     currentIndex.value = index;
+  }
+
+  @override
+  void onClose() {
+    // Clean up controllers when bottom navigation is closed
+    Get.delete<HomeController>();
+    Get.delete<ChatController>();
+    Get.delete<HikingController>();
+    Get.delete<ProfileController>();
+    super.onClose();
   }
 }
