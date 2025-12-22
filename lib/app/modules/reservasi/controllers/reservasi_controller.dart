@@ -5,6 +5,7 @@ import '../views/reservation_detail_view.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../services/hiking_service.dart';
 import '../../../services/reservasi_service.dart';
+import '../../../services/riwayat_service.dart';
 import '../../../services/auth_service.dart';
 
 class ReservasiController extends GetxController {
@@ -244,9 +245,12 @@ class ReservasiController extends GetxController {
     riwayat.add(historyMap);
 
     try {
+      print('💾 Starting payment save flow...');
       final reservasiService = Get.isRegistered<ReservasiService>()
           ? Get.find<ReservasiService>()
           : Get.put(ReservasiService(), permanent: true);
+      
+      print('📝 Upserting reservation with userId: $userId');
       await reservasiService.upsertReservation({
         'id': reservasiId,
         'code': reservasiCode,
@@ -255,14 +259,43 @@ class ReservasiController extends GetxController {
         'startDate': startDate,
         'ticketPrice': 15000,
         'hikers': historyMap['hikers'],
+        'userId': userId,
       });
+      print('✅ Reservation saved');
+      
+      print('💳 Upserting payment with userId: $userId');
       await reservasiService.upsertPayment({
         'reservasiId': reservasiId,
         'paymentCode': paymentCode,
         'totalPrice': totalPrice,
         'paymentDate': now,
+        'userId': userId,
       });
-    } catch (_) {}
+      print('✅ Payment saved, history should be created automatically');
+      
+      // Ensure RiwayatService loads the new data
+      try {
+        if (Get.isRegistered<RiwayatService>()) {
+          final riwayatService = Get.find<RiwayatService>();
+          print('🔄 Refreshing history data from Supabase...');
+          await riwayatService.loadFromSupabase();
+          print('✅ History refreshed');
+        }
+      } catch (e) {
+        print('⚠️ Could not refresh history after payment: $e');
+      }
+    } catch (e) {
+      print('❌ ERROR in payment save flow: $e');
+      Get.snackbar(
+        'Error',
+        'Gagal menyimpan pembayaran: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+      );
+      return;
+    }
 
     resetTicketCount();
     selectedDate.value = null;

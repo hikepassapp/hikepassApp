@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import '../models/hiking_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
+import '../models/riwayat_model.dart';
+import 'riwayat_service.dart';
 
 class HikingService extends GetxService {
 
@@ -169,6 +171,21 @@ class HikingService extends GetxService {
       status: HikingStatus.checkedIn,
     );
     await _upsertHiking(_hikingList[index]);
+    
+    // Also update riwayat table with the new hiking status
+    try {
+      final riwayatService = Get.isRegistered<RiwayatService>()
+          ? Get.find<RiwayatService>()
+          : Get.put(RiwayatService(), permanent: true);
+      final reservasiId = _hikingList[index].reservasiId;
+      // Assuming riwayat.id matches reservasi_id
+      await riwayatService.updateHikingStatus(
+        reservasiId,
+        HikingHistoryStatus.hiking,
+      );
+    } catch (e) {
+      print('⚠️ Could not update riwayat status: $e');
+    }
   }
 
   Future<void> processInitialCheckOut(String hikingId) async {
@@ -201,6 +218,20 @@ class HikingService extends GetxService {
       status: HikingStatus.checkedOut,
     );
     await _upsertHiking(_hikingList[index]);
+    
+    // Also update riwayat table with the new hiking status
+    try {
+      final riwayatService = Get.isRegistered<RiwayatService>()
+          ? Get.find<RiwayatService>()
+          : Get.put(RiwayatService(), permanent: true);
+      final reservasiId = _hikingList[index].reservasiId;
+      await riwayatService.updateHikingStatus(
+        reservasiId,
+        HikingHistoryStatus.finished,
+      );
+    } catch (e) {
+      print('⚠️ Could not update riwayat status for checkout: $e');
+    }
   }
 
   Future<Map<String, dynamic>?> completeCheckOut(String hikingId) async {

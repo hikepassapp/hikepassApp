@@ -121,6 +121,9 @@ class RiwayatController extends GetxController {
 
     }
     
+    // Sort by start_date descending so newest is at the top
+    serviceItems.sort((a, b) => b.reservasi.startDate.compareTo(a.reservasi.startDate));
+    
     return serviceItems;
   }
 
