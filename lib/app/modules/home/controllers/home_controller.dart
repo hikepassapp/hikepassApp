@@ -198,7 +198,7 @@ class HomeController extends GetxController {
   }
 
   void onSeeAllBeritaAcaraTapped() {
-    Get.toNamed('/berita-list');
+    Get.offAllNamed(Routes.beritaList);
   }
 
   void onBeritaAcaraTapped(BeritaModel item) {
@@ -206,7 +206,7 @@ class HomeController extends GetxController {
   }
 
   void onSeeAllPaketWisataTapped() {
-    Get.toNamed('/paket-list');
+    Get.offAllNamed(Routes.paketList);
   }
 
   void onPaketWisataTapped(PaketWisataModel item) {

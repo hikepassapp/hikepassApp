@@ -46,9 +46,10 @@ class ReservasiService extends GetxService {
       await _client.from('payment').upsert(payload).select();
       print('✅ Payment upserted successfully: ${payload["id"]}');
 
-      // Also create a history entry immediately so History shows the card
       try {
-        print('📝 Fetching reservasi row for history creation: ${data['reservasiId']}');
+        print(
+          '📝 Fetching reservasi row for history creation: ${data['reservasiId']}',
+        );
         final reservasiRow = await _client
             .from('reservasi')
             .select('*')
@@ -60,8 +61,11 @@ class ReservasiService extends GetxService {
             ? Get.find<RiwayatService>()
             : Get.put(RiwayatService(), permanent: true);
 
-        final userId = data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
-        print('📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}');
+        final userId =
+            data['userId'] ?? SupabaseConfig.client.auth.currentUser?.id;
+        print(
+          '📝 Creating history entry with userId: $userId for reservasi: ${data['reservasiId']}',
+        );
         await riwayatService.addFromPaymentAndUpsert(
           reservasiRow: reservasiRow as Map<String, dynamic>,
           paymentRow: payload,
@@ -78,7 +82,6 @@ class ReservasiService extends GetxService {
     }
   }
 
-  // Clean API - create reservation and (optionally) payment in a transaction-like sequence
   Future<Map<String, dynamic>> createReservation({
     required String code,
     required String mountainName,
@@ -120,7 +123,9 @@ class ReservasiService extends GetxService {
     return inserted as Map<String, dynamic>;
   }
 
-  Future<List<Map<String, dynamic>>> fetchReservationsByUser(String userId) async {
+  Future<List<Map<String, dynamic>>> fetchReservationsByUser(
+    String userId,
+  ) async {
     try {
       final rows = await _client
           .from('reservasi')
@@ -129,7 +134,6 @@ class ReservasiService extends GetxService {
           .order('start_date', ascending: false);
       return (rows as List).cast<Map<String, dynamic>>();
     } catch (e) {
-      // fallback for schemas without user_id
       final rows = await _client
           .from('reservasi')
           .select('*')
@@ -140,14 +144,12 @@ class ReservasiService extends GetxService {
 
   Future<void> cancelReservation(String reservasiId) async {
     try {
-      // Prefer soft-cancel via status if column exists
       await _client
           .from('reservasi')
           .update({'status': 'canceled'})
           .eq('id', reservasiId)
           .select();
     } catch (_) {
-      // If status column doesn't exist, fallback to delete
       await _client.from('reservasi').delete().eq('id', reservasiId);
     }
   }
