@@ -26,7 +26,7 @@ class HikersListView extends GetView<ReservasiController> {
 
             return ListView.separated(
               itemCount: count,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final hiker = controller.getHiker(index) ?? {};
                 final hasData = hiker.isNotEmpty;
@@ -102,57 +102,32 @@ class HikersListView extends GetView<ReservasiController> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: SizedBox(
             height: 48,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: Obx(
+              () => ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: controller.areAllHikersComplete.value
+                      ? AppColors.secondary
+                      : Colors.grey[400],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              onPressed: () {
-                // Validate that all hikers have required data before continuing
-                final count = controller.ticketCount.value;
-                controller.ensureHikersCount(count);
-                int firstIncomplete = -1;
-                for (var i = 0; i < count; i++) {
-                  final h = controller.getHiker(i) ?? {};
-                  if ((h['nama'] == null ||
-                          (h['nama'] as String).trim().isEmpty) ||
-                      (h['nik'] == null ||
-                          (h['nik'] as String).trim().isEmpty) ||
-                      (h['jenisKelamin'] == null ||
-                          (h['jenisKelamin'] as String).trim().isEmpty) ||
-                      (h['alamat'] == null ||
-                          (h['alamat'] as String).trim().isEmpty) ||
-                      (h['telepon'] == null ||
-                          (h['telepon'] as String).trim().isEmpty)) {
-                    firstIncomplete = i;
-                    break;
-                  }
-                }
-
-                if (firstIncomplete >= 0) {
-                  Get.snackbar(
-                    'Data belum lengkap',
-                    'Silakan lengkapi data untuk Pendaki ${firstIncomplete + 1}',
-                    backgroundColor: Colors.orange,
-                    colorText: Colors.white,
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                  // Open the form for the first incomplete hiker
-                  Get.to(
-                    () => ReservationFormView(),
-                    arguments: {'index': firstIncomplete, 'reservation': data},
-                  );
-                  return;
-                }
-
-                // All hikers complete — navigate to payment page with reservation data
-                Get.toNamed('/reservation-payment', arguments: data);
-              },
-              child: const Text(
-                'Lanjutkan',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                onPressed: controller.areAllHikersComplete.value
+                    ? () {
+                        // All hikers complete — navigate to payment page with reservation data
+                        Get.toNamed('/reservation-payment', arguments: data);
+                      }
+                    : null,
+                child: Text(
+                  'Lanjutkan',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: controller.areAllHikersComplete.value
+                        ? Colors.white
+                        : Colors.grey[600],
+                  ),
+                ),
               ),
             ),
           ),
