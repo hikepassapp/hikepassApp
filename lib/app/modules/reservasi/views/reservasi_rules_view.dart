@@ -31,7 +31,6 @@ class ReservasiRulesView extends GetView<ReservasiController> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
