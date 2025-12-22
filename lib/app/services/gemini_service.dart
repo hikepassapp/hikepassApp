@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class GeminiService {
   late final GenerativeModel _model;
-  late final ChatSession _chat;
+  late ChatSession _chat;
 
   GeminiService() {
     final apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';

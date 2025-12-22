@@ -7,6 +7,8 @@ class HikingService extends GetxService {
 
   final RxList<HikingModel> _hikingList = <HikingModel>[].obs;
 
+  String? get _userId => SupabaseConfig.client.auth.currentUser?.id;
+
   List<HikingModel> get allHikings => _hikingList;
 
   List<HikingModel> get pendingCheckIns =>
@@ -25,18 +27,20 @@ class HikingService extends GetxService {
     // No mock data - start empty until reservations are made
   }
 
-  HikingModel createFromReservation({
+  Future<HikingModel> createFromReservation({
     required String reservasiId,
     String? paymentId,
     required String mountainName,
     required String hikingTrail,
     required DateTime startDate,
-  }) {
-    print('🎫 Creating hiking from reservation:');
-    print('   - Mountain: $mountainName');
-    print('   - Trail: $hikingTrail');
-    print('   - Date: $startDate');
-    print('   - Service Instance: $hashCode');
+    String? userId,
+  }) async {
+    print('�️ === HikingService.createFromReservation START ===');
+    print('   Mountain: $mountainName');
+    print('   Trail: $hikingTrail');
+    print('   Date: $startDate');
+    print('   Passed userId: $userId');
+    print('   _userId from auth: $_userId');
     
     final hiking = HikingModel(
       id: 'hiking-${DateTime.now().millisecondsSinceEpoch}',
@@ -49,9 +53,31 @@ class HikingService extends GetxService {
     );
 
     _hikingList.add(hiking);
-    _upsertHiking(hiking);
-    print('✅ Hiking added. Total items: ${_hikingList.length}');
+    final uid = userId ?? _userId;
+    print('   Final uid to use: $uid');
+    
+    if (uid != null) {
+      print('   ✅ Calling _upsertHiking with userId: $uid');
+      await _upsertHiking(hiking, userId: uid);
+    } else {
+      print('   ⚠️ Skipping DB upsert for hiking because user_id is null');
+    }
+    print('🏔️ === HikingService.createFromReservation END ===');
     return hiking;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchHikingByUser(String userId, {String? status}) async {
+    final base = SupabaseConfig.client
+        .from('hiking')
+        .select('*')
+        .eq('user_id', userId);
+
+    final filtered = (status != null && status.isNotEmpty)
+        ? base.eq('status', status)
+        : base;
+
+    final rows = await filtered.order('start_date', ascending: false);
+    return (rows as List).cast<Map<String, dynamic>>();
   }
 
   HikingModel? getHikingById(String id) {
@@ -114,7 +140,7 @@ class HikingService extends GetxService {
     }
   }
 
-  Map<String, dynamic>? completeCheckOut(String hikingId) {
+  Future<Map<String, dynamic>?> completeCheckOut(String hikingId) async {
     final hiking = getHikingById(hikingId);
     if (hiking == null ||
         hiking.checkInDate == null ||
@@ -134,9 +160,15 @@ class HikingService extends GetxService {
       'checkOutDate': hiking.checkOutDate!.toIso8601String(),
       'checkInItems': hiking.checkInItems ?? '',
       'checkOutItems': hiking.checkOutItems ?? '',
+      if (_userId != null) 'userId': _userId,
     };
 
-    _upsertHiking(hiking);
+    final uid = _userId;
+    if (uid != null) {
+      await _upsertHiking(hiking, userId: uid);
+    } else {
+      await _upsertHiking(hiking);
+    }
     _hikingList.removeWhere((h) => h.id == hikingId);
 
     return historyData;
@@ -146,7 +178,7 @@ class HikingService extends GetxService {
     _hikingList.clear();
   }
 
-  void _upsertHiking(HikingModel h) {
+  Future<void> _upsertHiking(HikingModel h, {String? userId}) async {
     final client = SupabaseConfig.client;
     final payload = {
       'id': h.id,
@@ -162,9 +194,71 @@ class HikingService extends GetxService {
       'check_in_checkboxes': h.checkInCheckboxes,
       'check_out_items': h.checkOutItems,
       'check_out_checkboxes': h.checkOutCheckboxes,
+      if (userId != null) 'user_id': userId,
     };
     try {
-      client.from('hiking').upsert(payload);
-    } catch (_) {}
+      print('📤 Upserting hiking to DB with payload keys: ${payload.keys.toList()}');
+      print('   user_id in payload: ${payload['user_id']}');
+      final response = await client.from('hiking').upsert(payload).select();
+      print('✅ Hiking upserted successfully: ${h.id}');
+      print('   Response: $response');
+    } catch (e) {
+      print('❌ Error upserting hiking: $e');
+      print('   Payload was: $payload');
+    }
+  }
+
+  // Clean DB helpers
+  Future<Map<String, dynamic>> dbCheckIn({
+    required String reservasiId,
+    required String userId,
+    DateTime? at,
+  }) async {
+    final client = SupabaseConfig.client;
+    final payload = {
+      'reservasi_id': reservasiId,
+      'user_id': userId,
+      'status': 'checkedIn',
+      'check_in_date': (at ?? DateTime.now()).toIso8601String(),
+    };
+    final row = await client.from('hiking').insert(payload).select().single();
+    return row as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> dbCheckOut({
+    required String hikingId,
+    required String userId,
+    required String checkOutItems,
+    required List<bool> checkOutCheckboxes,
+    DateTime? at,
+  }) async {
+    final client = SupabaseConfig.client;
+    final payload = {
+      'status': 'checkedOut',
+      'check_out_date': (at ?? DateTime.now()).toIso8601String(),
+      'check_out_items': checkOutItems,
+      'check_out_checkboxes': checkOutCheckboxes,
+    };
+    final row = await client
+        .from('hiking')
+        .update(payload)
+        .eq('id', hikingId)
+        .eq('user_id', userId)
+        .select()
+        .single();
+    return row as Map<String, dynamic>;
+  }
+
+  RealtimeChannel subscribeUserHiking(String userId, void Function() onChange) {
+    final channel = SupabaseConfig.client
+        .channel('hiking-user-$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'hiking',
+          callback: (_) => onChange(),
+        )
+        .subscribe();
+    return channel;
   }
 }

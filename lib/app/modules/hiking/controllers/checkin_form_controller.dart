@@ -5,7 +5,7 @@ import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
 
 class CheckInFormController extends GetxController {
-  final HikingService _hikingService = Get.find<HikingService>();
+  late final HikingService _hikingService;
 
   final Rxn<HikingModel> currentHiking = Rxn<HikingModel>();
   final RxList<bool> checkboxes = List.generate(6, (_) => false).obs;
@@ -15,6 +15,9 @@ class CheckInFormController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _hikingService = Get.isRegistered<HikingService>()
+        ? Get.find<HikingService>()
+        : Get.put(HikingService(), permanent: true);
     final String? hikingId = Get.arguments as String?;
     if (hikingId != null) {
       final hiking = _hikingService.getHikingById(hikingId);

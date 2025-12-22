@@ -16,9 +16,12 @@ class ReservasiService extends GetxService {
           : data['startDate'],
       'ticket_price': data['ticketPrice'],
       'hikers': data['hikers'],
+      // optional user_id if your schema supports it
+      if (data['userId'] != null) 'user_id': data['userId'],
+      if (data['status'] != null) 'status': data['status'],
     };
     try {
-      await _client.from('reservasi').upsert(payload);
+      await _client.from('reservasi').upsert(payload).select();
     } catch (_) {}
   }
 
@@ -34,7 +37,81 @@ class ReservasiService extends GetxService {
       'status': 'paid',
     };
     try {
-      await _client.from('payment').upsert(payload);
+      await _client.from('payment').upsert(payload).select();
     } catch (_) {}
+  }
+
+  // Clean API - create reservation and (optionally) payment in a transaction-like sequence
+  Future<Map<String, dynamic>> createReservation({
+    required String code,
+    required String mountainName,
+    required String hikingTrail,
+    required DateTime startDate,
+    required List<dynamic> hikers,
+    required int ticketPrice,
+    String? userId,
+    Map<String, dynamic>? payment,
+  }) async {
+    final reservationPayload = {
+      'code': code,
+      'mountain_name': mountainName,
+      'hiking_trail': hikingTrail,
+      'start_date': startDate.toIso8601String(),
+      'hikers': hikers,
+      'ticket_price': ticketPrice,
+      if (userId != null) 'user_id': userId,
+      'status': 'active',
+    };
+
+    final inserted = await _client
+        .from('reservasi')
+        .insert(reservationPayload)
+        .select()
+        .single();
+
+    if (payment != null) {
+      final paymentPayload = {
+        'reservasi_id': inserted['id'],
+        'code': payment['code'],
+        'total': payment['total'],
+        'date': (payment['date'] as DateTime).toIso8601String(),
+        'status': payment['status'] ?? 'paid',
+      };
+      await _client.from('payment').insert(paymentPayload).select().single();
+    }
+
+    return inserted as Map<String, dynamic>;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchReservationsByUser(String userId) async {
+    try {
+      final rows = await _client
+          .from('reservasi')
+          .select('*')
+          .eq('user_id', userId)
+          .order('start_date', ascending: false);
+      return (rows as List).cast<Map<String, dynamic>>();
+    } catch (e) {
+      // fallback for schemas without user_id
+      final rows = await _client
+          .from('reservasi')
+          .select('*')
+          .order('start_date', ascending: false);
+      return (rows as List).cast<Map<String, dynamic>>();
+    }
+  }
+
+  Future<void> cancelReservation(String reservasiId) async {
+    try {
+      // Prefer soft-cancel via status if column exists
+      await _client
+          .from('reservasi')
+          .update({'status': 'canceled'})
+          .eq('id', reservasiId)
+          .select();
+    } catch (_) {
+      // If status column doesn't exist, fallback to delete
+      await _client.from('reservasi').delete().eq('id', reservasiId);
+    }
   }
 }
