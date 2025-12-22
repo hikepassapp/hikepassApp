@@ -171,7 +171,7 @@ class ReservasiService extends GetxService {
           .select('*')
           .eq('id', reservasiId)
           .single();
-      return response as Map<String, dynamic>;
+      return response;
     } catch (e) {
       print('❌ Error fetching reservation: $e');
       return null;
@@ -188,7 +188,7 @@ class ReservasiService extends GetxService {
           .select('*')
           .eq('reservasi_id', reservasiId)
           .single();
-      return response as Map<String, dynamic>;
+      return response;
     } catch (e) {
       print('⚠️ No payment found for reservation: $e');
       return null;

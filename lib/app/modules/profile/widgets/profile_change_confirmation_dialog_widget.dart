@@ -1,52 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
   final VoidCallback onConfirm;
+  final String title;
+  final String message;
 
   const ProfileChangeConfirmationDialogWidget({
     super.key,
     required this.onConfirm,
+    required this.title,
+    required this.message,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
-        'Konfirmasi',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      ),
-      content: Text(
-        'Apakah Anda yakin ingin mengubah profil?',
-        style: TextStyle(fontSize: 14),
-      ),
+      title: Text(title),
+      content: Text(message),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(
-            'Tidak',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          onPressed: () {
+            Navigator.of(context).pop(); // Use this instead of Get.back()
+          },
+          child: const Text('Batal'),
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(); // Use this instead of Get.back()
             onConfirm();
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF26A69A),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: Text(
-            'Ya',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-          ),
+          child: const Text('Konfirmasi'),
         ),
       ],
     );

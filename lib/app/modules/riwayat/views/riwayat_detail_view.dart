@@ -24,9 +24,9 @@ class RiwayatDetailView extends StatelessWidget {
 
   RiwayatModel? _findItem(String? id) {
     if (id == null) return null;
-    
+
     final hikingService = Get.find<HikingService>();
-    
+
     final service = Get.find<RiwayatService>();
     final serviceItem = service.getById(id);
     if (serviceItem != null) return serviceItem;
@@ -37,14 +37,13 @@ class RiwayatDetailView extends StatelessWidget {
         (item) => (item['id'] ?? '').toString() == id,
         orElse: () => null as dynamic,
       );
-      
+
       final hikersList = <HikerInfo>[];
       if (mapItem['hikers'] != null && mapItem['hikers'] is List) {
         for (var hiker in mapItem['hikers'] as List) {
-          hikersList.add(HikerInfo(
-            name: hiker['name'] ?? '-',
-            nik: hiker['nik'] ?? '-',
-          ));
+          hikersList.add(
+            HikerInfo(name: hiker['name'] ?? '-', nik: hiker['nik'] ?? '-'),
+          );
         }
       }
 
@@ -61,7 +60,7 @@ class RiwayatDetailView extends StatelessWidget {
         hikers: hikersList,
         ticketPrice: ticketPrice,
       );
-      
+
       final payment = PaymentModel(
         id: mapItem['paymentCode'] ?? '',
         code: mapItem['paymentCode'] ?? '',
@@ -79,7 +78,7 @@ class RiwayatDetailView extends StatelessWidget {
           (h) => h.reservasiId == reservasiId,
           orElse: () => null as dynamic,
         );
-        
+
         if (hiking.status == HikingStatus.checkedIn) {
           hikingStatus = HikingHistoryStatus.hiking;
         } else if (hiking.status == HikingStatus.checkedOut) {
@@ -87,13 +86,13 @@ class RiwayatDetailView extends StatelessWidget {
         } else {
           hikingStatus = HikingHistoryStatus.waiting;
         }
- 
+
         checkInDate = hiking.checkInDate;
         checkOutDate = hiking.checkOutDate;
-            } catch (_) {
+      } catch (_) {
         hikingStatus = HikingHistoryStatus.waiting;
       }
-      
+
       return RiwayatModel(
         id: mapItem['id'] ?? '',
         reservasi: reservasi,
@@ -102,10 +101,8 @@ class RiwayatDetailView extends StatelessWidget {
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
       );
-        } catch (_) {
+    } catch (_) {}
 
-    }
-    
     return null;
   }
 
@@ -327,7 +324,7 @@ class RiwayatDetailView extends StatelessWidget {
                           ],
                         ),
                       );
-                    }).toList(),
+                    }),
                     const SizedBox(height: 24),
 
                     const Text(
@@ -450,6 +447,4 @@ class RiwayatDetailView extends StatelessWidget {
             ),
     );
   }
-
-
 }

@@ -9,17 +9,23 @@ import 'app/config/supabase_config.dart';
 import 'app/services/auth_service.dart';
 import 'app/services/hiking_service.dart';
 import 'app/services/riwayat_service.dart';
+import 'app/modules/hiking/controllers/hiking_controller.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await dotenv.load();
   await initializeDateFormatting('id_ID', null);
+  await initializeDateFormatting('id_ID', null);
   await SupabaseConfig.initialize();
   Get.put(ErrorHandlingService());
   Get.put(AuthService());
   Get.put(HikingService());
+  // Ensure HikingController is available app-wide. Use lazyPut with fenix
+  // so it is created on first use and can be recreated if removed.
+  Get.lazyPut<HikingController>(() => HikingController(), fenix: true);
   Get.put(RiwayatService(), permanent: true);
 
   runApp(

@@ -217,15 +217,9 @@ class ReservasiController extends GetxController {
       print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
     }
 
-    print('💾 STEP 0: Creating hiking record...');
-    await _hikingService.createFromReservation(
-      reservasiId: reservasiId,
-      mountainName: mountainName,
-      hikingTrail: jalur,
-      startDate: startDate,
-      userId: userId,
-    );
-    print('✅ Hiking record created');
+    // NOTE: create hiking record AFTER reservation & payment are saved
+    // to ensure `user_id` is available and the UI query (by user_id)
+    // will include the newly created hiking row.
 
     final payRand = Random().nextInt(900000) + 100000;
     final paymentCode = 'PAY-$payRand';
@@ -321,6 +315,10 @@ class ReservasiController extends GetxController {
 
       print('💾 STEP 5: Refresh hiking...');
       await _hikingService.loadFromSupabase();
+      print(
+        '   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}',
+      );
+
       print(
         '   ✅ Hiking refreshed - count: ${_hikingService.allHikings.length}',
       );

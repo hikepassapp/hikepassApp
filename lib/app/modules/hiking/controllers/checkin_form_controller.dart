@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
+import 'hiking_controller.dart';
 
 class CheckInFormController extends GetxController {
   late final HikingService _hikingService;
@@ -60,10 +61,22 @@ class CheckInFormController extends GetxController {
         checkInCheckboxes: checkboxes.toList(),
       );
 
-      Get.offAllNamed(
-        Routes.hiking,
-        arguments: {'tab': 1},
-      );
+      // Ensure HikingController is registered so the hiking view can use it
+      if (!Get.isRegistered<HikingController>()) {
+        // Lazily put the HikingController if it's not present.
+        // Import is avoided here; use Get.put with instance from file.
+        try {
+          // Put the controller so view will not crash when it builds
+          Get.put(HikingController());
+        } catch (_) {}
+      } else {
+        // If controller exists, refresh data to reflect the recent check-in
+        try {
+          Get.find<HikingController>().refreshHikingData();
+        } catch (_) {}
+      }
+
+      Get.offAllNamed(Routes.hiking, arguments: {'tab': 1});
 
       Get.snackbar(
         'Berhasil',
