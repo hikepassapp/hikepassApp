@@ -107,7 +107,7 @@ class ProfileController extends GetxController {
         avatarUrl.value = userProfile['avatar_url'] ?? '';
         username.value =
             userProfile['email']?.split('@')[0] ??
-            ''; // Use email prefix as username
+            ''; // Derive username from email
 
         // Update text controllers
         emailController.text = email.value;
