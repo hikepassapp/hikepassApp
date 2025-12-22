@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hikepass_app/app/modules/home/controllers/home_controller.dart';
 import '../../chat/controllers/chat_controller.dart';
@@ -16,6 +17,13 @@ class BottomNavigationView extends GetView<BottomNavigationController> {
   const BottomNavigationView({super.key});
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: AppColors.secondary,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+    );
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
