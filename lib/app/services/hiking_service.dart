@@ -11,7 +11,8 @@ class HikingService extends GetxService {
 
   String? get _userId => SupabaseConfig.client.auth.currentUser?.id;
 
-  List<HikingModel> get allHikings => _hikingList;
+  // Return RxList so changes are properly observed
+  RxList<HikingModel> get allHikings => _hikingList;
 
   List<HikingModel> get pendingCheckIns =>
       _hikingList.where((h) => h.status == HikingStatus.pending).toList();
@@ -109,12 +110,10 @@ class HikingService extends GetxService {
     final uid = userId ?? _userId;
     print('   Final uid to use: $uid');
     
-    if (uid != null) {
-      print('   ✅ Calling _upsertHiking with userId: $uid');
-      await _upsertHiking(hiking, userId: uid);
-    } else {
-      print('   ⚠️ Skipping DB upsert for hiking because user_id is null');
-    }
+    // ALWAYS upsert to database - even if uid is null, let the database handle it
+    // This ensures the hiking record is persisted
+    print('   ✅ Upserting hiking with userId: $uid');
+    await _upsertHiking(hiking, userId: uid);
     print('🏔️ === HikingService.createFromReservation END ===');
     return hiking;
   }
@@ -274,6 +273,7 @@ class HikingService extends GetxService {
 
   Future<void> _upsertHiking(HikingModel h, {String? userId}) async {
     final client = SupabaseConfig.client;
+    final uid = userId ?? _userId;  // Get user_id from parameter or auth
     final payload = {
       'id': h.id,
       'reservasi_id': h.reservasiId,
@@ -288,7 +288,7 @@ class HikingService extends GetxService {
       'check_in_checkboxes': h.checkInCheckboxes,
       'check_out_items': h.checkOutItems,
       'check_out_checkboxes': h.checkOutCheckboxes,
-      if (userId != null) 'user_id': userId,
+      if (uid != null) 'user_id': uid,  // Always include user_id if available
     };
     try {
       print('📤 Upserting hiking to DB with payload keys: ${payload.keys.toList()}');

@@ -18,6 +18,13 @@ class BottomNavigationController extends GetxController {
     Get.lazyPut(() => ChatController(), fenix: true);
     Get.lazyPut(() => HikingController(), fenix: true);
     Get.lazyPut(() => ProfileController(), fenix: true);
+    
+    // Handle initialIndex argument (e.g., from payment success page)
+    final args = Get.arguments;
+    if (args is Map && args['initialIndex'] != null) {
+      final initialIndex = args['initialIndex'] as int;
+      currentIndex.value = initialIndex;
+    }
   }
 
   void setIndex(int index) {
@@ -26,6 +33,12 @@ class BottomNavigationController extends GetxController {
       return;
     }
     currentIndex.value = index;
+    
+    // Refresh hiking data when switching to hiking tab (index 2)
+    if (index == 2 && Get.isRegistered<HikingController>()) {
+      final hikingController = Get.find<HikingController>();
+      hikingController.refreshHikingData();
+    }
   }
 
   @override

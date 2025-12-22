@@ -14,10 +14,26 @@ class HikingController extends GetxController {
     print('HikingController initialized');
     print('HikingService instance: ${_hikingService.hashCode}');
     print('Current hiking items: ${_hikingService.allHikings.length}');
+    // Ensure persisted hiking data is loaded so the check-in tab shows pending hikes
+    _hikingService.loadFromSupabase();
     final args = Get.arguments;
     if (args is Map && args['tab'] is int) {
       tabIndex.value = args['tab'] as int;
     }
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Refresh hiking data when view becomes ready (helps after returning from payment)
+    refreshHikingData();
+  }
+
+  /// Refresh hiking data from database
+  Future<void> refreshHikingData() async {
+    print('🔄 Refreshing hiking data...');
+    await _hikingService.loadFromSupabase();
+    print('✅ Hiking data refreshed - ${_hikingService.allHikings.length} items');
   }
 
   List<HikingModel> get pendingCheckIns {
