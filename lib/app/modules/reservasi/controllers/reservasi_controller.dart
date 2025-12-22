@@ -259,7 +259,11 @@ class ReservasiController extends GetxController {
         'mountainName': mountainName,
         'hikingTrail': jalur,
         'startDate': startDate,
+
         'ticketPrice': 15000,
+        'ticketCount': ticketCount.value,
+        'totalPrice': totalPrice,
+
         'hikers': historyMap['hikers'],
         'userId': userId,
       });
