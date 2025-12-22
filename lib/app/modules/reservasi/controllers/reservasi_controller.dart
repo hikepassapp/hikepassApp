@@ -205,7 +205,7 @@ class ReservasiController extends GetxController {
     final authService = Get.find<AuthService>();
     final currentUser = authService.currentUser;
     final userId = currentUser?.id;
-    
+
     print('🔐 Auth Debug: currentUser=$currentUser, userId=$userId');
     if (userId == null) {
       print('⚠️ WARNING: userId is null! currentUser=${currentUser?.email}');
@@ -238,7 +238,17 @@ class ReservasiController extends GetxController {
       'ticketPrice': 15000,
       'totalPrice': totalPrice,
       'hikers': hikers
-          .map((h) => {'name': h['nama'] ?? '-', 'nik': h['nik'] ?? '-'})
+          .map(
+            (h) => {
+              'nama': h['nama'],
+              'nik': h['nik'],
+              'telepon': h['telepon'],
+              'alamat': h['alamat'],
+              'kewarganegaraan': h['kewarganegaraan'],
+              'jenisKelamin': h['jenisKelamin'],
+              'ktpImageUrl': h['ktpImageUrl'],
+            },
+          )
           .toList(),
     };
 
@@ -249,7 +259,7 @@ class ReservasiController extends GetxController {
       final reservasiService = Get.isRegistered<ReservasiService>()
           ? Get.find<ReservasiService>()
           : Get.put(ReservasiService(), permanent: true);
-      
+
       print('📝 Upserting reservation with userId: $userId');
       await reservasiService.upsertReservation({
         'id': reservasiId,
@@ -262,7 +272,7 @@ class ReservasiController extends GetxController {
         'userId': userId,
       });
       print('✅ Reservation saved');
-      
+
       print('💳 Upserting payment with userId: $userId');
       await reservasiService.upsertPayment({
         'reservasiId': reservasiId,
@@ -272,7 +282,7 @@ class ReservasiController extends GetxController {
         'userId': userId,
       });
       print('✅ Payment saved, history should be created automatically');
-      
+
       // Ensure RiwayatService loads the new data
       try {
         if (Get.isRegistered<RiwayatService>()) {
