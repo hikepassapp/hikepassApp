@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hikepass_app/app/services/riwayat_service.dart';
 import '../../../routes/app_pages.dart';
 import '../../../models/hiking_model.dart';
 import '../../../services/hiking_service.dart';
+import '../../reservasi/controllers/reservasi_controller.dart';
 import 'hiking_controller.dart';
 
 class CheckInFormController extends GetxController {
   late final HikingService _hikingService;
-
   final Rxn<HikingModel> currentHiking = Rxn<HikingModel>();
   final RxList<bool> checkboxes = List.generate(6, (_) => false).obs;
   final TextEditingController itemsController = TextEditingController();
@@ -43,7 +44,7 @@ class CheckInFormController extends GetxController {
     }
   }
 
-  void submitCheckIn() {
+  Future<void> submitCheckIn() async {
     if (!isFormValid) {
       Get.snackbar(
         'Perhatian',
@@ -55,33 +56,85 @@ class CheckInFormController extends GetxController {
     }
 
     if (currentHiking.value != null) {
-      _hikingService.processCheckInForm(
+      print('🏔️ === Starting Check-In Process ===');
+      
+      // ✨ 1. Process check-in form (updates hiking table)
+      await _hikingService.processCheckInForm(
         hikingId: currentHiking.value!.id,
         checkInItems: items.value,
         checkInCheckboxes: checkboxes.toList(),
       );
+      print('✅ Step 1: Hiking table updated');
 
-      // Ensure HikingController is registered so the hiking view can use it
+      // ✨ 2. Refresh hiking service to get latest data
+      await _hikingService.loadFromSupabase();
+      print('✅ Step 2: Hiking data refreshed');
+
+      // ✨ 3. Get updated hiking with checkInDate
+      final updatedHiking = _hikingService.getHikingById(currentHiking.value!.id);
+      print('📋 Updated hiking data:');
+      print('   CheckInDate: ${updatedHiking?.checkInDate}');
+      print('   ReservasiId: ${updatedHiking?.reservasiId}');
+      
+      // ✨ 4. Update riwayat table dengan checkInDate
+      if (updatedHiking != null && updatedHiking.checkInDate != null) {
+        final riwayatService = Get.isRegistered<RiwayatService>()
+            ? Get.find<RiwayatService>()
+            : Get.put(RiwayatService(), permanent: true);
+        
+        try {
+          // Update checkInDate di tabel riwayat
+          await riwayatService.updateCheckInDate(
+            updatedHiking.reservasiId,
+            updatedHiking.checkInDate!,
+          );
+          print('✅ Step 3: Riwayat table updated with checkInDate');
+        } catch (e) {
+          print('⚠️ Error updating riwayat checkInDate: $e');
+        }
+      }
+
+      // ✨ 5. Update data di ReservasiController
+      if (updatedHiking != null) {
+        try {
+          final reservasiC = Get.find<ReservasiController>();
+          final idx = reservasiC.riwayat.indexWhere(
+            (item) => (item['id'] ?? '') == updatedHiking.reservasiId,
+          );
+
+          if (idx != -1) {
+            reservasiC.riwayat[idx]['checkInDate'] = updatedHiking.checkInDate;
+            reservasiC.riwayat[idx]['hikingStatus'] = 'hiking';
+            print('✅ Step 4: ReservasiController updated');
+          }
+        } catch (e) {
+          print('⚠️ Error updating reservasi: $e');
+        }
+      }
+
+      // ✨ 6. Refresh riwayat service
+      if (Get.isRegistered<RiwayatService>()) {
+        final riwayatService = Get.find<RiwayatService>();
+        await riwayatService.loadFromSupabase();
+        print('✅ Step 5: Riwayat data refreshed from database');
+      }
+
+      // ✨ 7. Ensure HikingController exists
       if (!Get.isRegistered<HikingController>()) {
-        // Lazily put the HikingController if it's not present.
-        // Import is avoided here; use Get.put with instance from file.
         try {
-          // Put the controller so view will not crash when it builds
-          Get.put(HikingController());
-        } catch (_) {}
-      } else {
-        // If controller exists, refresh data to reflect the recent check-in
-        try {
-          Get.find<HikingController>().refreshHikingData();
+          Get.put(HikingController(), permanent: true);
         } catch (_) {}
       }
 
+      print('🎉 === Check-In Process Complete ===');
+      
+      // ✨ 8. Navigate to hiking tab
       Get.offAllNamed(Routes.hiking, arguments: {'tab': 1});
 
       Get.snackbar(
         'Berhasil',
-        'Check-in berhasil dilakukan',
-        backgroundColor: const Color(0xFF179778),
+        'Check-in berhasil! Status berubah ke Mendaki',
+        backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     }

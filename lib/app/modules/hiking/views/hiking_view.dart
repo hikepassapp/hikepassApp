@@ -5,7 +5,7 @@ import '../widgets/hiking_header.dart';
 import '../widgets/hiking_tab_bar.dart';
 import '../widgets/hiking_card_item.dart';
 
-class HikingView extends StatelessWidget {
+class HikingView extends GetView<HikingController> {
   const HikingView({super.key});
 
   @override

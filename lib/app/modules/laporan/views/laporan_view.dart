@@ -12,6 +12,7 @@ class LaporanView extends GetView<LaporanController> {
 
   @override
   Widget build(BuildContext context) {
+    final RxBool isVerified = false.obs;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -86,6 +87,32 @@ class LaporanView extends GetView<LaporanController> {
               }
               return const SizedBox.shrink();
             }),
+            Obx(
+              () => Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: isVerified.value,
+                    onChanged: (value) => isVerified.value = value ?? false,
+                    activeColor: AppColors.primary,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => isVerified.value = !isVerified.value,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Text(
+                          'Saya menyatakan bahwa laporan ini benar adanya dan dapat dipertanggungjawabkan.',
+                          style: AppTypography.sRegular.copyWith(
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 24),
             Obx(
               () => CustomButton(
