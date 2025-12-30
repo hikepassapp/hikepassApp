@@ -36,7 +36,7 @@ class PaymentSuccessView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 32),
+            const SizedBox(height: 26),
             Container(
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
@@ -80,12 +80,13 @@ class PaymentSuccessView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
+
+              child: Text(
                 'Kembali ke Beranda',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
           ],
         ),
       ),

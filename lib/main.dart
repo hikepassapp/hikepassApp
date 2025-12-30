@@ -25,8 +25,6 @@ void main() async {
   Get.put(ErrorHandlingService());
   Get.put(AuthService());
   Get.put(HikingService());
-  // Ensure HikingController is available app-wide. Use lazyPut with fenix
-  // so it is created on first use and can be recreated if removed.
   Get.lazyPut<HikingController>(() => HikingController(), fenix: true);
   Get.put(RiwayatService(), permanent: true);
 

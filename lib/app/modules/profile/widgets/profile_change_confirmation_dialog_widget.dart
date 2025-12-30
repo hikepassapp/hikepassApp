@@ -20,13 +20,13 @@ class ProfileChangeConfirmationDialogWidget extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Use this instead of Get.back()
+            Navigator.of(context).pop(); 
           },
           child: const Text('Batal'),
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.of(context).pop(); // Use this instead of Get.back()
+            Navigator.of(context).pop();
             onConfirm();
           },
           child: const Text('Konfirmasi'),
